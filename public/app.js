@@ -1388,7 +1388,7 @@ async function searchPolice() {
     if (!value) {
 
         toast(
-            "Enter a citizen ID.",
+            "Enter a name, email, Government ID, or database ID.",
             "error"
         );
 
@@ -1620,7 +1620,7 @@ function renderPoliceRecord(
 // ============================================================
 
 async function addPolicePoints(
-    citizenId
+    citizenIdentifier
 ) {
 
     const points =
@@ -1667,7 +1667,7 @@ async function addPolicePoints(
                     JSON.stringify({
 
                         citizen_id:
-                            citizenId,
+                            citizenIdentifier,
 
                         points,
 
@@ -1686,7 +1686,7 @@ async function addPolicePoints(
 
 
         await searchCitizenAgain(
-            citizenId
+            citizenIdentifier
         );
 
     } catch (error) {
@@ -1706,7 +1706,7 @@ async function addPolicePoints(
 // ============================================================
 
 async function addPoliceRecord(
-    citizenId
+    citizenIdentifier
 ) {
 
     const reason =
@@ -1754,7 +1754,7 @@ async function addPoliceRecord(
                     JSON.stringify({
 
                         citizen_id:
-                            citizenId,
+                            citizenIdentifier,
 
                         reason,
 
@@ -1773,7 +1773,7 @@ async function addPoliceRecord(
 
 
         await searchCitizenAgain(
-            citizenId
+            citizenIdentifier
         );
 
     } catch (error) {
@@ -1793,7 +1793,7 @@ async function addPoliceRecord(
 // ============================================================
 
 async function searchCitizenAgain(
-    citizenId
+    citizenIdentifier
 ) {
 
     try {
@@ -1801,7 +1801,7 @@ async function searchCitizenAgain(
         const data =
             await api(
                 `/api/police/citizen/${encodeURIComponent(
-                    citizenId
+                    citizenIdentifier
                 )}`
             );
 
@@ -1903,6 +1903,7 @@ async function searchGovernmentUsers() {
         );
 
         return;
+
     }
 
 
@@ -1957,6 +1958,7 @@ function renderGovernmentUsers(
         `;
 
         return;
+
     }
 
 
@@ -2022,11 +2024,13 @@ $("bankAction")?.addEventListener(
     "click",
     async () => {
 
-        const userId =
-            Number(
-                $("bankUserId")
-                    .value
-            );
+        // DO NOT convert this to Number().
+        // It can be a name, email, GOV ID, Citizen ID,
+        // or database ID.
+        const userIdentifier =
+            $("bankUserId")
+                .value
+                .trim();
 
 
         const amount =
@@ -2042,18 +2046,15 @@ $("bankAction")?.addEventListener(
                 .trim();
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!userIdentifier) {
 
             toast(
-                "Enter a valid user ID.",
+                "Enter a name, email, Government ID, Citizen ID, or database ID.",
                 "error"
             );
 
             return;
+
         }
 
 
@@ -2070,6 +2071,7 @@ $("bankAction")?.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -2085,11 +2087,13 @@ $("bankAction")?.addEventListener(
                         JSON.stringify({
 
                             user_id:
-                                userId,
+                                userIdentifier,
 
                             amount,
 
-                            description
+                            description:
+                                description ||
+                                "Government transaction"
 
                         })
 
@@ -2132,11 +2136,12 @@ $("licenseAction")?.addEventListener(
     "click",
     async () => {
 
-        const userId =
-            Number(
-                $("licenseUserId")
-                    .value
-            );
+        // Can be name, email, GOV ID, Citizen ID,
+        // or database ID.
+        const userIdentifier =
+            $("licenseUserId")
+                .value
+                .trim();
 
 
         const licenseType =
@@ -2149,18 +2154,15 @@ $("licenseAction")?.addEventListener(
                 .value;
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!userIdentifier) {
 
             toast(
-                "Enter a valid user ID.",
+                "Enter a name, email, Government ID, Citizen ID, or database ID.",
                 "error"
             );
 
             return;
+
         }
 
 
@@ -2176,7 +2178,7 @@ $("licenseAction")?.addEventListener(
                         JSON.stringify({
 
                             user_id:
-                                userId,
+                                userIdentifier,
 
                             license_type:
                                 licenseType,
@@ -2193,6 +2195,10 @@ $("licenseAction")?.addEventListener(
                 "License updated.",
                 "success"
             );
+
+
+            $("licenseUserId")
+                .value = "";
 
 
             await loadLicenseRequests();
@@ -2220,11 +2226,12 @@ $("roleAction")?.addEventListener(
     "click",
     async () => {
 
-        const userId =
-            Number(
-                $("roleUserId")
-                    .value
-            );
+        // Can be name, email, GOV ID, Citizen ID,
+        // or database ID.
+        const userIdentifier =
+            $("roleUserId")
+                .value
+                .trim();
 
 
         const role =
@@ -2232,18 +2239,15 @@ $("roleAction")?.addEventListener(
                 .value;
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!userIdentifier) {
 
             toast(
-                "Enter a valid user ID.",
+                "Enter a name, email, Government ID, Citizen ID, or database ID.",
                 "error"
             );
 
             return;
+
         }
 
 
@@ -2259,7 +2263,7 @@ $("roleAction")?.addEventListener(
                         JSON.stringify({
 
                             user_id:
-                                userId,
+                                userIdentifier,
 
                             role
 
@@ -2273,6 +2277,10 @@ $("roleAction")?.addEventListener(
                 "User role updated.",
                 "success"
             );
+
+
+            $("roleUserId")
+                .value = "";
 
 
             await loadAudit();
@@ -2355,6 +2363,7 @@ function renderLicenseRequests(
         `;
 
         return;
+
     }
 
 
