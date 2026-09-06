@@ -588,6 +588,150 @@ function cleanText(
 
 
 // ============================================================
+// FIND USER
+//
+// Government/police staff can use:
+//
+// 1. Database ID
+// 2. Government ID
+// 3. Email
+// 4. Exact name
+//
+// The database ID is still supported internally, but staff
+// do not need to use it.
+// ============================================================
+
+function findUser(identifier) {
+
+    const input =
+        cleanText(
+            identifier,
+            255
+        );
+
+
+    if (!input) {
+
+        return null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // DATABASE ID
+    // --------------------------------------------------------
+
+    const numericId =
+        Number(input);
+
+
+    if (
+
+        Number.isInteger(numericId) &&
+
+        numericId > 0
+
+    ) {
+
+        const user =
+            db.prepare(`
+
+                SELECT
+
+                    id,
+
+                    name,
+
+                    email,
+
+                    citizen_id,
+
+                    role,
+
+                    police_points,
+
+                    created_at
+
+                FROM users
+
+                WHERE id = ?
+
+                LIMIT 1
+
+            `).get(
+
+                numericId
+
+            );
+
+
+        if (user) {
+
+            return user;
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // GOVERNMENT ID / EMAIL / EXACT NAME
+    // --------------------------------------------------------
+
+    const normalizedEmail =
+        normalizeEmail(
+            input
+        );
+
+
+    const user =
+        db.prepare(`
+
+            SELECT
+
+                id,
+
+                name,
+
+                email,
+
+                citizen_id,
+
+                role,
+
+                police_points,
+
+                created_at
+
+            FROM users
+
+            WHERE
+
+                citizen_id = ?
+
+                OR email = ?
+
+                OR LOWER(name) = LOWER(?)
+
+            LIMIT 1
+
+        `).get(
+
+            input,
+
+            normalizedEmail,
+
+            input
+
+        );
+
+
+    return user || null;
+
+}
+
+
+// ============================================================
 // INITIAL GOVERNMENT ACCOUNT
 // ============================================================
 
@@ -1963,11 +2107,17 @@ app.post(
 
 // ============================================================
 // POLICE CITIZEN SEARCH
+//
+// Search by:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.get(
 
-    "/api/police/citizen/:citizenId",
+    "/api/police/citizen/:identifier",
 
     requireAuth,
 
@@ -1976,34 +2126,8 @@ app.get(
     (req, res) => {
 
         const citizen =
-            db.prepare(`
-
-                SELECT
-
-                    id,
-
-                    name,
-
-                    citizen_id,
-
-                    role,
-
-                    police_points,
-
-                    created_at
-
-                FROM users
-
-                WHERE id = ?
-
-                OR citizen_id = ?
-
-            `).get(
-
-                req.params.citizenId,
-
-                req.params.citizenId
-
+            findUser(
+                req.params.identifier
             );
 
 
@@ -2068,6 +2192,12 @@ app.get(
 
 // ============================================================
 // ADD POLICE POINTS
+//
+// citizen_id can be:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.post(
@@ -2080,9 +2210,13 @@ app.post(
 
     (req, res) => {
 
-        const citizenId =
-            Number(
-                req.body.citizen_id
+        const identifier =
+            cleanText(
+
+                req.body.citizen_id,
+
+                255
+
             );
 
 
@@ -2102,16 +2236,12 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(
-                citizenId
-            )
-        ) {
+        if (!identifier) {
 
             return res.status(400).json({
 
                 message:
-                    "Invalid citizen ID."
+                    "Name, email, Government ID or database ID is required."
 
             });
 
@@ -2151,8 +2281,8 @@ app.post(
 
 
         const citizen =
-            getUserById(
-                citizenId
+            findUser(
+                identifier
             );
 
 
@@ -2241,6 +2371,12 @@ app.post(
 
 // ============================================================
 // ADD POLICE RECORD
+//
+// citizen_id can be:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.post(
@@ -2253,9 +2389,13 @@ app.post(
 
     (req, res) => {
 
-        const citizenId =
-            Number(
-                req.body.citizen_id
+        const identifier =
+            cleanText(
+
+                req.body.citizen_id,
+
+                255
+
             );
 
 
@@ -2275,16 +2415,12 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(
-                citizenId
-            )
-        ) {
+        if (!identifier) {
 
             return res.status(400).json({
 
                 message:
-                    "Invalid citizen ID."
+                    "Name, email, Government ID or database ID is required."
 
             });
 
@@ -2324,8 +2460,8 @@ app.post(
 
 
         const citizen =
-            getUserById(
-                citizenId
+            findUser(
+                identifier
             );
 
 
@@ -2418,6 +2554,16 @@ app.post(
 
 // ============================================================
 // GOVERNMENT USER SEARCH
+//
+// Search supports partial:
+// - Name
+// - Email
+// - Government ID
+//
+// Example:
+// Joshua
+// joshua@email.com
+// GOV-123456
 // ============================================================
 
 app.get(
@@ -2478,13 +2624,15 @@ app.get(
 
                 WHERE
 
-                    name LIKE ?
+                    name LIKE ? COLLATE NOCASE
 
-                    OR email LIKE ?
+                    OR email LIKE ? COLLATE NOCASE
 
-                    OR citizen_id LIKE ?
+                    OR citizen_id LIKE ? COLLATE NOCASE
 
-                ORDER BY id DESC
+                ORDER BY
+
+                    name COLLATE NOCASE ASC
 
                 LIMIT 50
 
@@ -2576,6 +2724,12 @@ app.get(
 
 // ============================================================
 // GOVERNMENT BANK ACTION
+//
+// user_id can be:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.post(
@@ -2616,7 +2770,7 @@ app.post(
             return res.status(400).json({
 
                 message:
-                    "Citizen ID, database ID, name or email is required."
+                    "Name, email, Government ID or database ID is required."
 
             });
 
@@ -2655,129 +2809,13 @@ app.post(
 
         // --------------------------------------------------------
         // FIND CITIZEN
-        //
-        // Accepts:
-        // Database ID
-        // Citizen ID
-        // Name
-        // Email
         // --------------------------------------------------------
 
-        const numericId =
-            Number(userInput);
+        const targetUser =
+            findUser(
+                userInput
+            );
 
-
-        let targetUser =
-            null;
-
-
-        // --------------------------------------------------------
-        // DATABASE ID
-        // --------------------------------------------------------
-
-        if (
-
-            Number.isInteger(numericId) &&
-
-            numericId > 0
-
-        ) {
-
-            targetUser =
-                db.prepare(`
-
-                    SELECT
-
-                        id,
-
-                        name,
-
-                        email,
-
-                        citizen_id,
-
-                        role,
-
-                        police_points,
-
-                        created_at
-
-                    FROM users
-
-                    WHERE id = ?
-
-                    LIMIT 1
-
-                `).get(
-
-                    numericId
-
-                );
-
-        }
-
-
-        // --------------------------------------------------------
-        // CITIZEN ID / EMAIL / NAME
-        // --------------------------------------------------------
-
-        if (!targetUser) {
-
-            const normalizedInput =
-                normalizeEmail(
-                    userInput
-                );
-
-
-            targetUser =
-                db.prepare(`
-
-                    SELECT
-
-                        id,
-
-                        name,
-
-                        email,
-
-                        citizen_id,
-
-                        role,
-
-                        police_points,
-
-                        created_at
-
-                    FROM users
-
-                    WHERE
-
-                        citizen_id = ?
-
-                        OR email = ?
-
-                        OR name = ?
-
-                    COLLATE NOCASE
-
-                    LIMIT 1
-
-                `).get(
-
-                    userInput,
-
-                    normalizedInput,
-
-                    userInput
-
-                );
-
-        }
-
-
-        // --------------------------------------------------------
-        // CITIZEN NOT FOUND
-        // --------------------------------------------------------
 
         if (!targetUser) {
 
@@ -3001,6 +3039,12 @@ app.post(
 
 // ============================================================
 // GOVERNMENT LICENSE MANAGEMENT
+//
+// user_id can be:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.post(
@@ -3013,9 +3057,13 @@ app.post(
 
     (req, res) => {
 
-        const userId =
-            Number(
-                req.body.user_id
+        const identifier =
+            cleanText(
+
+                req.body.user_id,
+
+                255
+
             );
 
 
@@ -3039,16 +3087,12 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!identifier) {
 
             return res.status(400).json({
 
                 message:
-                    "Invalid user ID."
+                    "Name, email, Government ID or database ID is required."
 
             });
 
@@ -3092,8 +3136,8 @@ app.post(
 
 
         const user =
-            getUserById(
-                userId
+            findUser(
+                identifier
             );
 
 
@@ -3122,7 +3166,7 @@ app.post(
 
             `).get(
 
-                userId,
+                user.id,
 
                 licenseType
 
@@ -3201,7 +3245,7 @@ app.post(
 
             `).run(
 
-                userId,
+                user.id,
 
                 licenseType,
 
@@ -3232,7 +3276,20 @@ app.post(
         res.json({
 
             message:
-                "License updated."
+                "License updated.",
+
+            citizen: {
+
+                name:
+                    user.name,
+
+                email:
+                    user.email,
+
+                citizen_id:
+                    user.citizen_id
+
+            }
 
         });
 
@@ -3243,6 +3300,12 @@ app.post(
 
 // ============================================================
 // GOVERNMENT ROLE MANAGEMENT
+//
+// user_id can be:
+// - Name
+// - Email
+// - Government ID
+// - Database ID
 // ============================================================
 
 app.post(
@@ -3255,9 +3318,13 @@ app.post(
 
     (req, res) => {
 
-        const userId =
-            Number(
-                req.body.user_id
+        const identifier =
+            cleanText(
+
+                req.body.user_id,
+
+                255
+
             );
 
 
@@ -3282,16 +3349,12 @@ app.post(
         ];
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!identifier) {
 
             return res.status(400).json({
 
                 message:
-                    "Invalid user ID."
+                    "Name, email, Government ID or database ID is required."
 
             });
 
@@ -3315,8 +3378,8 @@ app.post(
 
 
         const targetUser =
-            getUserById(
-                userId
+            findUser(
+                identifier
             );
 
 
@@ -3344,7 +3407,7 @@ app.post(
 
             role,
 
-            userId
+            targetUser.id
 
         );
 
@@ -3363,7 +3426,22 @@ app.post(
         res.json({
 
             message:
-                "User role updated."
+                "User role updated.",
+
+            citizen: {
+
+                name:
+                    targetUser.name,
+
+                email:
+                    targetUser.email,
+
+                citizen_id:
+                    targetUser.citizen_id,
+
+                role
+
+            }
 
         });
 
