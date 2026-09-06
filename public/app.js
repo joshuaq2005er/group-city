@@ -13,6 +13,14 @@ let currentUser = null;
 
 
 // ============================================================
+// API CONFIGURATION
+// ============================================================
+
+// Render backend
+const API_BASE = "https://group-city.onrender.com";
+
+
+// ============================================================
 // HELPERS
 // ============================================================
 
@@ -112,7 +120,7 @@ async function api(
 
     const response =
         await fetch(
-            endpoint,
+            `${API_BASE}${endpoint}`,
             {
                 ...options,
                 headers
@@ -726,8 +734,7 @@ function updateUserInterface() {
     if (government) {
 
         show(
-            $("govNav"
-            )
+            $("govNav")
         );
 
     } else {
