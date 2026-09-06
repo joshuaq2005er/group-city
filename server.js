@@ -923,13 +923,6 @@ app.post(
             const result =
                 db.transaction(() => {
 
-                    // ------------------------------------------------
-                    // IMPORTANT:
-                    // If the registered email matches ADMIN_EMAIL,
-                    // the account becomes government.
-                    // Otherwise it becomes citizen.
-                    // ------------------------------------------------
-
                     const role =
                         email ===
                         normalizeEmail(
@@ -1353,10 +1346,6 @@ app.post(
             );
 
 
-        // --------------------------------------------------------
-        // VALIDATION
-        // --------------------------------------------------------
-
         if (!recipient) {
 
             return res.status(400).json({
@@ -1407,10 +1396,6 @@ app.post(
             ) / 100;
 
 
-        // --------------------------------------------------------
-        // SENDER
-        // --------------------------------------------------------
-
         const senderAccount =
             db.prepare(`
 
@@ -1444,16 +1429,6 @@ app.post(
 
         }
 
-
-        // --------------------------------------------------------
-        // RECIPIENT
-        //
-        // Accepts:
-        //
-        // Email
-        // Citizen ID
-        // Bank account number
-        // --------------------------------------------------------
 
         const normalizedRecipient =
             normalizeEmail(
@@ -1521,10 +1496,6 @@ app.post(
         }
 
 
-        // --------------------------------------------------------
-        // PREVENT SELF TRANSFER
-        // --------------------------------------------------------
-
         if (
             target.id === req.user.id
         ) {
@@ -1538,10 +1509,6 @@ app.post(
 
         }
 
-
-        // --------------------------------------------------------
-        // CHECK BALANCE
-        // --------------------------------------------------------
 
         if (
 
@@ -1560,17 +1527,9 @@ app.post(
         }
 
 
-        // --------------------------------------------------------
-        // TRANSFER
-        // --------------------------------------------------------
-
         try {
 
             db.transaction(() => {
-
-                // ----------------------------------------------
-                // Remove money from sender
-                // ----------------------------------------------
 
                 db.prepare(`
 
@@ -1590,10 +1549,6 @@ app.post(
                 );
 
 
-                // ----------------------------------------------
-                // Add money to recipient
-                // ----------------------------------------------
-
                 db.prepare(`
 
                     UPDATE bank_accounts
@@ -1611,10 +1566,6 @@ app.post(
 
                 );
 
-
-                // ----------------------------------------------
-                // Sender transaction
-                // ----------------------------------------------
 
                 db.prepare(`
 
@@ -1642,10 +1593,6 @@ app.post(
                 );
 
 
-                // ----------------------------------------------
-                // Recipient transaction
-                // ----------------------------------------------
-
                 db.prepare(`
 
                     INSERT INTO transactions
@@ -1671,10 +1618,6 @@ app.post(
 
                 );
 
-
-                // ----------------------------------------------
-                // Audit
-                // ----------------------------------------------
 
                 createAudit(
 
@@ -2559,6 +2502,70 @@ app.get(
         res.json({
 
             users
+
+        });
+
+    }
+
+);
+
+
+// ============================================================
+// GOVERNMENT MONEY LEADERBOARD
+// ============================================================
+
+app.get(
+
+    "/api/government/money-leaderboard",
+
+    requireAuth,
+
+    requireGovernment,
+
+    (req, res) => {
+
+        const leaderboard =
+            db.prepare(`
+
+                SELECT
+
+                    users.id,
+
+                    users.name,
+
+                    users.email,
+
+                    users.citizen_id,
+
+                    users.role,
+
+                    bank_accounts.account_number,
+
+                    bank_accounts.balance
+
+                FROM users
+
+                INNER JOIN bank_accounts
+
+                    ON bank_accounts.user_id =
+                        users.id
+
+                WHERE users.role != 'government'
+
+                ORDER BY
+
+                    bank_accounts.balance DESC,
+
+                    users.id ASC
+
+                LIMIT 100
+
+            `).all();
+
+
+        res.json({
+
+            leaderboard
 
         });
 
