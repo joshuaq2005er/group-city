@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Government Portal</title>
+
+<link rel="stylesheet" href="style.css">
+```
+
+</head>
+
+<body>
+
+```
+<!-- =========================
+     TOP NAVIGATION
+========================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="seal">
+            ★
+        </div>
+
+        <div class="brand-text">
+            <strong>Government Portal</strong>
+            <span>Official Citizen Services</span>
+        </div>
+
+    </div>
+
+    <nav id="nav" class="hidden">
+
+        <button data-page="home">
+            Home
+        </button>
+
+        <button data-page="bank">
+            Bank
+        </button>
+
+        <button data-page="licenses">
+            Licenses
+        </button>
+
+        <button
+            data-page="police"
+            id="policeNav"
+            class="hidden"
+        >
+            Police
+        </button>
+
+        <button
+            data-page="government"
+            id="govNav"
+            class="hidden"
+        >
+            Government
+        </button>
+
+        <button
+            id="logoutBtn"
+            class="danger"
+        >
+            Logout
+        </button>
+
+    </nav>
+
+</header>
+
+
+<!-- =========================
+     NOTIFICATION
+========================== -->
+
+<div id="toast"></div>
+
+
+<main>
+
+
+    <!-- =========================
+         LOGIN / REGISTER
+    ========================== -->
+
+    <section
+        id="authPage"
+        class="auth-wrap"
+    >
+
+        <div class="auth-card">
+
+            <div class="big-seal">
+                ★
+            </div>
+
+            <h1>
+                Government Portal
+            </h1>
+
+            <p class="muted">
+                Secure access to citizen and government services.
+            </p>
+
+
+            <!-- Login / Register Tabs -->
+
+            <div class="tabs">
+
+                <button
+                    id="loginTab"
+                    class="active"
+                >
+                    Login
+                </button>
+
+                <button
+                    id="registerTab"
+                >
+                    Register
+                </button>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <form id="loginForm">
+
+                <label>
+                    Email
+
+                    <input
+                        id="loginEmail"
+                        type="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </label>
+
+
+                <label>
+                    Password
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        placeholder="Your password"
+                        required
+                    >
+
+                </label>
+
+
+                <button
+                    class="primary"
+                    type="submit"
+                >
+                    Sign In
+                </button>
+
+            </form>
+
+
+            <!-- REGISTER -->
+
+            <form
+                id="registerForm"
+                class="hidden"
+            >
+
+                <label>
+                    Full Name
+
+                    <input
+                        id="regName"
+                        type="text"
+                        maxlength="80"
+                        placeholder="Your full name"
+                        required
+                    >
+
+                </label>
+
+
+                <label>
+                    Email
+
+                    <input
+                        id="regEmail"
+                        type="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </label>
+
+
+                <label>
+                    Password
+
+                    <input
+                        id="regPassword"
+                        type="password"
+                        minlength="8"
+                        placeholder="At least 8 characters"
+                        required
+                    >
+
+                </label>
+
+
+                <button
+                    class="primary"
+                    type="submit"
+                >
+                    Create Citizen Account
+                </button>
+
+            </form>
+
+
+            <p
+                id="authMessage"
+                class="message"
+            ></p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         APPLICATION
+    ========================== -->
+
+    <section
+        id="appPage"
+        class="hidden"
+    >
+
+
+        <!-- =========================
+             HOME
+        ========================== -->
+
+        <div
+            id="home"
+            class="page"
+        >
+
+            <div class="hero">
+
+                <div>
+
+                    <p class="eyebrow">
+                        CITIZEN SERVICES
+                    </p>
+
+                    <h1>
+                        Welcome,
+                        <span id="welcomeName">
+                            Citizen
+                        </span>.
+                    </h1>
+
+                    <p>
+                        Manage your government account,
+                        bank account, licenses and official records.
+                    </p>
+
+                </div>
+
+
+                <div class="citizen-id-box">
+
+                    <small>
+                        Citizen ID
+                    </small>
+
+                    <strong id="citizenId">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Statistics -->
+
+            <div class="grid four">
+
+                <div class="card stat">
+
+                    <span>
+                        Bank Balance
+                    </span>
+
+                    <strong id="homeBalance">
+                        $0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="card stat">
+
+                    <span>
+                        Licenses
+                    </span>
+
+                    <strong id="homeLicenses">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="card stat">
+
+                    <span>
+                        Police Points
+                    </span>
+
+                    <strong id="homePoints">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="card stat">
+
+                    <span>
+                        Role
+                    </span>
+
+                    <strong id="homeRole">
+                        Citizen
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Services -->
+
+            <div class="grid three">
+
+                <button
+                    class="service card-btn"
+                    data-page="bank"
+                >
+
+                    <b>
+                        🏦 Bank
+                    </b>
+
+                    <span>
+                        View your account and transactions.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="service card-btn"
+                    data-page="licenses"
+                >
+
+                    <b>
+                        🪪 Licenses
+                    </b>
+
+                    <span>
+                        View and earn available licenses.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="service card-btn hidden"
+                    data-page="police"
+                    id="policeCard"
+                >
+
+                    <b>
+                        👮 Police
+                    </b>
+
+                    <span>
+                        Officer records and points.
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             BANK
+        ========================== -->
+
+        <div
+            id="bank"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    FINANCIAL SERVICES
+                </p>
+
+                <h1>
+                    Government Bank
+                </h1>
+
+            </div>
+
+
+            <div class="bank-card">
+
+                <span>
+                    Available Balance
+                </span>
+
+                <strong id="balance">
+                    $0.00
+                </strong>
+
+                <small>
+                    Account
+                    <b id="accountNumber">
+                        —
+                    </b>
+                </small>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>
+                    Transaction History
+                </h2>
+
+                <div id="transactions">
+
+                    <p class="muted">
+                        Loading transactions...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             LICENSES
+        ========================== -->
+
+        <div
+            id="licenses"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    IDENTIFICATION & PERMITS
+                </p>
+
+                <h1>
+                    Licenses
+                </h1>
+
+                <p class="muted">
+                    View and earn your government licenses.
+                </p>
+
+            </div>
+
+
+            <div
+                id="licenseGrid"
+                class="grid two"
+            >
+
+                <!-- JavaScript loads licenses here -->
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             POLICE
+        ========================== -->
+
+        <div
+            id="police"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    LAW ENFORCEMENT
+                </p>
+
+                <h1>
+                    Police Department
+                </h1>
+
+                <p>
+                    Search citizens and manage official police records.
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>
+                    Search Citizen
+                </h2>
+
+                <div class="inline">
+
+                    <input
+                        id="policeCitizen"
+                        type="number"
+                        placeholder="Citizen database ID"
+                    >
+
+                    <button
+                        class="primary"
+                        id="searchPolice"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+                <p class="muted">
+                    Enter the citizen's database ID to view their records.
+                </p>
+
+            </div>
+
+
+            <div id="policeResult">
+
+                <!-- Police records load here -->
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             GOVERNMENT
+        ========================== -->
+
+        <div
+            id="government"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    GOVERNMENT ADMINISTRATION
+                </p>
+
+                <h1>
+                    Government Dashboard
+                </h1>
+
+                <p>
+                    Manage citizens, roles, licenses,
+                    bank accounts and official records.
+                </p>
+
+            </div>
+
+
+
+            <!-- SEARCH USERS -->
+
+            <div class="card">
+
+                <h2>
+                    Find Citizen
+                </h2>
+
+                <div class="inline">
+
+                    <input
+                        id="govSearch"
+                        placeholder="Name, email or citizen ID"
+                    >
+
+                    <button
+                        class="primary"
+                        id="govSearchBtn"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <div id="govUsers">
+
+                    <!-- Users appear here -->
+
+                </div>
+
+            </div>
+
+
+
+            <!-- GOVERNMENT ACTIONS -->
+
+            <div class="grid two">
+
+
+                <!-- BANK -->
+
+                <div class="card">
+
+                    <h2>
+                        Government Bank Action
+                    </h2>
+
+                    <label>
+                        User Database ID
+
+                        <input
+                            id="bankUserId"
+                            type="number"
+                        >
+
+                    </label>
+
+
+                    <label>
+                        Amount
+
+                        <input
+                            id="bankAmount"
+                            type="number"
+                            step="0.01"
+                            placeholder="1000 or -1000"
+                        >
+
+                    </label>
+
+
+                    <label>
+                        Description
+
+                        <input
+                            id="bankDescription"
+                            value="Government transaction"
+                        >
+
+                    </label>
+
+
+                    <button
+                        class="primary"
+                        id="bankAction"
+                    >
+                        Apply Transaction
+                    </button>
+
+                </div>
+
+
+
+                <!-- LICENSE -->
+
+                <div class="card">
+
+                    <h2>
+                        Government License
+                    </h2>
+
+
+                    <label>
+                        User Database ID
+
+                        <input
+                            id="licenseUserId"
+                            type="number"
+                        >
+
+                    </label>
+
+
+                    <label>
+                        License
+
+                        <select id="licenseType">
+
+                            <option>
+                                Driver's License
+                            </option>
+
+                            <option>
+                                Pilot License
+                            </option>
+
+                            <option>
+                                Boating License
+                            </option>
+
+                            <option>
+                                Business License
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label>
+                        Status
+
+                        <select id="licenseStatus">
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="revoked">
+                                Revoked
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <button
+                        class="primary"
+                        id="licenseAction"
+                    >
+                        Update License
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ROLE MANAGEMENT -->
+
+            <div class="card">
+
+                <h2>
+                    Government Personnel
+                </h2>
+
+                <p class="muted">
+                    Assign or remove government and police roles.
+                </p>
+
+                <div class="inline">
+
+                    <input
+                        id="roleUserId"
+                        type="number"
+                        placeholder="User database ID"
+                    >
+
+
+                    <select id="roleSelect">
+
+                        <option value="citizen">
+                            Citizen
+                        </option>
+
+                        <option value="police">
+                            Police Officer
+                        </option>
+
+                        <option value="government">
+                            Government
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        class="primary"
+                        id="roleAction"
+                    >
+                        Assign Role
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- AUDIT LOG -->
+
+            <div class="card">
+
+                <h2>
+                    Government Audit Log
+                </h2>
+
+                <p class="muted">
+                    Recent government and police administrative actions.
+                </p>
+
+                <div id="audit">
+
+                    <!-- Audit records load here -->
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- JavaScript -->
+
+<script src="app.js"></script>
+```
+
+</body>
+</html>
