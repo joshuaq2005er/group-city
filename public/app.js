@@ -82,6 +82,7 @@ function toast(
             "";
 
     }, 3500);
+
 }
 
 
@@ -154,6 +155,7 @@ async function api(
 
 
     return data;
+
 }
 
 
@@ -852,6 +854,148 @@ async function loadBank() {
 
 
 // ============================================================
+// CITIZEN MONEY TRANSFER
+// ============================================================
+
+$("transferBtn")?.addEventListener(
+    "click",
+    async () => {
+
+        if (!currentUser) {
+
+            toast(
+                "You must be logged in.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const recipient =
+            $("transferRecipient")
+                ?.value
+                .trim();
+
+
+        const amount =
+            Number(
+                $("transferAmount")
+                    ?.value
+            );
+
+
+        const description =
+            $("transferDescription")
+                ?.value
+                .trim();
+
+
+        if (!recipient) {
+
+            toast(
+                "Enter a recipient.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !Number.isFinite(amount) ||
+            amount <= 0
+        ) {
+
+            toast(
+                "Enter a valid transfer amount.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const data =
+                await api(
+                    "/api/bank/transfer",
+                    {
+                        method:
+                            "POST",
+
+                        body:
+                            JSON.stringify({
+
+                                recipient,
+
+                                amount,
+
+                                description:
+                                    description ||
+                                    "Bank transfer"
+
+                            })
+
+                    }
+                );
+
+
+            toast(
+
+                `Successfully sent ${formatMoney(
+                    amount
+                )} to ${data.recipient.name}.`,
+
+                "success"
+
+            );
+
+
+            if ($("transferRecipient")) {
+
+                $("transferRecipient")
+                    .value = "";
+
+            }
+
+
+            if ($("transferAmount")) {
+
+                $("transferAmount")
+                    .value = "";
+
+            }
+
+
+            if ($("transferDescription")) {
+
+                $("transferDescription")
+                    .value = "";
+
+            }
+
+
+            await loadBank();
+
+        } catch (error) {
+
+            toast(
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+// ============================================================
 // MONEY
 // ============================================================
 
@@ -866,6 +1010,7 @@ function formatMoney(
         {
             style:
                 "currency",
+
             currency:
                 "USD"
         }
@@ -1157,12 +1302,15 @@ async function requestLicense(
 
                 body:
                     JSON.stringify({
+
                         license_type:
                             licenseType,
 
                         government_passcode:
                             passcode
+
                     })
+
             }
         );
 
@@ -1172,6 +1320,8 @@ async function requestLicense(
             "success"
         );
 
+
+        await loadLicenses();
 
     } catch (error) {
 
@@ -1375,9 +1525,11 @@ function renderPoliceResult(
                         )
                         .join("")
                     : `
+
                         <p class="muted">
                             No police records found.
                         </p>
+
                     `
             }
 
@@ -1513,13 +1665,16 @@ async function addPolicePoints(
 
                 body:
                     JSON.stringify({
+
                         citizen_id:
                             citizenId,
 
                         points,
 
                         reason
+
                     })
+
             }
         );
 
@@ -1597,13 +1752,16 @@ async function addPoliceRecord(
 
                 body:
                     JSON.stringify({
+
                         citizen_id:
                             citizenId,
 
                         reason,
 
                         points
+
                     })
+
             }
         );
 
@@ -1696,6 +1854,8 @@ async function loadGovernment() {
     await loadAudit();
 
     await loadLicenseRequests();
+
+    await loadMoneyLeaderboard();
 
 }
 
@@ -1923,13 +2083,16 @@ $("bankAction")?.addEventListener(
 
                     body:
                         JSON.stringify({
+
                             user_id:
                                 userId,
 
                             amount,
 
                             description
+
                         })
+
                 }
             );
 
@@ -1945,6 +2108,8 @@ $("bankAction")?.addEventListener(
 
 
             await loadAudit();
+
+            await loadMoneyLeaderboard();
 
         } catch (error) {
 
@@ -2009,6 +2174,7 @@ $("licenseAction")?.addEventListener(
 
                     body:
                         JSON.stringify({
+
                             user_id:
                                 userId,
 
@@ -2016,7 +2182,9 @@ $("licenseAction")?.addEventListener(
                                 licenseType,
 
                             status
+
                         })
+
                 }
             );
 
@@ -2089,11 +2257,14 @@ $("roleAction")?.addEventListener(
 
                     body:
                         JSON.stringify({
+
                             user_id:
                                 userId,
 
                             role
+
                         })
+
                 }
             );
 
@@ -2312,9 +2483,13 @@ async function reviewLicense(
 
                 body:
                     JSON.stringify({
+
                         status,
+
                         note
+
                     })
+
             }
         );
 
@@ -2339,6 +2514,219 @@ async function reviewLicense(
     }
 
 }
+
+
+// ============================================================
+// GOVERNMENT MONEY LEADERBOARD
+// ============================================================
+
+async function loadMoneyLeaderboard() {
+
+    if (
+        !currentUser ||
+        currentUser.role !==
+        "government"
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const data =
+            await api(
+                "/api/government/money-leaderboard"
+            );
+
+
+        renderMoneyLeaderboard(
+            data.leaderboard ||
+            []
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Money leaderboard:",
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// RENDER MONEY LEADERBOARD
+// ============================================================
+
+function renderMoneyLeaderboard(
+    leaderboard
+) {
+
+    const container =
+        $("moneyLeaderboard");
+
+
+    if (!container) return;
+
+
+    if (!leaderboard.length) {
+
+        container.innerHTML = `
+            <p class="muted">
+                No citizen bank accounts found.
+            </p>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <div class="leaderboard-table">
+
+            <div class="leaderboard-row leaderboard-header">
+
+                <span>
+                    #
+                </span>
+
+                <span>
+                    Citizen
+                </span>
+
+                <span>
+                    Citizen ID
+                </span>
+
+                <span>
+                    Account
+                </span>
+
+                <span>
+                    Balance
+                </span>
+
+            </div>
+
+
+            ${leaderboard
+                .map(
+                    (user, index) => `
+
+                        <div class="leaderboard-row">
+
+                            <span class="leaderboard-rank">
+
+                                ${index + 1}
+
+                            </span>
+
+
+                            <span>
+
+                                <strong>
+
+                                    ${escapeHTML(
+                                        user.name
+                                    )}
+
+                                </strong>
+
+
+                                <small>
+
+                                    ${escapeHTML(
+                                        user.email
+                                    )}
+
+                                </small>
+
+                            </span>
+
+
+                            <span>
+
+                                ${escapeHTML(
+                                    user.citizen_id
+                                )}
+
+                            </span>
+
+
+                            <span>
+
+                                ${escapeHTML(
+                                    user.account_number
+                                )}
+
+                            </span>
+
+
+                            <strong>
+
+                                ${formatMoney(
+                                    user.balance
+                                )}
+
+                            </strong>
+
+                        </div>
+
+                    `
+                )
+                .join("")}
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// REFRESH MONEY LEADERBOARD
+// ============================================================
+
+$("refreshLeaderboard")?.addEventListener(
+    "click",
+    async () => {
+
+        const button =
+            $("refreshLeaderboard");
+
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "Refreshing...";
+
+        }
+
+
+        await loadMoneyLeaderboard();
+
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Refresh";
+
+        }
+
+    }
+);
 
 
 // ============================================================
@@ -2406,6 +2794,7 @@ function renderAudit(
         `;
 
         return;
+
     }
 
 
