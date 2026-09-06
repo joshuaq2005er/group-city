@@ -2588,9 +2588,10 @@ app.post(
 
     (req, res) => {
 
-        const userId =
-            Number(
-                req.body.user_id
+        const userInput =
+            cleanText(
+                req.body.user_id,
+                255
             );
 
 
@@ -2610,16 +2611,12 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(
-                userId
-            )
-        ) {
+        if (!userInput) {
 
             return res.status(400).json({
 
                 message:
-                    "Invalid user ID."
+                    "Citizen ID, database ID, name or email is required."
 
             });
 
@@ -2656,43 +2653,189 @@ app.post(
         }
 
 
-        const account =
-            db.prepare(`
+        // --------------------------------------------------------
+        // FIND CITIZEN
+        //
+        // Accepts:
+        // Database ID
+        // Citizen ID
+        // Name
+        // Email
+        // --------------------------------------------------------
 
-                SELECT *
-
-                FROM bank_accounts
-
-                WHERE user_id = ?
-
-            `).get(
-                userId
-            );
+        const numericId =
+            Number(userInput);
 
 
-        const targetUser =
-            getUserById(
-                userId
-            );
+        let targetUser =
+            null;
 
+
+        // --------------------------------------------------------
+        // DATABASE ID
+        // --------------------------------------------------------
 
         if (
 
-            !account ||
+            Number.isInteger(numericId) &&
 
-            !targetUser
+            numericId > 0
 
         ) {
+
+            targetUser =
+                db.prepare(`
+
+                    SELECT
+
+                        id,
+
+                        name,
+
+                        email,
+
+                        citizen_id,
+
+                        role,
+
+                        police_points,
+
+                        created_at
+
+                    FROM users
+
+                    WHERE id = ?
+
+                    LIMIT 1
+
+                `).get(
+
+                    numericId
+
+                );
+
+        }
+
+
+        // --------------------------------------------------------
+        // CITIZEN ID / EMAIL / NAME
+        // --------------------------------------------------------
+
+        if (!targetUser) {
+
+            const normalizedInput =
+                normalizeEmail(
+                    userInput
+                );
+
+
+            targetUser =
+                db.prepare(`
+
+                    SELECT
+
+                        id,
+
+                        name,
+
+                        email,
+
+                        citizen_id,
+
+                        role,
+
+                        police_points,
+
+                        created_at
+
+                    FROM users
+
+                    WHERE
+
+                        citizen_id = ?
+
+                        OR email = ?
+
+                        OR name = ?
+
+                    COLLATE NOCASE
+
+                    LIMIT 1
+
+                `).get(
+
+                    userInput,
+
+                    normalizedInput,
+
+                    userInput
+
+                );
+
+        }
+
+
+        // --------------------------------------------------------
+        // CITIZEN NOT FOUND
+        // --------------------------------------------------------
+
+        if (!targetUser) {
 
             return res.status(404).json({
 
                 message:
-                    "Citizen bank account not found."
+                    "Citizen was not found."
 
             });
 
         }
 
+
+        // --------------------------------------------------------
+        // FIND BANK ACCOUNT
+        // --------------------------------------------------------
+
+        const account =
+            db.prepare(`
+
+                SELECT
+
+                    id,
+
+                    user_id,
+
+                    account_number,
+
+                    balance
+
+                FROM bank_accounts
+
+                WHERE user_id = ?
+
+                LIMIT 1
+
+            `).get(
+
+                targetUser.id
+
+            );
+
+
+        if (!account) {
+
+            return res.status(404).json({
+
+                message:
+                    "This citizen does not have a bank account."
+
+            });
+
+        }
+
+
+        // --------------------------------------------------------
+        // CALCULATE NEW BALANCE
+        // --------------------------------------------------------
 
         const newBalance =
             account.balance +
@@ -2713,72 +2856,143 @@ app.post(
         }
 
 
-        db.transaction(() => {
+        // --------------------------------------------------------
+        // APPLY TRANSACTION
+        // --------------------------------------------------------
 
-            db.prepare(`
+        try {
 
-                UPDATE bank_accounts
+            db.transaction(() => {
 
-                SET balance = ?
+                db.prepare(`
 
-                WHERE id = ?
+                    UPDATE bank_accounts
 
-            `).run(
+                    SET balance = ?
 
-                newBalance,
+                    WHERE id = ?
 
-                account.id
+                `).run(
 
-            );
+                    newBalance,
+
+                    account.id
+
+                );
 
 
-            db.prepare(`
+                db.prepare(`
 
-                INSERT INTO transactions
+                    INSERT INTO transactions
 
-                (
-                    account_id,
+                    (
+                        account_id,
+                        amount,
+                        type,
+                        description
+                    )
+
+                    VALUES (?, ?, ?, ?)
+
+                `).run(
+
+                    account.id,
+
                     amount,
-                    type,
+
+                    amount > 0
+                        ? "deposit"
+                        : "withdrawal",
+
                     description
-                )
 
-                VALUES (?, ?, ?, ?)
+                );
 
-            `).run(
 
-                account.id,
+                createAudit(
 
-                amount,
+                    req.user.id,
 
-                amount > 0
-                    ? "deposit"
-                    : "withdrawal",
+                    "BANK_ACTION",
 
-                description
+                    `${req.user.name} changed ${targetUser.name}'s balance by $${amount.toFixed(2)}. ${description}`
+
+                );
+
+            })();
+
+
+            // ----------------------------------------------------
+            // RETURN UPDATED ACCOUNT
+            // ----------------------------------------------------
+
+            const updatedAccount =
+                db.prepare(`
+
+                    SELECT
+
+                        id,
+
+                        account_number,
+
+                        balance
+
+                    FROM bank_accounts
+
+                    WHERE user_id = ?
+
+                `).get(
+
+                    targetUser.id
+
+                );
+
+
+            res.json({
+
+                message:
+                    "Bank transaction applied successfully.",
+
+                citizen: {
+
+                    id:
+                        targetUser.id,
+
+                    name:
+                        targetUser.name,
+
+                    email:
+                        targetUser.email,
+
+                    citizen_id:
+                        targetUser.citizen_id
+
+                },
+
+                account:
+                    updatedAccount
+
+            });
+
+        } catch (error) {
+
+            console.error(
+
+                "GOVERNMENT BANK ERROR:",
+
+                error
 
             );
 
 
-            createAudit(
+            res.status(500).json({
 
-                req.user.id,
+                message:
+                    "Unable to complete government bank transaction."
 
-                "BANK_ACTION",
+            });
 
-                `${req.user.name} changed ${targetUser.name}'s balance by $${amount}. ${description}`
-
-            );
-
-        })();
-
-
-        res.json({
-
-            message:
-                "Bank transaction applied."
-
-        });
+        }
 
     }
 
