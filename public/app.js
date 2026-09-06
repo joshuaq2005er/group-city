@@ -1,13 +1,8 @@
 // ============================================================
-// GOVERNMENT PORTAL - FRONTEND
+// GOVERNMENT PORTAL
+// FRONTEND JAVASCRIPT
 // public/app.js
 // ============================================================
-
-// Change this when your backend is deployed.
-// Example:
-// const API_BASE = "https://your-backend.onrender.com/api";
-
-const API_BASE = "/api";
 
 
 // ============================================================
@@ -18,387 +13,634 @@ let currentUser = null;
 
 
 // ============================================================
-// ELEMENT HELPERS
+// HELPERS
 // ============================================================
 
 function $(id) {
+
     return document.getElementById(id);
+
 }
 
+
 function show(element) {
+
     if (element) {
         element.classList.remove("hidden");
     }
+
 }
 
+
 function hide(element) {
+
     if (element) {
         element.classList.add("hidden");
     }
+
 }
 
 
 // ============================================================
-// TOAST / NOTIFICATIONS
+// TOAST
 // ============================================================
 
-function toast(message, type = "success") {
-    const element = $("toast");
+function toast(
+    message,
+    type = "success"
+) {
+
+    const element =
+        $("toast");
 
     if (!element) return;
 
-    element.textContent = message;
-    element.className = "";
-    element.classList.add("show", type);
+
+    element.textContent =
+        message;
+
+    element.className =
+        "";
+
+    element.classList.add(
+        "show",
+        type
+    );
+
 
     setTimeout(() => {
-        element.className = "";
+
+        element.className =
+            "";
+
     }, 3500);
 }
 
 
 // ============================================================
-// API REQUEST
+// API
 // ============================================================
 
-async function api(endpoint, options = {}) {
-    const token = localStorage.getItem("government_token");
+async function api(
+    endpoint,
+    options = {}
+) {
+
+    const token =
+        localStorage.getItem(
+            "government_token"
+        );
+
 
     const headers = {
-        "Content-Type": "application/json",
+
+        "Content-Type":
+            "application/json",
+
         ...(options.headers || {})
+
     };
 
+
     if (token) {
-        headers.Authorization = `Bearer ${token}`;
+
+        headers.Authorization =
+            `Bearer ${token}`;
+
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-        ...options,
-        headers
-    });
+
+    const response =
+        await fetch(
+            endpoint,
+            {
+                ...options,
+                headers
+            }
+        );
+
 
     let data = {};
 
+
     try {
-        data = await response.json();
+
+        data =
+            await response.json();
+
     } catch {
+
         data = {};
+
     }
 
+
     if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
+
+        throw new Error(
+            data.message ||
+            "Something went wrong."
+        );
+
     }
+
 
     return data;
 }
 
 
 // ============================================================
-// AUTH STATE
+// SESSION
 // ============================================================
 
 async function checkSession() {
-    const token = localStorage.getItem("government_token");
+
+    const token =
+        localStorage.getItem(
+            "government_token"
+        );
+
 
     if (!token) {
+
         showAuth();
+
         return;
     }
 
-    try {
-        const data = await api("/auth/me");
 
-        currentUser = data.user;
+    try {
+
+        const data =
+            await api(
+                "/api/auth/me"
+            );
+
+
+        currentUser =
+            data.user;
+
 
         showApplication();
 
         await loadUserData();
 
-    } catch (error) {
-        localStorage.removeItem("government_token");
-        currentUser = null;
+    } catch {
+
+        localStorage.removeItem(
+            "government_token"
+        );
+
+
+        currentUser =
+            null;
+
 
         showAuth();
+
     }
+
 }
 
 
 // ============================================================
-// SHOW LOGIN / REGISTER
+// AUTH UI
 // ============================================================
 
 function showAuth() {
-    hide($("appPage"));
-    show($("authPage"));
-    hide($("nav"));
+
+    hide(
+        $("appPage")
+    );
+
+    show(
+        $("authPage")
+    );
+
+    hide(
+        $("nav")
+    );
+
 }
 
-
-// ============================================================
-// SHOW APPLICATION
-// ============================================================
 
 function showApplication() {
-    hide($("authPage"));
-    show($("appPage"));
-    show($("nav"));
+
+    hide(
+        $("authPage")
+    );
+
+    show(
+        $("appPage")
+    );
+
+    show(
+        $("nav")
+    );
+
 }
 
 
 // ============================================================
-// LOGIN / REGISTER TABS
+// LOGIN TAB
 // ============================================================
 
-$("loginTab")?.addEventListener("click", () => {
+$("loginTab")?.addEventListener(
+    "click",
+    () => {
 
-    $("loginTab").classList.add("active");
-    $("registerTab").classList.remove("active");
-
-    show($("loginForm"));
-    hide($("registerForm"));
-
-    $("authMessage").textContent = "";
-});
+        $("loginTab")
+            .classList
+            .add("active");
 
 
-$("registerTab")?.addEventListener("click", () => {
+        $("registerTab")
+            .classList
+            .remove("active");
 
-    $("registerTab").classList.add("active");
-    $("loginTab").classList.remove("active");
 
-    hide($("loginForm"));
-    show($("registerForm"));
+        show(
+            $("loginForm")
+        );
 
-    $("authMessage").textContent = "";
-});
+
+        hide(
+            $("registerForm")
+        );
+
+
+        $("authMessage")
+            .textContent = "";
+
+    }
+);
+
+
+// ============================================================
+// REGISTER TAB
+// ============================================================
+
+$("registerTab")?.addEventListener(
+    "click",
+    () => {
+
+        $("registerTab")
+            .classList
+            .add("active");
+
+
+        $("loginTab")
+            .classList
+            .remove("active");
+
+
+        hide(
+            $("loginForm")
+        );
+
+
+        show(
+            $("registerForm")
+        );
+
+
+        $("authMessage")
+            .textContent = "";
+
+    }
+);
 
 
 // ============================================================
 // REGISTER
 // ============================================================
 
-$("registerForm")?.addEventListener("submit", async (event) => {
+$("registerForm")?.addEventListener(
+    "submit",
+    async event => {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    const name = $("regName").value.trim();
-    const email = $("regEmail").value.trim();
-    const password = $("regPassword").value;
 
-    const message = $("authMessage");
+        const name =
+            $("regName")
+                .value
+                .trim();
 
-    message.textContent = "Creating your citizen account...";
-    message.style.color = "";
 
-    try {
+        const email =
+            $("regEmail")
+                .value
+                .trim();
 
-        const data = await api("/auth/register", {
-            method: "POST",
 
-            body: JSON.stringify({
-                name,
-                email,
-                password
-            })
-        });
+        const password =
+            $("regPassword")
+                .value;
 
-        localStorage.setItem(
-            "government_token",
-            data.token
-        );
 
-        currentUser = data.user;
+        const message =
+            $("authMessage");
 
-        message.textContent = "";
 
-        showApplication();
+        message.textContent =
+            "Creating your citizen account...";
 
-        await loadUserData();
 
-        toast(
-            "Your citizen account has been created.",
-            "success"
-        );
+        try {
 
-    } catch (error) {
+            const data =
+                await api(
+                    "/api/auth/register",
+                    {
+                        method:
+                            "POST",
 
-        message.textContent = error.message;
-        message.style.color = "#c0392b";
+                        body:
+                            JSON.stringify({
+                                name,
+                                email,
+                                password
+                            })
+                    }
+                );
+
+
+            localStorage.setItem(
+                "government_token",
+                data.token
+            );
+
+
+            currentUser =
+                data.user;
+
+
+            showApplication();
+
+            await loadUserData();
+
+
+            toast(
+                "Your citizen account has been created.",
+                "success"
+            );
+
+        } catch (error) {
+
+            message.textContent =
+                error.message;
+
+            message.style.color =
+                "#c0392b";
+
+        }
+
     }
-});
+);
 
 
 // ============================================================
 // LOGIN
 // ============================================================
 
-$("loginForm")?.addEventListener("submit", async (event) => {
+$("loginForm")?.addEventListener(
+    "submit",
+    async event => {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    const email = $("loginEmail").value.trim();
-    const password = $("loginPassword").value;
 
-    const message = $("authMessage");
+        const email =
+            $("loginEmail")
+                .value
+                .trim();
 
-    message.textContent = "Signing in...";
-    message.style.color = "";
 
-    try {
+        const password =
+            $("loginPassword")
+                .value;
 
-        const data = await api("/auth/login", {
-            method: "POST",
 
-            body: JSON.stringify({
-                email,
-                password
-            })
-        });
+        const message =
+            $("authMessage");
 
-        localStorage.setItem(
-            "government_token",
-            data.token
-        );
 
-        currentUser = data.user;
+        message.textContent =
+            "Signing in...";
 
-        message.textContent = "";
 
-        showApplication();
+        try {
 
-        await loadUserData();
+            const data =
+                await api(
+                    "/api/auth/login",
+                    {
+                        method:
+                            "POST",
 
-        toast(
-            "Welcome back.",
-            "success"
-        );
+                        body:
+                            JSON.stringify({
+                                email,
+                                password
+                            })
+                    }
+                );
 
-    } catch (error) {
 
-        message.textContent = error.message;
-        message.style.color = "#c0392b";
+            localStorage.setItem(
+                "government_token",
+                data.token
+            );
+
+
+            currentUser =
+                data.user;
+
+
+            showApplication();
+
+            await loadUserData();
+
+
+            toast(
+                "Welcome back.",
+                "success"
+            );
+
+        } catch (error) {
+
+            message.textContent =
+                error.message;
+
+            message.style.color =
+                "#c0392b";
+
+        }
+
     }
-});
+);
 
 
 // ============================================================
 // LOGOUT
 // ============================================================
 
-$("logoutBtn")?.addEventListener("click", async () => {
+$("logoutBtn")?.addEventListener(
+    "click",
+    () => {
 
-    localStorage.removeItem("government_token");
+        localStorage.removeItem(
+            "government_token"
+        );
 
-    currentUser = null;
 
-    showAuth();
+        currentUser =
+            null;
 
-    toast(
-        "You have been signed out.",
-        "success"
-    );
-});
+
+        showAuth();
+
+
+        toast(
+            "You have been signed out.",
+            "success"
+        );
+
+    }
+);
 
 
 // ============================================================
 // NAVIGATION
 // ============================================================
 
-document.addEventListener("click", (event) => {
+document.addEventListener(
+    "click",
+    event => {
 
-    const button = event.target.closest("[data-page]");
-
-    if (!button) return;
-
-    const page = button.dataset.page;
-
-    navigate(page);
-});
+        const button =
+            event.target.closest(
+                "[data-page]"
+            );
 
 
-function navigate(pageName) {
+        if (!button) return;
 
-    const pages = document.querySelectorAll(".page");
 
-    pages.forEach(page => {
-        hide(page);
-    });
+        navigate(
+            button.dataset.page
+        );
 
-    const selected = $(pageName);
+    }
+);
+
+
+function navigate(
+    pageName
+) {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            page => hide(page)
+        );
+
+
+    const selected =
+        $(pageName);
+
 
     if (selected) {
+
         show(selected);
+
     }
 
-    if (pageName === "home") {
+
+    if (
+        pageName === "home"
+    ) {
+
         loadUserData();
+
     }
 
-    if (pageName === "bank") {
+
+    if (
+        pageName === "bank"
+    ) {
+
         loadBank();
+
     }
 
-    if (pageName === "licenses") {
+
+    if (
+        pageName === "licenses"
+    ) {
+
         loadLicenses();
+
     }
 
-    if (pageName === "police") {
 
-        if (
-            currentUser &&
-            currentUser.role === "police"
-        ) {
-            loadPolice();
-        }
+    if (
+        pageName === "police"
+    ) {
+
+        loadPolice();
+
     }
 
-    if (pageName === "government") {
 
-        if (
-            currentUser &&
-            currentUser.role === "government"
-        ) {
-            loadGovernment();
-        }
+    if (
+        pageName === "government"
+    ) {
+
+        loadGovernment();
+
     }
+
 }
 
 
 // ============================================================
-// LOAD USER DATA
+// LOAD USER
 // ============================================================
 
 async function loadUserData() {
 
     try {
 
-        const data = await api("/users/me");
+        const data =
+            await api(
+                "/api/users/me"
+            );
 
-        currentUser = data.user;
+
+        currentUser =
+            data.user;
+
 
         updateUserInterface();
 
-        loadBank();
-        loadLicenses();
+
+        await loadBank();
+
+        await loadLicenses();
 
     } catch (error) {
 
         console.error(error);
 
-        if (
-            error.message.toLowerCase().includes("unauthorized")
-        ) {
-            localStorage.removeItem("government_token");
-
-            showAuth();
-        }
     }
+
 }
 
 
 // ============================================================
-// UPDATE USER INTERFACE
+// UPDATE USER UI
 // ============================================================
 
 function updateUserInterface() {
@@ -406,92 +648,126 @@ function updateUserInterface() {
     if (!currentUser) return;
 
 
-    // -------------------------------
-    // NAME
-    // -------------------------------
-
     if ($("welcomeName")) {
-        $("welcomeName").textContent =
-            currentUser.name || "Citizen";
+
+        $("welcomeName")
+            .textContent =
+            currentUser.name ||
+            "Citizen";
+
     }
 
-
-    // -------------------------------
-    // CITIZEN ID
-    // -------------------------------
 
     if ($("citizenId")) {
-        $("citizenId").textContent =
-            currentUser.citizen_id || "—";
+
+        $("citizenId")
+            .textContent =
+            currentUser.citizen_id ||
+            "—";
+
     }
 
-
-    // -------------------------------
-    // ROLE
-    // -------------------------------
-
-    const role =
-        currentUser.role || "citizen";
 
     if ($("homeRole")) {
 
-        $("homeRole").textContent =
-            formatRole(role);
+        $("homeRole")
+            .textContent =
+            formatRole(
+                currentUser.role
+            );
+
     }
 
 
-    // -------------------------------
-    // POLICE ACCESS
-    // -------------------------------
+    if ($("homePoints")) {
 
-    const isPolice =
-        role === "police" ||
-        role === "government";
+        $("homePoints")
+            .textContent =
+            Number(
+                currentUser.police_points ||
+                0
+            );
+
+    }
 
 
-    const isGovernment =
-        role === "government";
+    const police =
+        currentUser.role === "police" ||
+        currentUser.role === "government";
 
 
-    if (isPolice) {
+    const government =
+        currentUser.role === "government";
 
-        show($("policeNav"));
-        show($("policeCard"));
+
+    if (police) {
+
+        show(
+            $("policeNav")
+        );
+
+        show(
+            $("policeCard")
+        );
 
     } else {
 
-        hide($("policeNav"));
-        hide($("policeCard"));
+        hide(
+            $("policeNav")
+        );
+
+        hide(
+            $("policeCard")
+        );
+
     }
 
 
-    if (isGovernment) {
+    if (government) {
 
-        show($("govNav"));
+        show(
+            $("govNav"
+            )
+        );
 
     } else {
 
-        hide($("govNav"));
+        hide(
+            $("govNav")
+        );
+
     }
+
 }
 
 
 // ============================================================
-// FORMAT ROLE
+// ROLE
 // ============================================================
 
-function formatRole(role) {
+function formatRole(
+    role
+) {
 
     const roles = {
 
-        citizen: "Citizen",
+        citizen:
+            "Citizen",
 
-        police: "Police Officer",
+        police:
+            "Police Officer",
 
-        government: "Government"
+        government:
+            "Government"
+
     };
 
-    return roles[role] || "Citizen";
+
+    return (
+        roles[role] ||
+        "Citizen"
+    );
+
 }
 
 
@@ -503,89 +779,91 @@ async function loadBank() {
 
     if (!currentUser) return;
 
+
     try {
 
-        const data = await api("/bank");
+        const data =
+            await api(
+                "/api/bank"
+            );
 
-        const account = data.account;
+
+        const account =
+            data.account;
+
 
         if (!account) return;
 
 
-        // -------------------------------
-        // BALANCE
-        // -------------------------------
-
-        const balance =
-            Number(account.balance || 0);
-
-
         if ($("balance")) {
 
-            $("balance").textContent =
-                formatMoney(balance);
+            $("balance")
+                .textContent =
+                formatMoney(
+                    account.balance
+                );
+
         }
 
 
         if ($("homeBalance")) {
 
-            $("homeBalance").textContent =
-                formatMoney(balance);
+            $("homeBalance")
+                .textContent =
+                formatMoney(
+                    account.balance
+                );
+
         }
 
-
-        // -------------------------------
-        // ACCOUNT NUMBER
-        // -------------------------------
 
         if ($("accountNumber")) {
 
-            $("accountNumber").textContent =
-                account.account_number || "—";
+            $("accountNumber")
+                .textContent =
+                account.account_number ||
+                "—";
+
         }
 
 
-        // -------------------------------
-        // TRANSACTIONS
-        // -------------------------------
-
         renderTransactions(
-            data.transactions || []
+            data.transactions ||
+            []
         );
 
     } catch (error) {
 
         console.error(
-            "Bank error:",
+            "Bank:",
             error
         );
 
-        if ($("transactions")) {
-
-            $("transactions").innerHTML =
-                `<p class="muted">
-                    Unable to load transactions.
-                </p>`;
-        }
     }
+
 }
 
 
 // ============================================================
-// MONEY FORMAT
+// MONEY
 // ============================================================
 
-function formatMoney(amount) {
+function formatMoney(
+    amount
+) {
 
-    const number = Number(amount || 0);
-
-    return number.toLocaleString(
+    return Number(
+        amount || 0
+    ).toLocaleString(
         "en-US",
         {
-            style: "currency",
-            currency: "USD"
+            style:
+                "currency",
+            currency:
+                "USD"
         }
     );
+
 }
 
 
@@ -593,74 +871,86 @@ function formatMoney(amount) {
 // TRANSACTIONS
 // ============================================================
 
-function renderTransactions(transactions) {
+function renderTransactions(
+    transactions
+) {
 
     const container =
         $("transactions");
+
 
     if (!container) return;
 
 
     if (!transactions.length) {
 
-        container.innerHTML =
-            `<p class="muted">
+        container.innerHTML = `
+            <p class="muted">
                 No transactions yet.
-            </p>`;
+            </p>
+        `;
 
         return;
     }
 
 
     container.innerHTML =
-        transactions.map(transaction => {
+        transactions
+            .map(
+                transaction => {
 
-            const amount =
-                Number(transaction.amount || 0);
+                    const amount =
+                        Number(
+                            transaction.amount ||
+                            0
+                        );
 
-            const positive =
-                amount >= 0;
+
+                    return `
+
+                        <div class="transaction">
+
+                            <div class="transaction-info">
+
+                                <strong>
+                                    ${escapeHTML(
+                                        transaction.description
+                                    )}
+                                </strong>
+
+                                <span>
+                                    ${formatDate(
+                                        transaction.created_at
+                                    )}
+                                </span>
+
+                            </div>
 
 
-            return `
-                <div class="transaction">
+                            <div class="transaction-amount ${
+                                amount >= 0
+                                    ? "positive"
+                                    : "negative"
+                            }">
 
-                    <div class="transaction-info">
+                                ${
+                                    amount >= 0
+                                        ? "+"
+                                        : ""
+                                }${formatMoney(
+                                    amount
+                                )}
 
-                        <strong>
-                            ${escapeHTML(
-                                transaction.description ||
-                                transaction.type ||
-                                "Transaction"
-                            )}
-                        </strong>
+                            </div>
 
-                        <span>
-                            ${formatDate(
-                                transaction.created_at
-                            )}
-                        </span>
+                        </div>
 
-                    </div>
+                    `;
 
-                    <div class="transaction-amount ${
-                        positive
-                            ? "positive"
-                            : "negative"
-                    }">
+                }
+            )
+            .join("");
 
-                        ${
-                            positive
-                                ? "+"
-                                : ""
-                        }${formatMoney(amount)}
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
 }
 
 
@@ -672,43 +962,48 @@ async function loadLicenses() {
 
     if (!currentUser) return;
 
+
     try {
 
         const data =
-            await api("/licenses");
+            await api(
+                "/api/licenses"
+            );
 
-        const licenses =
-            data.licenses || [];
 
-        renderLicenses(licenses);
+        renderLicenses(
+            data.licenses ||
+            []
+        );
+
+
+        const active =
+            (data.licenses || [])
+                .filter(
+                    license =>
+                        license.status ===
+                        "active"
+                )
+                .length;
+
 
         if ($("homeLicenses")) {
 
-            const activeCount =
-                licenses.filter(
-                    license =>
-                        license.status === "active"
-                ).length;
+            $("homeLicenses")
+                .textContent =
+                active;
 
-            $("homeLicenses").textContent =
-                activeCount;
         }
 
     } catch (error) {
 
         console.error(
-            "License error:",
+            "Licenses:",
             error
         );
 
-        if ($("licenseGrid")) {
-
-            $("licenseGrid").innerHTML =
-                `<p class="muted">
-                    Unable to load licenses.
-                </p>`;
-        }
     }
+
 }
 
 
@@ -716,116 +1011,153 @@ async function loadLicenses() {
 // RENDER LICENSES
 // ============================================================
 
-function renderLicenses(licenses) {
+function renderLicenses(
+    licenses
+) {
 
     const container =
         $("licenseGrid");
+
 
     if (!container) return;
 
 
     container.innerHTML =
-        licenses.map(license => {
+        licenses
+            .map(
+                license => {
 
-            const status =
-                license.status || "unlicensed";
-
-
-            let statusText =
-                "Not Licensed";
-
-
-            if (status === "active") {
-                statusText = "Active";
-            }
-
-            if (status === "revoked") {
-                statusText = "Revoked";
-            }
+                    const active =
+                        license.status ===
+                        "active";
 
 
-            return `
-                <div class="license-card">
+                    const revoked =
+                        license.status ===
+                        "revoked";
 
-                    <div class="license-info">
 
-                        <h3>
-                            ${escapeHTML(
-                                license.license_type
-                            )}
-                        </h3>
+                    let statusText =
+                        "Not Licensed";
 
-                        <p>
-                            ${
-                                status === "active"
-                                    ? `Issued ${formatDate(
-                                        license.issued_at
-                                    )}`
-                                    : "This license has not been issued."
-                            }
-                        </p>
 
-                        ${
-                            status !== "active"
-                                ? `
-                                    <button
-                                        class="primary"
-                                        onclick="requestLicense('${escapeAttribute(
-                                            license.license_type
-                                        )}')"
-                                    >
-                                        Earn / Apply
-                                    </button>
-                                `
-                                : ""
-                        }
+                    if (active) {
 
-                    </div>
+                        statusText =
+                            "Active";
 
-                    <span class="license-status ${status}">
+                    } else if (revoked) {
 
-                        ${statusText}
+                        statusText =
+                            "Revoked";
 
-                    </span>
+                    }
 
-                </div>
-            `;
 
-        }).join("");
+                    return `
+
+                        <div class="license-card">
+
+                            <div class="license-info">
+
+                                <h3>
+                                    ${escapeHTML(
+                                        license.license_type
+                                    )}
+                                </h3>
+
+
+                                <p>
+
+                                    ${
+                                        active
+                                            ? `Issued ${formatDate(
+                                                license.issued_at
+                                            )}`
+                                            : "You do not currently have this license."
+                                    }
+
+                                </p>
+
+
+                                ${
+                                    !active
+                                        ? `
+                                            <button
+                                                class="primary"
+                                                onclick="requestLicense('${escapeAttribute(
+                                                    license.license_type
+                                                )}')"
+                                            >
+                                                Request License
+                                            </button>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+
+                            <span
+                                class="license-status ${license.status}"
+                            >
+
+                                ${statusText}
+
+                            </span>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
 }
 
 
 // ============================================================
-// LICENSE REQUEST
+// REQUEST LICENSE
 // ============================================================
 
-async function requestLicense(type) {
+async function requestLicense(
+    licenseType
+) {
 
-    const governmentPasscode =
+    const passcode =
         prompt(
             "Enter the government passcode:"
         );
 
 
-    if (!governmentPasscode) {
+    if (
+        passcode === null
+    ) {
+
         return;
+
     }
 
 
     try {
 
-        await api("/licenses/request", {
+        await api(
+            "/api/licenses/request",
+            {
+                method:
+                    "POST",
 
-            method: "POST",
+                body:
+                    JSON.stringify({
+                        license_type:
+                            licenseType,
 
-            body: JSON.stringify({
-
-                license_type: type,
-
-                government_passcode:
-                    governmentPasscode
-            })
-        });
+                        government_passcode:
+                            passcode
+                    })
+            }
+        );
 
 
         toast(
@@ -834,15 +1166,15 @@ async function requestLicense(type) {
         );
 
 
-        await loadLicenses();
-
     } catch (error) {
 
         toast(
             error.message,
             "error"
         );
+
     }
+
 }
 
 
@@ -865,8 +1197,16 @@ async function loadPolice() {
             "error"
         );
 
+
+        navigate(
+            "home"
+        );
+
+
         return;
+
     }
+
 }
 
 
@@ -876,56 +1216,66 @@ async function loadPolice() {
 
 $("searchPolice")?.addEventListener(
     "click",
-    async () => {
-
-        const citizenId =
-            $("policeCitizen").value.trim();
-
-
-        if (!citizenId) {
-
-            toast(
-                "Enter a citizen database ID.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        try {
-
-            const data =
-                await api(
-                    `/police/citizen/${encodeURIComponent(
-                        citizenId
-                    )}`
-                );
-
-
-            renderPoliceResult(
-                data
-            );
-
-        } catch (error) {
-
-            toast(
-                error.message,
-                "error"
-            );
-        }
-    }
+    searchPolice
 );
 
 
+async function searchPolice() {
+
+    const value =
+        $("policeCitizen")
+            .value
+            .trim();
+
+
+    if (!value) {
+
+        toast(
+            "Enter a citizen ID.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const data =
+            await api(
+                `/api/police/citizen/${encodeURIComponent(
+                    value
+                )}`
+            );
+
+
+        renderPoliceResult(
+            data
+        );
+
+    } catch (error) {
+
+        toast(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
 // ============================================================
-// RENDER POLICE RESULT
+// POLICE RESULT
 // ============================================================
 
-function renderPoliceResult(data) {
+function renderPoliceResult(
+    data
+) {
 
     const container =
         $("policeResult");
+
 
     if (!container) return;
 
@@ -935,7 +1285,8 @@ function renderPoliceResult(data) {
 
 
     const records =
-        data.records || [];
+        data.records ||
+        [];
 
 
     container.innerHTML = `
@@ -946,7 +1297,9 @@ function renderPoliceResult(data) {
                 Citizen Information
             </h2>
 
+
             <p>
+
                 <strong>
                     Name:
                 </strong>
@@ -954,9 +1307,12 @@ function renderPoliceResult(data) {
                 ${escapeHTML(
                     citizen.name
                 )}
+
             </p>
 
+
             <p>
+
                 <strong>
                     Citizen ID:
                 </strong>
@@ -964,16 +1320,34 @@ function renderPoliceResult(data) {
                 ${escapeHTML(
                     citizen.citizen_id
                 )}
+
             </p>
 
+
             <p>
+
+                <strong>
+                    Role:
+                </strong>
+
+                ${formatRole(
+                    citizen.role
+                )}
+
+            </p>
+
+
+            <p>
+
                 <strong>
                     Police Points:
                 </strong>
 
                 ${Number(
-                    citizen.police_points || 0
+                    citizen.police_points ||
+                    0
                 )}
+
             </p>
 
         </div>
@@ -985,11 +1359,14 @@ function renderPoliceResult(data) {
                 Police Records
             </h2>
 
+
             ${
                 records.length
-                    ? records.map(
-                        renderPoliceRecord
-                    ).join("")
+                    ? records
+                        .map(
+                            renderPoliceRecord
+                        )
+                        .join("")
                     : `
                         <p class="muted">
                             No police records found.
@@ -1004,24 +1381,23 @@ function renderPoliceResult(data) {
 
             <button
                 class="primary"
-                onclick="addPolicePoints(
-                    ${citizen.id}
-                )"
+                onclick="addPolicePoints(${citizen.id})"
             >
                 Add Points
             </button>
 
+
             <button
                 class="primary"
-                onclick="addPoliceRecord(
-                    ${citizen.id}
-                )"
+                onclick="addPoliceRecord(${citizen.id})"
             >
                 Add Record
             </button>
 
         </div>
+
     `;
+
 }
 
 
@@ -1029,7 +1405,9 @@ function renderPoliceResult(data) {
 // POLICE RECORD
 // ============================================================
 
-function renderPoliceRecord(record) {
+function renderPoliceRecord(
+    record
+) {
 
     return `
 
@@ -1043,15 +1421,18 @@ function renderPoliceRecord(record) {
                     )}
                 </h3>
 
+
                 <span class="points">
 
                     +${Number(
-                        record.points || 0
+                        record.points ||
+                        0
                     )} points
 
                 </span>
 
             </div>
+
 
             <p>
 
@@ -1063,19 +1444,20 @@ function renderPoliceRecord(record) {
 
                 ${escapeHTML(
                     record.officer_name ||
-                    record.officer_id ||
                     "Unknown"
                 )}
 
             </p>
 
         </div>
+
     `;
+
 }
 
 
 // ============================================================
-// ADD POLICE POINTS
+// ADD POINTS
 // ============================================================
 
 async function addPolicePoints(
@@ -1083,29 +1465,25 @@ async function addPolicePoints(
 ) {
 
     const points =
-        prompt(
-            "How many points should be added?"
+        Number(
+            prompt(
+                "How many points should be added?"
+            )
         );
 
 
-    if (!points) return;
-
-
-    const numericPoints =
-        Number(points);
-
-
     if (
-        !Number.isFinite(numericPoints) ||
-        numericPoints <= 0
+        !Number.isFinite(points) ||
+        points <= 0
     ) {
 
         toast(
-            "Enter a valid positive number.",
+            "Enter a valid number of points.",
             "error"
         );
 
         return;
+
     }
 
 
@@ -1121,21 +1499,20 @@ async function addPolicePoints(
     try {
 
         await api(
-            "/police/points",
+            "/api/police/points",
             {
+                method:
+                    "POST",
 
-                method: "POST",
+                body:
+                    JSON.stringify({
+                        citizen_id:
+                            citizenId,
 
-                body: JSON.stringify({
+                        points,
 
-                    citizen_id:
-                        citizenId,
-
-                    points:
-                        numericPoints,
-
-                    reason
-                })
+                        reason
+                    })
             }
         );
 
@@ -1156,12 +1533,14 @@ async function addPolicePoints(
             error.message,
             "error"
         );
+
     }
+
 }
 
 
 // ============================================================
-// ADD POLICE RECORD
+// ADD RECORD
 // ============================================================
 
 async function addPoliceRecord(
@@ -1178,57 +1557,52 @@ async function addPoliceRecord(
 
 
     const points =
-        prompt(
-            "Points to add (0 if none):",
-            "0"
+        Number(
+            prompt(
+                "Points to add (0 if none):",
+                "0"
+            )
         );
 
 
-    if (points === null) return;
-
-
-    const numericPoints =
-        Number(points);
-
-
     if (
-        !Number.isFinite(numericPoints) ||
-        numericPoints < 0
+        !Number.isFinite(points) ||
+        points < 0
     ) {
 
         toast(
-            "Enter a valid number.",
+            "Enter a valid points amount.",
             "error"
         );
 
         return;
+
     }
 
 
     try {
 
         await api(
-            "/police/records",
+            "/api/police/records",
             {
+                method:
+                    "POST",
 
-                method: "POST",
+                body:
+                    JSON.stringify({
+                        citizen_id:
+                            citizenId,
 
-                body: JSON.stringify({
+                        reason,
 
-                    citizen_id:
-                        citizenId,
-
-                    reason,
-
-                    points:
-                        numericPoints
-                })
+                        points
+                    })
             }
         );
 
 
         toast(
-            "Police record added.",
+            "Police record created.",
             "success"
         );
 
@@ -1243,12 +1617,14 @@ async function addPoliceRecord(
             error.message,
             "error"
         );
+
     }
+
 }
 
 
 // ============================================================
-// SEARCH CITIZEN AGAIN
+// SEARCH AGAIN
 // ============================================================
 
 async function searchCitizenAgain(
@@ -1259,7 +1635,7 @@ async function searchCitizenAgain(
 
         const data =
             await api(
-                `/police/citizen/${encodeURIComponent(
+                `/api/police/citizen/${encodeURIComponent(
                     citizenId
                 )}`
             );
@@ -1271,8 +1647,12 @@ async function searchCitizenAgain(
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
+
     }
+
 }
 
 
@@ -1286,7 +1666,8 @@ async function loadGovernment() {
 
 
     if (
-        currentUser.role !== "government"
+        currentUser.role !==
+        "government"
     ) {
 
         toast(
@@ -1294,31 +1675,26 @@ async function loadGovernment() {
             "error"
         );
 
+
+        navigate(
+            "home"
+        );
+
+
         return;
+
     }
 
 
-    try {
+    await loadAudit();
 
-        const data =
-            await api("/government/audit");
+    await loadLicenseRequests();
 
-        renderAudit(
-            data.audit || []
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Government error:",
-            error
-        );
-    }
 }
 
 
 // ============================================================
-// GOVERNMENT USER SEARCH
+// GOVERNMENT SEARCH
 // ============================================================
 
 $("govSearchBtn")?.addEventListener(
@@ -1331,23 +1707,31 @@ $("govSearch")?.addEventListener(
     "keydown",
     event => {
 
-        if (event.key === "Enter") {
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
             searchGovernmentUsers();
+
         }
+
     }
 );
 
 
 async function searchGovernmentUsers() {
 
-    const query =
-        $("govSearch").value.trim();
+    const search =
+        $("govSearch")
+            .value
+            .trim();
 
 
-    if (!query) {
+    if (!search) {
 
         toast(
-            "Enter a name, email or citizen ID.",
+            "Enter a search.",
             "error"
         );
 
@@ -1359,14 +1743,15 @@ async function searchGovernmentUsers() {
 
         const data =
             await api(
-                `/government/users?search=${encodeURIComponent(
-                    query
+                `/api/government/users?search=${encodeURIComponent(
+                    search
                 )}`
             );
 
 
         renderGovernmentUsers(
-            data.users || []
+            data.users ||
+            []
         );
 
     } catch (error) {
@@ -1375,12 +1760,14 @@ async function searchGovernmentUsers() {
             error.message,
             "error"
         );
+
     }
+
 }
 
 
 // ============================================================
-// RENDER GOVERNMENT USERS
+// GOVERNMENT USERS
 // ============================================================
 
 function renderGovernmentUsers(
@@ -1390,68 +1777,78 @@ function renderGovernmentUsers(
     const container =
         $("govUsers");
 
+
     if (!container) return;
 
 
     if (!users.length) {
 
-        container.innerHTML =
-            `<p class="muted">
+        container.innerHTML = `
+            <p class="muted">
                 No citizens found.
-            </p>`;
+            </p>
+        `;
 
         return;
     }
 
 
     container.innerHTML =
-        users.map(user => `
+        users
+            .map(
+                user => `
 
-            <div class="user-row">
+                    <div class="user-row">
 
-                <div class="user-main">
+                        <div class="user-main">
 
-                    <strong>
-                        ${escapeHTML(
-                            user.name
-                        )}
-                    </strong>
+                            <strong>
+                                ${escapeHTML(
+                                    user.name
+                                )}
+                            </strong>
 
-                    <span>
-                        ID:
-                        ${escapeHTML(
-                            String(
-                                user.id
-                            )
-                        )}
+                            <span>
 
-                        ·
+                                Database ID:
+                                ${user.id}
 
-                        ${escapeHTML(
-                            user.citizen_id
-                        )}
-                    </span>
+                                ·
 
-                </div>
+                                ${escapeHTML(
+                                    user.citizen_id
+                                )}
 
-                <span class="role-badge">
+                                ·
 
-                    ${escapeHTML(
-                        formatRole(
-                            user.role
-                        )
-                    )}
+                                ${escapeHTML(
+                                    user.email
+                                )}
 
-                </span>
+                            </span>
 
-            </div>
+                        </div>
 
-        `).join("");
+
+                        <span class="role-badge">
+
+                            ${formatRole(
+                                user.role
+                            )}
+
+                        </span>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
 }
 
 
 // ============================================================
-// GOVERNMENT BANK ACTION
+// GOVERNMENT BANK
 // ============================================================
 
 $("bankAction")?.addEventListener(
@@ -1459,23 +1856,33 @@ $("bankAction")?.addEventListener(
     async () => {
 
         const userId =
-            $("bankUserId").value;
+            Number(
+                $("bankUserId")
+                    .value
+            );
 
 
         const amount =
             Number(
-                $("bankAmount").value
+                $("bankAmount")
+                    .value
             );
 
 
         const description =
-            $("bankDescription").value.trim();
+            $("bankDescription")
+                .value
+                .trim();
 
 
-        if (!userId) {
+        if (
+            !Number.isInteger(
+                userId
+            )
+        ) {
 
             toast(
-                "Enter a user database ID.",
+                "Enter a valid user ID.",
                 "error"
             );
 
@@ -1484,7 +1891,9 @@ $("bankAction")?.addEventListener(
 
 
         if (
-            !Number.isFinite(amount) ||
+            !Number.isFinite(
+                amount
+            ) ||
             amount === 0
         ) {
 
@@ -1500,22 +1909,20 @@ $("bankAction")?.addEventListener(
         try {
 
             await api(
-                "/government/bank",
+                "/api/government/bank",
                 {
+                    method:
+                        "POST",
 
-                    method: "POST",
+                    body:
+                        JSON.stringify({
+                            user_id:
+                                userId,
 
-                    body: JSON.stringify({
+                            amount,
 
-                        user_id:
-                            Number(userId),
-
-                        amount,
-
-                        description:
-                            description ||
-                            "Government transaction"
-                    })
+                            description
+                        })
                 }
             );
 
@@ -1526,13 +1933,11 @@ $("bankAction")?.addEventListener(
             );
 
 
-            $("bankAmount").value = "";
-
-            $("bankDescription").value =
-                "Government transaction";
+            $("bankAmount")
+                .value = "";
 
 
-            await loadGovernment();
+            await loadAudit();
 
         } catch (error) {
 
@@ -1540,7 +1945,9 @@ $("bankAction")?.addEventListener(
                 error.message,
                 "error"
             );
+
         }
+
     }
 );
 
@@ -1554,21 +1961,30 @@ $("licenseAction")?.addEventListener(
     async () => {
 
         const userId =
-            $("licenseUserId").value;
+            Number(
+                $("licenseUserId")
+                    .value
+            );
 
 
         const licenseType =
-            $("licenseType").value;
+            $("licenseType")
+                .value;
 
 
         const status =
-            $("licenseStatus").value;
+            $("licenseStatus")
+                .value;
 
 
-        if (!userId) {
+        if (
+            !Number.isInteger(
+                userId
+            )
+        ) {
 
             toast(
-                "Enter a user database ID.",
+                "Enter a valid user ID.",
                 "error"
             );
 
@@ -1579,21 +1995,21 @@ $("licenseAction")?.addEventListener(
         try {
 
             await api(
-                "/government/license",
+                "/api/government/license",
                 {
+                    method:
+                        "POST",
 
-                    method: "POST",
+                    body:
+                        JSON.stringify({
+                            user_id:
+                                userId,
 
-                    body: JSON.stringify({
+                            license_type:
+                                licenseType,
 
-                        user_id:
-                            Number(userId),
-
-                        license_type:
-                            licenseType,
-
-                        status
-                    })
+                            status
+                        })
                 }
             );
 
@@ -1604,7 +2020,9 @@ $("licenseAction")?.addEventListener(
             );
 
 
-            await loadGovernment();
+            await loadLicenseRequests();
+
+            await loadAudit();
 
         } catch (error) {
 
@@ -1612,13 +2030,15 @@ $("licenseAction")?.addEventListener(
                 error.message,
                 "error"
             );
+
         }
+
     }
 );
 
 
 // ============================================================
-// GOVERNMENT ROLE MANAGEMENT
+// GOVERNMENT ROLE
 // ============================================================
 
 $("roleAction")?.addEventListener(
@@ -1626,17 +2046,25 @@ $("roleAction")?.addEventListener(
     async () => {
 
         const userId =
-            $("roleUserId").value;
+            Number(
+                $("roleUserId")
+                    .value
+            );
 
 
         const role =
-            $("roleSelect").value;
+            $("roleSelect")
+                .value;
 
 
-        if (!userId) {
+        if (
+            !Number.isInteger(
+                userId
+            )
+        ) {
 
             toast(
-                "Enter a user database ID.",
+                "Enter a valid user ID.",
                 "error"
             );
 
@@ -1647,18 +2075,18 @@ $("roleAction")?.addEventListener(
         try {
 
             await api(
-                "/government/role",
+                "/api/government/role",
                 {
+                    method:
+                        "POST",
 
-                    method: "POST",
+                    body:
+                        JSON.stringify({
+                            user_id:
+                                userId,
 
-                    body: JSON.stringify({
-
-                        user_id:
-                            Number(userId),
-
-                        role
-                    })
+                            role
+                        })
                 }
             );
 
@@ -1669,7 +2097,7 @@ $("roleAction")?.addEventListener(
             );
 
 
-            await loadGovernment();
+            await loadAudit();
 
         } catch (error) {
 
@@ -1677,78 +2105,368 @@ $("roleAction")?.addEventListener(
                 error.message,
                 "error"
             );
+
         }
+
     }
 );
 
 
 // ============================================================
-// AUDIT LOG
+// LICENSE REQUESTS
 // ============================================================
 
-function renderAudit(entries) {
+async function loadLicenseRequests() {
+
+    if (
+        !currentUser ||
+        currentUser.role !==
+        "government"
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const data =
+            await api(
+                "/api/government/license-requests"
+            );
+
+
+        renderLicenseRequests(
+            data.requests ||
+            []
+        );
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// RENDER LICENSE REQUESTS
+// ============================================================
+
+function renderLicenseRequests(
+    requests
+) {
 
     const container =
-        $("audit");
+        $("licenseRequests");
+
 
     if (!container) return;
 
 
-    if (!entries.length) {
+    if (!requests.length) {
 
-        container.innerHTML =
-            `<p class="muted">
-                No administrative actions yet.
-            </p>`;
+        container.innerHTML = `
+            <p class="muted">
+                No license requests.
+            </p>
+        `;
 
         return;
     }
 
 
     container.innerHTML =
-        entries.map(entry => `
+        requests
+            .map(
+                request => `
 
-            <div class="audit-entry">
+                    <div class="request">
 
-                <strong>
-                    ${escapeHTML(
-                        entry.action ||
-                        "Administrative action"
-                    )}
-                </strong>
+                        <div class="request-header">
 
-                <p>
-                    ${escapeHTML(
-                        entry.description ||
-                        ""
-                    )}
-                </p>
+                            <div>
 
-                <time>
-                    ${formatDate(
-                        entry.created_at
-                    )}
-                </time>
+                                <strong>
+                                    ${escapeHTML(
+                                        request.license_type
+                                    )}
+                                </strong>
 
-            </div>
+                                <p class="muted">
 
-        `).join("");
+                                    ${escapeHTML(
+                                        request.user_name
+                                    )}
+
+                                    ·
+
+                                    ${escapeHTML(
+                                        request.citizen_id
+                                    )}
+
+                                </p>
+
+                            </div>
+
+
+                            <span class="role-badge">
+
+                                ${escapeHTML(
+                                    request.status
+                                )}
+
+                            </span>
+
+                        </div>
+
+
+                        ${
+                            request.status ===
+                            "pending"
+
+                                ? `
+
+                                    <div class="request-actions">
+
+                                        <button
+                                            class="primary"
+                                            onclick="reviewLicense(
+                                                ${request.id},
+                                                'approved'
+                                            )"
+                                        >
+                                            Approve
+                                        </button>
+
+
+                                        <button
+                                            class="primary"
+                                            onclick="reviewLicense(
+                                                ${request.id},
+                                                'denied'
+                                            )"
+                                        >
+                                            Deny
+                                        </button>
+
+                                    </div>
+
+                                `
+
+                                : ""
+
+                        }
+
+                    </div>
+
+                `
+            )
+            .join("");
+
 }
 
 
 // ============================================================
-// DATE FORMAT
+// REVIEW LICENSE
 // ============================================================
 
-function formatDate(date) {
+async function reviewLicense(
+    requestId,
+    status
+) {
+
+    const note =
+        prompt(
+            "Optional government note:"
+        );
+
+
+    if (
+        note === null
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await api(
+            `/api/government/license-requests/${requestId}`,
+            {
+                method:
+                    "POST",
+
+                body:
+                    JSON.stringify({
+                        status,
+                        note
+                    })
+            }
+        );
+
+
+        toast(
+            `License request ${status}.`,
+            "success"
+        );
+
+
+        await loadLicenseRequests();
+
+        await loadAudit();
+
+    } catch (error) {
+
+        toast(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// AUDIT
+// ============================================================
+
+async function loadAudit() {
+
+    if (
+        !currentUser ||
+        currentUser.role !==
+        "government"
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const data =
+            await api(
+                "/api/government/audit"
+            );
+
+
+        renderAudit(
+            data.audit ||
+            []
+        );
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// RENDER AUDIT
+// ============================================================
+
+function renderAudit(
+    entries
+) {
+
+    const container =
+        $("audit");
+
+
+    if (!container) return;
+
+
+    if (!entries.length) {
+
+        container.innerHTML = `
+            <p class="muted">
+                No administrative actions yet.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        entries
+            .map(
+                entry => `
+
+                    <div class="audit-entry">
+
+                        <strong>
+                            ${escapeHTML(
+                                entry.action
+                            )}
+                        </strong>
+
+
+                        <p>
+                            ${escapeHTML(
+                                entry.description
+                            )}
+                        </p>
+
+
+                        <time>
+
+                            ${
+                                entry.actor_name
+                                    ? escapeHTML(
+                                        entry.actor_name
+                                    ) + " · "
+                                    : ""
+                            }
+
+                            ${formatDate(
+                                entry.created_at
+                            )}
+
+                        </time>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+}
+
+
+// ============================================================
+// DATE
+// ============================================================
+
+function formatDate(
+    date
+) {
 
     if (!date) {
+
         return "Unknown date";
+
     }
 
 
     const parsed =
-        new Date(date);
+        new Date(
+            date
+        );
 
 
     if (
@@ -1757,40 +2475,78 @@ function formatDate(date) {
         )
     ) {
 
-        return String(date);
+        return String(
+            date
+        );
+
     }
 
 
     return parsed.toLocaleString(
         "en-US",
         {
-            dateStyle: "medium",
-            timeStyle: "short"
+            dateStyle:
+                "medium",
+
+            timeStyle:
+                "short"
         }
     );
+
 }
 
 
 // ============================================================
-// SECURITY HELPERS
+// HTML ESCAPING
 // ============================================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
 }
 
 
-function escapeAttribute(value) {
+function escapeAttribute(
+    value
+) {
 
-    return String(value ?? "")
-        .replaceAll("\\", "\\\\")
-        .replaceAll("'", "\\'");
+    return String(
+        value ?? ""
+    )
+        .replaceAll(
+            "\\",
+            "\\\\"
+        )
+        .replaceAll(
+            "'",
+            "\\'"
+        );
+
 }
 
 
