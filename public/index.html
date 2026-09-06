@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 
 <html lang="en">
@@ -536,8 +537,8 @@
 
                 <p class="muted">
                     Send money to another citizen using
-                    their email, Citizen ID, or bank
-                    account number.
+                    their name, email, Government ID,
+                    Citizen ID, or bank account number.
                 </p>
 
 
@@ -548,7 +549,7 @@
                     <input
                         id="transferRecipient"
                         type="text"
-                        placeholder="Email, GOV-123456, or GB-123456789"
+                        placeholder="Name, email, GOV ID, or bank account"
                         maxlength="255"
                     >
 
@@ -706,8 +707,9 @@
 
                     <input
                         id="policeCitizen"
-                        type="number"
-                        placeholder="Citizen database ID"
+                        type="text"
+                        placeholder="Name, email, Government ID, or database ID"
+                        maxlength="255"
                     >
 
 
@@ -722,8 +724,8 @@
 
 
                 <p class="muted">
-                    Enter the citizen's database ID
-                    to view their records.
+                    Enter the citizen's name, email,
+                    Government ID, Citizen ID, or database ID.
                 </p>
 
             </div>
@@ -784,7 +786,9 @@
 
                     <input
                         id="govSearch"
-                        placeholder="Name, email or citizen ID"
+                        type="text"
+                        placeholder="Name, email, or Government ID"
+                        maxlength="255"
                     >
 
 
@@ -796,6 +800,12 @@
                     </button>
 
                 </div>
+
+
+                <p class="muted">
+                    Search by name, email, Government ID,
+                    Citizen ID, or database ID.
+                </p>
 
 
                 <div id="govUsers">
@@ -872,13 +882,22 @@
                     </h2>
 
 
+                    <p class="muted">
+                        Pay or withdraw money from a citizen.
+                        Enter their name, email, Government ID,
+                        Citizen ID, or database ID.
+                    </p>
+
+
                     <label>
 
-                        User Database ID
+                        Citizen
 
                         <input
                             id="bankUserId"
-                            type="number"
+                            type="text"
+                            placeholder="Name, email, GOV ID, or database ID"
+                            maxlength="255"
                         >
 
                     </label>
@@ -932,13 +951,22 @@
                     </h2>
 
 
+                    <p class="muted">
+                        Give or revoke a license using the
+                        citizen's name, email, Government ID,
+                        Citizen ID, or database ID.
+                    </p>
+
+
                     <label>
 
-                        User Database ID
+                        Citizen
 
                         <input
                             id="licenseUserId"
-                            type="number"
+                            type="text"
+                            placeholder="Name, email, GOV ID, or database ID"
+                            maxlength="255"
                         >
 
                     </label>
@@ -1020,7 +1048,8 @@
 
                 <p class="muted">
                     Assign or remove government and
-                    police roles.
+                    police roles. Search by name, email,
+                    Government ID, Citizen ID, or database ID.
                 </p>
 
 
@@ -1028,8 +1057,9 @@
 
                     <input
                         id="roleUserId"
-                        type="number"
-                        placeholder="User database ID"
+                        type="text"
+                        placeholder="Name, email, GOV ID, or database ID"
+                        maxlength="255"
                     >
 
 
@@ -1144,3 +1174,4 @@
 </body>
 
 </html>
+```
