@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>Government Portal</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<link rel="stylesheet" href="style.css">
-```
+    <title>Government Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
+
 <body>
 
-```
+
 <!-- =========================
      TOP NAVIGATION
 ========================== -->
@@ -29,13 +37,24 @@
         </div>
 
         <div class="brand-text">
-            <strong>Government Portal</strong>
-            <span>Official Citizen Services</span>
+
+            <strong>
+                Government Portal
+            </strong>
+
+            <span>
+                Official Citizen Services
+            </span>
+
         </div>
 
     </div>
 
-    <nav id="nav" class="hidden">
+
+    <nav
+        id="nav"
+        class="hidden"
+    >
 
         <button data-page="home">
             Home
@@ -77,11 +96,13 @@
 </header>
 
 
+
 <!-- =========================
      NOTIFICATION
 ========================== -->
 
 <div id="toast"></div>
+
 
 
 <main>
@@ -102,16 +123,19 @@
                 ★
             </div>
 
+
             <h1>
                 Government Portal
             </h1>
+
 
             <p class="muted">
                 Secure access to citizen and government services.
             </p>
 
 
-            <!-- Login / Register Tabs -->
+
+            <!-- LOGIN / REGISTER TABS -->
 
             <div class="tabs">
 
@@ -122,6 +146,7 @@
                     Login
                 </button>
 
+
                 <button
                     id="registerTab"
                 >
@@ -131,11 +156,15 @@
             </div>
 
 
-            <!-- LOGIN -->
+
+            <!-- =========================
+                 LOGIN
+            ========================== -->
 
             <form id="loginForm">
 
                 <label>
+
                     Email
 
                     <input
@@ -149,6 +178,7 @@
 
 
                 <label>
+
                     Password
 
                     <input
@@ -171,7 +201,10 @@
             </form>
 
 
-            <!-- REGISTER -->
+
+            <!-- =========================
+                 REGISTER
+            ========================== -->
 
             <form
                 id="registerForm"
@@ -179,6 +212,7 @@
             >
 
                 <label>
+
                     Full Name
 
                     <input
@@ -193,6 +227,7 @@
 
 
                 <label>
+
                     Email
 
                     <input
@@ -206,6 +241,7 @@
 
 
                 <label>
+
                     Password
 
                     <input
@@ -267,12 +303,17 @@
                         CITIZEN SERVICES
                     </p>
 
+
                     <h1>
+
                         Welcome,
+
                         <span id="welcomeName">
                             Citizen
                         </span>.
+
                     </h1>
+
 
                     <p>
                         Manage your government account,
@@ -288,6 +329,7 @@
                         Citizen ID
                     </small>
 
+
                     <strong id="citizenId">
                         —
                     </strong>
@@ -298,7 +340,9 @@
 
 
 
-            <!-- Statistics -->
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
 
             <div class="grid four">
 
@@ -307,6 +351,7 @@
                     <span>
                         Bank Balance
                     </span>
+
 
                     <strong id="homeBalance">
                         $0.00
@@ -321,6 +366,7 @@
                         Licenses
                     </span>
 
+
                     <strong id="homeLicenses">
                         0
                     </strong>
@@ -333,6 +379,7 @@
                     <span>
                         Police Points
                     </span>
+
 
                     <strong id="homePoints">
                         0
@@ -347,6 +394,7 @@
                         Role
                     </span>
 
+
                     <strong id="homeRole">
                         Citizen
                     </strong>
@@ -357,7 +405,9 @@
 
 
 
-            <!-- Services -->
+            <!-- =========================
+                 SERVICES
+            ========================== -->
 
             <div class="grid three">
 
@@ -370,8 +420,10 @@
                         🏦 Bank
                     </b>
 
+
                     <span>
-                        View your account and transactions.
+                        View your account, transfer money
+                        and transactions.
                     </span>
 
                 </button>
@@ -385,6 +437,7 @@
                     <b>
                         🪪 Licenses
                     </b>
+
 
                     <span>
                         View and earn available licenses.
@@ -402,6 +455,7 @@
                     <b>
                         👮 Police
                     </b>
+
 
                     <span>
                         Officer records and points.
@@ -430,6 +484,7 @@
                     FINANCIAL SERVICES
                 </p>
 
+
                 <h1>
                     Government Bank
                 </h1>
@@ -437,31 +492,119 @@
             </div>
 
 
+
+            <!-- =========================
+                 BANK BALANCE
+            ========================== -->
+
             <div class="bank-card">
 
                 <span>
                     Available Balance
                 </span>
 
+
                 <strong id="balance">
                     $0.00
                 </strong>
 
+
                 <small>
+
                     Account
+
                     <b id="accountNumber">
                         —
                     </b>
+
                 </small>
 
             </div>
 
+
+
+            <!-- =========================
+                 TRANSFER MONEY
+            ========================== -->
+
+            <div class="card">
+
+                <h2>
+                    Transfer Money
+                </h2>
+
+
+                <p class="muted">
+                    Send money to another citizen using
+                    their email, Citizen ID, or bank
+                    account number.
+                </p>
+
+
+                <label>
+
+                    Recipient
+
+                    <input
+                        id="transferRecipient"
+                        type="text"
+                        placeholder="Email, GOV-123456, or GB-123456789"
+                        maxlength="255"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Amount
+
+                    <input
+                        id="transferAmount"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="100.00"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Description
+
+                    <input
+                        id="transferDescription"
+                        type="text"
+                        placeholder="Bank transfer"
+                        maxlength="200"
+                    >
+
+                </label>
+
+
+                <button
+                    class="primary"
+                    id="transferBtn"
+                >
+                    Send Money
+                </button>
+
+            </div>
+
+
+
+            <!-- =========================
+                 TRANSACTIONS
+            ========================== -->
 
             <div class="card">
 
                 <h2>
                     Transaction History
                 </h2>
+
 
                 <div id="transactions">
 
@@ -492,9 +635,11 @@
                     IDENTIFICATION & PERMITS
                 </p>
 
+
                 <h1>
                     Licenses
                 </h1>
+
 
                 <p class="muted">
                     View and earn your government licenses.
@@ -531,22 +676,31 @@
                     LAW ENFORCEMENT
                 </p>
 
+
                 <h1>
                     Police Department
                 </h1>
 
+
                 <p>
-                    Search citizens and manage official police records.
+                    Search citizens and manage official
+                    police records.
                 </p>
 
             </div>
 
+
+
+            <!-- =========================
+                 POLICE SEARCH
+            ========================== -->
 
             <div class="card">
 
                 <h2>
                     Search Citizen
                 </h2>
+
 
                 <div class="inline">
 
@@ -555,6 +709,7 @@
                         type="number"
                         placeholder="Citizen database ID"
                     >
+
 
                     <button
                         class="primary"
@@ -565,8 +720,10 @@
 
                 </div>
 
+
                 <p class="muted">
-                    Enter the citizen's database ID to view their records.
+                    Enter the citizen's database ID
+                    to view their records.
                 </p>
 
             </div>
@@ -597,9 +754,11 @@
                     GOVERNMENT ADMINISTRATION
                 </p>
 
+
                 <h1>
                     Government Dashboard
                 </h1>
+
 
                 <p>
                     Manage citizens, roles, licenses,
@@ -610,7 +769,9 @@
 
 
 
-            <!-- SEARCH USERS -->
+            <!-- =========================
+                 SEARCH USERS
+            ========================== -->
 
             <div class="card">
 
@@ -618,12 +779,14 @@
                     Find Citizen
                 </h2>
 
+
                 <div class="inline">
 
                     <input
                         id="govSearch"
                         placeholder="Name, email or citizen ID"
                     >
+
 
                     <button
                         class="primary"
@@ -645,12 +808,62 @@
 
 
 
-            <!-- GOVERNMENT ACTIONS -->
+            <!-- =========================
+                 MONEY LEADERBOARD
+            ========================== -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <h2>
+                            Money Leaderboard
+                        </h2>
+
+
+                        <p class="muted">
+                            Citizens ranked by their
+                            current bank balance.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary"
+                        id="refreshLeaderboard"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+                <div id="moneyLeaderboard">
+
+                    <p class="muted">
+                        Loading leaderboard...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 GOVERNMENT ACTIONS
+            ========================== -->
 
             <div class="grid two">
 
 
-                <!-- BANK -->
+
+                <!-- =========================
+                     BANK
+                ========================== -->
 
                 <div class="card">
 
@@ -658,7 +871,9 @@
                         Government Bank Action
                     </h2>
 
+
                     <label>
+
                         User Database ID
 
                         <input
@@ -670,6 +885,7 @@
 
 
                     <label>
+
                         Amount
 
                         <input
@@ -683,6 +899,7 @@
 
 
                     <label>
+
                         Description
 
                         <input
@@ -704,7 +921,9 @@
 
 
 
-                <!-- LICENSE -->
+                <!-- =========================
+                     LICENSE
+                ========================== -->
 
                 <div class="card">
 
@@ -714,6 +933,7 @@
 
 
                     <label>
+
                         User Database ID
 
                         <input
@@ -725,6 +945,7 @@
 
 
                     <label>
+
                         License
 
                         <select id="licenseType">
@@ -733,13 +954,16 @@
                                 Driver's License
                             </option>
 
+
                             <option>
                                 Pilot License
                             </option>
 
+
                             <option>
                                 Boating License
                             </option>
+
 
                             <option>
                                 Business License
@@ -751,6 +975,7 @@
 
 
                     <label>
+
                         Status
 
                         <select id="licenseStatus">
@@ -758,6 +983,7 @@
                             <option value="active">
                                 Active
                             </option>
+
 
                             <option value="revoked">
                                 Revoked
@@ -781,7 +1007,9 @@
 
 
 
-            <!-- ROLE MANAGEMENT -->
+            <!-- =========================
+                 ROLE MANAGEMENT
+            ========================== -->
 
             <div class="card">
 
@@ -789,9 +1017,12 @@
                     Government Personnel
                 </h2>
 
+
                 <p class="muted">
-                    Assign or remove government and police roles.
+                    Assign or remove government and
+                    police roles.
                 </p>
+
 
                 <div class="inline">
 
@@ -808,9 +1039,11 @@
                             Citizen
                         </option>
 
+
                         <option value="police">
                             Police Officer
                         </option>
+
 
                         <option value="government">
                             Government
@@ -832,7 +1065,45 @@
 
 
 
-            <!-- AUDIT LOG -->
+            <!-- =========================
+                 LICENSE REQUESTS
+            ========================== -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <h2>
+                            License Requests
+                        </h2>
+
+
+                        <p class="muted">
+                            Review citizen license requests.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="licenseRequests">
+
+                    <p class="muted">
+                        Loading license requests...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 AUDIT LOG
+            ========================== -->
 
             <div class="card">
 
@@ -840,9 +1111,12 @@
                     Government Audit Log
                 </h2>
 
+
                 <p class="muted">
-                    Recent government and police administrative actions.
+                    Recent government and police
+                    administrative actions.
                 </p>
+
 
                 <div id="audit">
 
@@ -859,10 +1133,14 @@
 </main>
 
 
-<!-- JavaScript -->
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
 
 <script src="app.js"></script>
-```
+
 
 </body>
+
 </html>
