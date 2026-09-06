@@ -1,7 +1,12 @@
-```css
-/* =========================
+/* ============================================================
+   GOVERNMENT PORTAL
+   style.css
+============================================================ */
+
+
+/* ============================================================
    RESET
-========================= */
+============================================================ */
 
 * {
     box-sizing: border-box;
@@ -9,25 +14,40 @@
     padding: 0;
 }
 
+
 :root {
+
     --navy: #071a33;
+
     --navy-2: #0d2748;
+
     --blue: #1769aa;
+
     --blue-light: #2f80c9;
 
     --background: #eef2f6;
+
     --card: #ffffff;
 
     --text: #142033;
+
     --muted: #667085;
+
     --border: #d9e0e8;
 
     --success: #198754;
+
     --danger: #c0392b;
+
     --warning: #d68910;
 
     --shadow:
-        0 10px 30px rgba(7, 26, 51, 0.08);
+        0 10px 30px rgba(
+            7,
+            26,
+            51,
+            0.08
+        );
 
     font-family:
         Inter,
@@ -38,772 +58,1612 @@
         sans-serif;
 }
 
+
 body {
-    background: var(--background);
-    color: var(--text);
-    min-height: 100vh;
+
+    background:
+        var(--background);
+
+    color:
+        var(--text);
+
+    min-height:
+        100vh;
 }
 
 
-/* =========================
+/* ============================================================
    GENERAL
-========================= */
+============================================================ */
 
 .hidden {
     display: none !important;
 }
 
+
 .muted {
-    color: var(--muted);
+    color:
+        var(--muted);
 }
+
 
 .message {
-    margin-top: 15px;
-    min-height: 20px;
+
+    margin-top:
+        15px;
+
+    min-height:
+        20px;
 }
+
 
 .eyebrow {
-    color: var(--blue);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
+
+    color:
+        var(--blue);
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.5px;
+
+    margin-bottom:
+        8px;
+
+    text-transform:
+        uppercase;
 }
+
 
 h1 {
-    font-size: 32px;
-    line-height: 1.2;
+
+    font-size:
+        32px;
+
+    line-height:
+        1.2;
 }
+
 
 h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
+
+    font-size:
+        20px;
+
+    margin-bottom:
+        15px;
 }
+
 
 p {
-    line-height: 1.6;
+
+    line-height:
+        1.6;
 }
 
 
-/* =========================
-   TOPBAR
-========================= */
+/* ============================================================
+   NAVIGATION
+============================================================ */
 
 .topbar {
-    align-items: center;
-    background: var(--navy);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    min-height: 72px;
-    padding: 12px 30px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+
+    align-items:
+        center;
+
+    background:
+        var(--navy);
+
+    color:
+        white;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    min-height:
+        72px;
+
+    padding:
+        12px 30px;
+
+    position:
+        sticky;
+
+    top:
+        0;
+
+    z-index:
+        100;
 }
+
 
 .brand {
-    align-items: center;
-    display: flex;
-    gap: 12px;
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    gap:
+        12px;
 }
+
 
 .seal {
-    align-items: center;
-    background: white;
-    border: 3px solid #b9c8d9;
-    border-radius: 50%;
-    color: var(--navy);
-    display: flex;
-    font-size: 18px;
-    height: 44px;
-    justify-content: center;
-    width: 44px;
+
+    align-items:
+        center;
+
+    background:
+        white;
+
+    border:
+        3px solid #b9c8d9;
+
+    border-radius:
+        50%;
+
+    color:
+        var(--navy);
+
+    display:
+        flex;
+
+    font-size:
+        18px;
+
+    height:
+        44px;
+
+    justify-content:
+        center;
+
+    width:
+        44px;
 }
+
 
 .brand-text {
-    display: flex;
-    flex-direction: column;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
 }
+
 
 .brand-text strong {
-    font-size: 17px;
+
+    font-size:
+        17px;
 }
+
 
 .brand-text span {
-    color: #b9c8d9;
-    font-size: 11px;
-    margin-top: 2px;
+
+    color:
+        #b9c8d9;
+
+    font-size:
+        11px;
 }
+
 
 nav {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        6px;
 }
+
 
 nav button {
-    background: transparent;
-    border: 0;
-    border-radius: 7px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 9px 12px;
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    border-radius:
+        7px;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    font-size:
+        14px;
+
+    padding:
+        9px 12px;
 }
+
 
 nav button:hover {
-    background: rgba(255, 255, 255, 0.1);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.1
+        );
 }
+
 
 nav button.danger:hover {
-    background: rgba(192, 57, 43, 0.3);
+
+    background:
+        rgba(
+            192,
+            57,
+            43,
+            0.3
+        );
 }
 
 
-/* =========================
+/* ============================================================
    MAIN
-========================= */
+============================================================ */
 
 main {
-    margin: 0 auto;
-    max-width: 1250px;
-    padding: 35px 20px 60px;
+
+    margin:
+        0 auto;
+
+    max-width:
+        1250px;
+
+    padding:
+        35px 20px 60px;
 }
 
 
-/* =========================
+/* ============================================================
    AUTH
-========================= */
+============================================================ */
 
 .auth-wrap {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    min-height: calc(100vh - 150px);
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    min-height:
+        calc(
+            100vh - 150px
+        );
 }
+
 
 .auth-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    box-shadow: var(--shadow);
-    max-width: 460px;
-    padding: 38px;
-    width: 100%;
+
+    background:
+        var(--card);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        var(--shadow);
+
+    max-width:
+        460px;
+
+    padding:
+        38px;
+
+    width:
+        100%;
 }
+
 
 .auth-card h1 {
-    margin-bottom: 8px;
-    text-align: center;
+
+    margin-bottom:
+        8px;
+
+    text-align:
+        center;
 }
+
 
 .auth-card > p {
-    text-align: center;
+
+    text-align:
+        center;
 }
+
 
 .big-seal {
-    align-items: center;
-    background: var(--navy);
-    border: 5px solid #cbd5df;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    font-size: 32px;
-    height: 82px;
-    justify-content: center;
-    margin: 0 auto 20px;
-    width: 82px;
+
+    align-items:
+        center;
+
+    background:
+        var(--navy);
+
+    border:
+        5px solid #cbd5df;
+
+    border-radius:
+        50%;
+
+    color:
+        white;
+
+    display:
+        flex;
+
+    font-size:
+        32px;
+
+    height:
+        82px;
+
+    justify-content:
+        center;
+
+    margin:
+        0 auto 20px;
+
+    width:
+        82px;
 }
+
 
 .tabs {
-    background: #edf1f5;
-    border-radius: 9px;
-    display: flex;
-    gap: 4px;
-    margin: 25px 0;
-    padding: 4px;
+
+    background:
+        #edf1f5;
+
+    border-radius:
+        9px;
+
+    display:
+        flex;
+
+    gap:
+        4px;
+
+    margin:
+        25px 0;
+
+    padding:
+        4px;
 }
+
 
 .tabs button {
-    background: transparent;
-    border: 0;
-    border-radius: 7px;
-    color: var(--muted);
-    cursor: pointer;
-    flex: 1;
-    font-weight: 700;
-    padding: 11px;
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    border-radius:
+        7px;
+
+    color:
+        var(--muted);
+
+    cursor:
+        pointer;
+
+    flex:
+        1;
+
+    font-weight:
+        700;
+
+    padding:
+        11px;
 }
+
 
 .tabs button.active {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    color: var(--navy);
+
+    background:
+        white;
+
+    box-shadow:
+        0 2px 8px
+        rgba(
+            0,
+            0,
+            0,
+            0.08
+        );
+
+    color:
+        var(--navy);
 }
 
 
-/* =========================
+/* ============================================================
    FORMS
-========================= */
+============================================================ */
 
 label {
-    color: var(--text);
-    display: block;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 16px;
+
+    color:
+        var(--text);
+
+    display:
+        block;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    margin-bottom:
+        16px;
 }
+
 
 input,
 select {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    display: block;
-    font-family: inherit;
-    font-size: 14px;
-    margin-top: 7px;
-    outline: none;
-    padding: 12px 13px;
-    width: 100%;
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        8px;
+
+    color:
+        var(--text);
+
+    display:
+        block;
+
+    font-family:
+        inherit;
+
+    font-size:
+        14px;
+
+    margin-top:
+        7px;
+
+    outline:
+        none;
+
+    padding:
+        12px 13px;
+
+    width:
+        100%;
 }
+
 
 input:focus,
 select:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.12);
+
+    border-color:
+        var(--blue);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            23,
+            105,
+            170,
+            0.12
+        );
 }
 
 
-/* =========================
+/* ============================================================
    BUTTONS
-========================= */
+============================================================ */
 
 button {
-    font-family: inherit;
+
+    font-family:
+        inherit;
 }
+
 
 .primary {
-    background: var(--blue);
-    border: 0;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    font-weight: 700;
-    padding: 12px 17px;
+
+    background:
+        var(--blue);
+
+    border:
+        0;
+
+    border-radius:
+        8px;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        700;
+
+    padding:
+        12px 17px;
 }
+
 
 .primary:hover {
-    background: var(--blue-light);
+
+    background:
+        var(--blue-light);
 }
+
 
 .danger {
-    color: #ffb4ad !important;
+
+    color:
+        #ffb4ad !important;
 }
+
 
 button:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
+
+    cursor:
+        not-allowed;
+
+    opacity:
+        0.55;
 }
 
-.card-btn {
-    text-align: left;
-}
 
-
-/* =========================
+/* ============================================================
    CARDS
-========================= */
+============================================================ */
 
 .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    padding: 22px;
+
+    background:
+        var(--card);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        var(--shadow);
+
+    margin-bottom:
+        20px;
+
+    padding:
+        22px;
 }
 
+
 .card-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    cursor: pointer;
-    padding: 22px;
+
+    background:
+        var(--card);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    cursor:
+        pointer;
+
+    padding:
+        22px;
+
+    text-align:
+        left;
+
     transition:
         transform 0.15s ease,
         box-shadow 0.15s ease;
 }
 
+
 .card-btn:hover {
-    box-shadow: var(--shadow);
-    transform: translateY(-2px);
+
+    box-shadow:
+        var(--shadow);
+
+    transform:
+        translateY(-2px);
 }
+
 
 .service {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
 }
+
 
 .service b {
-    font-size: 17px;
+
+    font-size:
+        17px;
 }
+
 
 .service span {
-    color: var(--muted);
-    line-height: 1.5;
+
+    color:
+        var(--muted);
+
+    line-height:
+        1.5;
 }
 
 
-/* =========================
+/* ============================================================
    GRIDS
-========================= */
+============================================================ */
 
 .grid {
-    display: grid;
-    gap: 20px;
-    margin-bottom: 20px;
+
+    display:
+        grid;
+
+    gap:
+        20px;
+
+    margin-bottom:
+        20px;
 }
+
 
 .grid.two {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
 }
+
 
 .grid.three {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
 }
+
 
 .grid.four {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
 }
 
 
-/* =========================
-   HOME
-========================= */
+/* ============================================================
+   HERO
+============================================================ */
 
 .hero {
-    align-items: center;
+
+    align-items:
+        center;
+
     background:
         linear-gradient(
             135deg,
             var(--navy),
             var(--navy-2)
         );
-    border-radius: 18px;
-    box-shadow: var(--shadow);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-    padding: 35px;
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        var(--shadow);
+
+    color:
+        white;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    margin-bottom:
+        25px;
+
+    padding:
+        35px;
 }
+
 
 .hero .eyebrow {
-    color: #9cc7eb;
+
+    color:
+        #9cc7eb;
 }
+
 
 .hero h1 {
-    margin-bottom: 10px;
+
+    margin-bottom:
+        10px;
 }
+
 
 .hero p:not(.eyebrow) {
-    color: #d5e1ed;
-    max-width: 700px;
+
+    color:
+        #d5e1ed;
+
+    max-width:
+        700px;
 }
+
 
 .citizen-id-box {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    min-width: 190px;
-    padding: 17px;
-    text-align: center;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.1
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.15
+        );
+
+    border-radius:
+        12px;
+
+    min-width:
+        190px;
+
+    padding:
+        17px;
+
+    text-align:
+        center;
 }
+
 
 .citizen-id-box small {
-    color: #b9c8d9;
-    display: block;
-    margin-bottom: 5px;
+
+    color:
+        #b9c8d9;
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
 }
+
 
 .citizen-id-box strong {
-    font-size: 22px;
+
+    font-size:
+        22px;
 }
 
 
-/* =========================
-   STAT CARDS
-========================= */
+/* ============================================================
+   STATISTICS
+============================================================ */
 
 .stat {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
 }
+
 
 .stat span {
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
 }
+
 
 .stat strong {
-    color: var(--navy);
-    font-size: 24px;
+
+    color:
+        var(--navy);
+
+    font-size:
+        24px;
 }
 
 
-/* =========================
-   PAGE TITLES
-========================= */
+/* ============================================================
+   PAGE TITLE
+============================================================ */
 
 .page-title {
-    margin-bottom: 25px;
+
+    margin-bottom:
+        25px;
 }
+
 
 .page-title h1 {
-    margin-bottom: 8px;
+
+    margin-bottom:
+        8px;
 }
 
 
-/* =========================
+/* ============================================================
    BANK
-========================= */
+============================================================ */
 
 .bank-card {
+
     background:
         linear-gradient(
             135deg,
             var(--navy),
             #12365f
         );
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    color: white;
-    margin-bottom: 20px;
-    max-width: 650px;
-    padding: 30px;
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        var(--shadow);
+
+    color:
+        white;
+
+    margin-bottom:
+        20px;
+
+    max-width:
+        650px;
+
+    padding:
+        30px;
 }
+
 
 .bank-card > span {
-    color: #b9c8d9;
-    display: block;
-    font-size: 14px;
+
+    color:
+        #b9c8d9;
+
+    display:
+        block;
+
+    font-size:
+        14px;
 }
+
 
 .bank-card > strong {
-    display: block;
-    font-size: 38px;
-    margin: 8px 0 18px;
+
+    display:
+        block;
+
+    font-size:
+        38px;
+
+    margin:
+        8px 0 18px;
 }
+
 
 .bank-card > small {
-    color: #d4dfeb;
+
+    color:
+        #d4dfeb;
 }
+
 
 .bank-card b {
-    color: white;
+
+    color:
+        white;
 }
 
 
-/* =========================
+/* ============================================================
    INLINE
-========================= */
+============================================================ */
 
 .inline {
-    align-items: end;
-    display: flex;
-    gap: 10px;
+
+    align-items:
+        end;
+
+    display:
+        flex;
+
+    gap:
+        10px;
 }
+
 
 .inline input,
 .inline select {
-    margin-top: 0;
+
+    margin-top:
+        0;
 }
+
 
 .inline > * {
-    flex: 1;
+
+    flex:
+        1;
 }
+
 
 .inline > button {
-    flex: 0 0 auto;
+
+    flex:
+        0 0 auto;
 }
 
 
-/* =========================
-   LICENSES
-========================= */
+/* ============================================================
+   LICENSE
+============================================================ */
 
 .license-card {
-    align-items: flex-start;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    padding: 22px;
+
+    align-items:
+        flex-start;
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        var(--shadow);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    padding:
+        22px;
 }
+
 
 .license-info h3 {
-    margin-bottom: 6px;
+
+    margin-bottom:
+        6px;
 }
+
 
 .license-info p {
-    color: var(--muted);
-    font-size: 13px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
 }
+
 
 .license-status {
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
-    padding: 6px 10px;
+
+    border-radius:
+        999px;
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    padding:
+        6px 10px;
 }
+
 
 .license-status.active {
-    background: #e5f5ec;
-    color: var(--success);
+
+    background:
+        #e5f5ec;
+
+    color:
+        var(--success);
 }
+
 
 .license-status.revoked {
-    background: #fae7e5;
-    color: var(--danger);
+
+    background:
+        #fae7e5;
+
+    color:
+        var(--danger);
 }
 
-.license-status.unlicensed {
-    background: #edf1f5;
-    color: var(--muted);
+
+.license-status.inactive {
+
+    background:
+        #edf1f5;
+
+    color:
+        var(--muted);
 }
+
 
 .license-card button {
-    margin-top: 15px;
+
+    margin-top:
+        15px;
 }
 
 
-/* =========================
-   RECORDS
-========================= */
-
-.record {
-    border-bottom: 1px solid var(--border);
-    padding: 15px 0;
-}
-
-.record:last-child {
-    border-bottom: 0;
-}
-
-.record-header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.record h3 {
-    font-size: 15px;
-}
-
-.record .points {
-    background: #fae7e5;
-    border-radius: 999px;
-    color: var(--danger);
-    font-size: 12px;
-    font-weight: 800;
-    padding: 5px 9px;
-}
-
-.record p {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 5px;
-}
-
-
-/* =========================
-   USER SEARCH
-========================= */
-
-.user-row {
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 15px 0;
-}
-
-.user-row:last-child {
-    border-bottom: 0;
-}
-
-.user-main strong {
-    display: block;
-}
-
-.user-main span {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.role-badge {
-    background: #edf3f8;
-    border-radius: 999px;
-    color: var(--navy);
-    font-size: 11px;
-    font-weight: 800;
-    padding: 5px 9px;
-    text-transform: uppercase;
-}
-
-
-/* =========================
+/* ============================================================
    TRANSACTIONS
-========================= */
+============================================================ */
 
 .transaction {
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    padding: 14px 0;
+
+    align-items:
+        center;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    padding:
+        14px 0;
 }
+
 
 .transaction:last-child {
-    border-bottom: 0;
+
+    border-bottom:
+        0;
 }
+
 
 .transaction-info strong {
-    display: block;
-    font-size: 14px;
+
+    display:
+        block;
+
+    font-size:
+        14px;
 }
+
 
 .transaction-info span {
-    color: var(--muted);
-    font-size: 12px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
 }
+
 
 .transaction-amount {
-    font-weight: 800;
+
+    font-weight:
+        800;
 }
+
 
 .transaction-amount.positive {
-    color: var(--success);
+
+    color:
+        var(--success);
 }
+
 
 .transaction-amount.negative {
-    color: var(--danger);
+
+    color:
+        var(--danger);
 }
 
 
-/* =========================
-   AUDIT LOG
-========================= */
+/* ============================================================
+   POLICE RECORDS
+============================================================ */
+
+.record {
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding:
+        15px 0;
+}
+
+
+.record:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.record-header {
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+}
+
+
+.record h3 {
+
+    font-size:
+        15px;
+}
+
+
+.record .points {
+
+    background:
+        #fae7e5;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--danger);
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    padding:
+        5px 9px;
+}
+
+
+.record p {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    margin-top:
+        5px;
+}
+
+
+/* ============================================================
+   USERS
+============================================================ */
+
+.user-row {
+
+    align-items:
+        center;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    padding:
+        15px 0;
+}
+
+
+.user-row:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.user-main strong {
+
+    display:
+        block;
+}
+
+
+.user-main span {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+}
+
+
+.role-badge {
+
+    background:
+        #edf3f8;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--navy);
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    padding:
+        5px 9px;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* ============================================================
+   REQUESTS
+============================================================ */
+
+.request {
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding:
+        16px 0;
+}
+
+
+.request:last-child {
+
+    border-bottom:
+        0;
+}
+
+
+.request-header {
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+}
+
+
+.request-actions {
+
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    margin-top:
+        10px;
+}
+
+
+.request-actions button {
+
+    padding:
+        8px 12px;
+}
+
+
+/* ============================================================
+   AUDIT
+============================================================ */
 
 .audit-entry {
-    border-bottom: 1px solid var(--border);
-    padding: 13px 0;
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding:
+        13px 0;
 }
+
 
 .audit-entry:last-child {
-    border-bottom: 0;
+
+    border-bottom:
+        0;
 }
+
 
 .audit-entry strong {
-    font-size: 14px;
+
+    font-size:
+        14px;
 }
+
 
 .audit-entry p {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 3px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    margin-top:
+        3px;
 }
+
 
 .audit-entry time {
-    color: #8993a1;
-    display: block;
-    font-size: 11px;
-    margin-top: 4px;
+
+    color:
+        #8993a1;
+
+    display:
+        block;
+
+    font-size:
+        11px;
+
+    margin-top:
+        4px;
 }
 
 
-/* =========================
+/* ============================================================
    TOAST
-========================= */
+============================================================ */
 
 #toast {
-    background: var(--navy);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    color: white;
-    display: none;
-    font-size: 14px;
-    font-weight: 600;
-    left: 50%;
-    max-width: 90%;
-    padding: 12px 18px;
-    position: fixed;
-    top: 88px;
-    transform: translateX(-50%);
-    z-index: 999;
+
+    background:
+        var(--navy);
+
+    border-radius:
+        8px;
+
+    box-shadow:
+        var(--shadow);
+
+    color:
+        white;
+
+    display:
+        none;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    left:
+        50%;
+
+    max-width:
+        90%;
+
+    padding:
+        12px 18px;
+
+    position:
+        fixed;
+
+    top:
+        88px;
+
+    transform:
+        translateX(-50%);
+
+    z-index:
+        999;
 }
+
 
 #toast.show {
-    display: block;
+
+    display:
+        block;
 }
+
 
 #toast.success {
-    background: var(--success);
+
+    background:
+        var(--success);
 }
+
 
 #toast.error {
-    background: var(--danger);
+
+    background:
+        var(--danger);
 }
 
 
-/* =========================
+/* ============================================================
    RESPONSIVE
-========================= */
+============================================================ */
 
 @media (max-width: 900px) {
 
     .grid.four {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
     }
+
 
     .grid.three {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
     }
+
 
     .hero {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 25px;
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            25px;
     }
+
 
     .citizen-id-box {
-        width: 100%;
+
+        width:
+            100%;
     }
+
 
     .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 12px;
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            12px;
     }
+
 
     nav {
-        width: 100%;
+
+        width:
+            100%;
     }
 
+
     nav button {
-        flex: 1;
+
+        flex:
+            1;
     }
 }
 
@@ -811,48 +1671,93 @@ button:disabled {
 @media (max-width: 650px) {
 
     main {
-        padding: 20px 12px 40px;
+
+        padding:
+            20px 12px 40px;
     }
+
 
     .auth-card {
-        padding: 25px 20px;
+
+        padding:
+            25px 20px;
     }
 
+
     h1 {
-        font-size: 27px;
+
+        font-size:
+            27px;
     }
+
 
     .grid.two,
     .grid.four {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
     }
+
 
     .hero {
-        padding: 25px 20px;
+
+        padding:
+            25px 20px;
     }
+
 
     .bank-card > strong {
-        font-size: 30px;
+
+        font-size:
+            30px;
     }
+
 
     .inline {
-        align-items: stretch;
-        flex-direction: column;
+
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
     }
 
+
     .inline > button {
-        width: 100%;
+
+        width:
+            100%;
     }
+
 
     .user-row,
     .license-card {
-        align-items: flex-start;
-        flex-direction: column;
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
     }
 
+
     .transaction {
-        align-items: flex-start;
-        gap: 10px;
+
+        align-items:
+            flex-start;
+
+        gap:
+            10px;
     }
+
+
+    .request-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
 }
-```
