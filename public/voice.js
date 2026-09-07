@@ -32,7 +32,7 @@ const pendingIce =
 
 function voiceToken() {
     return localStorage.getItem(
-        "groupCityToken"
+        "government_token"
     );
 }
 
