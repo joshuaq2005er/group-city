@@ -1,6 +1,6 @@
 /* ============================================================
-   GOVERNMENT PORTAL
-   style.css
+   GROUP CITY GOVERNMENT PORTAL
+   public/style.css
 ============================================================ */
 
 
@@ -18,11 +18,9 @@
 :root {
 
     --navy: #071a33;
-
     --navy-2: #0d2748;
 
     --blue: #1769aa;
-
     --blue-light: #2f80c9;
 
     --background: #eef2f6;
@@ -59,6 +57,11 @@
 }
 
 
+html {
+    scroll-behavior: smooth;
+}
+
+
 body {
 
     background:
@@ -69,6 +72,7 @@ body {
 
     min-height:
         100vh;
+
 }
 
 
@@ -94,6 +98,7 @@ body {
 
     min-height:
         20px;
+
 }
 
 
@@ -116,6 +121,7 @@ body {
 
     text-transform:
         uppercase;
+
 }
 
 
@@ -126,6 +132,7 @@ h1 {
 
     line-height:
         1.2;
+
 }
 
 
@@ -136,6 +143,15 @@ h2 {
 
     margin-bottom:
         15px;
+
+}
+
+
+h3 {
+
+    font-size:
+        16px;
+
 }
 
 
@@ -143,6 +159,26 @@ p {
 
     line-height:
         1.6;
+
+}
+
+
+a {
+
+    color:
+        var(--blue);
+
+    text-decoration:
+        none;
+
+}
+
+
+a:hover {
+
+    text-decoration:
+        underline;
+
 }
 
 
@@ -150,7 +186,7 @@ p {
    NAVIGATION
 ============================================================ */
 
-.topbar {
+#nav {
 
     align-items:
         center;
@@ -181,84 +217,47 @@ p {
 
     z-index:
         100;
+
 }
 
 
-.brand {
-
-    align-items:
-        center;
-
-    display:
-        flex;
-
-    gap:
-        12px;
-}
-
-
-.seal {
-
-    align-items:
-        center;
-
-    background:
-        white;
-
-    border:
-        3px solid #b9c8d9;
-
-    border-radius:
-        50%;
-
-    color:
-        var(--navy);
-
-    display:
-        flex;
-
-    font-size:
-        18px;
-
-    height:
-        44px;
-
-    justify-content:
-        center;
-
-    width:
-        44px;
-}
-
-
-.brand-text {
+.nav-brand {
 
     display:
         flex;
 
     flex-direction:
         column;
+
+    gap:
+        2px;
+
 }
 
 
-.brand-text strong {
+.nav-brand strong {
 
     font-size:
         17px;
+
+    letter-spacing:
+        0.5px;
+
 }
 
 
-.brand-text span {
+.nav-brand span {
 
     color:
         #b9c8d9;
 
     font-size:
         11px;
+
 }
 
 
-nav {
+.nav-links {
 
     align-items:
         center;
@@ -271,10 +270,11 @@ nav {
 
     gap:
         6px;
+
 }
 
 
-nav button {
+.nav-links button {
 
     background:
         transparent;
@@ -296,10 +296,11 @@ nav button {
 
     padding:
         9px 12px;
+
 }
 
 
-nav button:hover {
+.nav-links button:hover {
 
     background:
         rgba(
@@ -308,10 +309,22 @@ nav button:hover {
             255,
             0.1
         );
+
 }
 
 
-nav button.danger:hover {
+.nav-links .danger-btn {
+
+    background:
+        transparent;
+
+    color:
+        #ffb4ad;
+
+}
+
+
+.nav-links .danger-btn:hover {
 
     background:
         rgba(
@@ -320,31 +333,15 @@ nav button.danger:hover {
             43,
             0.3
         );
+
 }
 
 
 /* ============================================================
-   MAIN
+   AUTH PAGE
 ============================================================ */
 
-main {
-
-    margin:
-        0 auto;
-
-    max-width:
-        1250px;
-
-    padding:
-        35px 20px 60px;
-}
-
-
-/* ============================================================
-   AUTH
-============================================================ */
-
-.auth-wrap {
+#authPage {
 
     align-items:
         center;
@@ -356,16 +353,18 @@ main {
         center;
 
     min-height:
-        calc(
-            100vh - 150px
-        );
+        100vh;
+
+    padding:
+        30px 20px;
+
 }
 
 
-.auth-card {
+.auth-wrapper {
 
     background:
-        var(--card);
+        white;
 
     border:
         1px solid var(--border);
@@ -376,47 +375,32 @@ main {
     box-shadow:
         var(--shadow);
 
-    max-width:
-        460px;
+    display:
+        grid;
 
-    padding:
-        38px;
+    grid-template-columns:
+        1.2fr 0.8fr;
+
+    max-width:
+        1000px;
+
+    overflow:
+        hidden;
 
     width:
         100%;
+
 }
 
 
-.auth-card h1 {
-
-    margin-bottom:
-        8px;
-
-    text-align:
-        center;
-}
-
-
-.auth-card > p {
-
-    text-align:
-        center;
-}
-
-
-.big-seal {
-
-    align-items:
-        center;
+.auth-brand {
 
     background:
-        var(--navy);
-
-    border:
-        5px solid #cbd5df;
-
-    border-radius:
-        50%;
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--navy-2)
+        );
 
     color:
         white;
@@ -424,24 +408,86 @@ main {
     display:
         flex;
 
-    font-size:
-        32px;
-
-    height:
-        82px;
+    flex-direction:
+        column;
 
     justify-content:
         center;
 
-    margin:
-        0 auto 20px;
+    min-height:
+        520px;
 
-    width:
-        82px;
+    padding:
+        55px;
+
 }
 
 
-.tabs {
+.auth-brand .eyebrow {
+
+    color:
+        #9cc7eb;
+
+}
+
+
+.auth-brand h1 {
+
+    font-size:
+        48px;
+
+    margin-bottom:
+        4px;
+
+}
+
+
+.auth-brand h2 {
+
+    color:
+        #d5e1ed;
+
+    font-size:
+        22px;
+
+    margin-bottom:
+        20px;
+
+}
+
+
+.auth-brand p:last-child {
+
+    color:
+        #d5e1ed;
+
+    max-width:
+        520px;
+
+}
+
+
+.auth-card {
+
+    background:
+        var(--card);
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    padding:
+        40px;
+
+}
+
+
+.auth-tabs {
 
     background:
         #edf1f5;
@@ -455,15 +501,16 @@ main {
     gap:
         4px;
 
-    margin:
-        25px 0;
+    margin-bottom:
+        25px;
 
     padding:
         4px;
+
 }
 
 
-.tabs button {
+.auth-tabs button {
 
     background:
         transparent;
@@ -488,10 +535,11 @@ main {
 
     padding:
         11px;
+
 }
 
 
-.tabs button.active {
+.auth-tabs button.active {
 
     background:
         white;
@@ -507,6 +555,33 @@ main {
 
     color:
         var(--navy);
+
+}
+
+
+/* ============================================================
+   APPLICATION
+============================================================ */
+
+#appPage {
+
+    margin:
+        0 auto;
+
+    max-width:
+        1250px;
+
+    padding:
+        35px 20px 60px;
+
+}
+
+
+.page {
+
+    width:
+        100%;
+
 }
 
 
@@ -530,11 +605,13 @@ label {
 
     margin-bottom:
         16px;
+
 }
 
 
 input,
-select {
+select,
+textarea {
 
     background:
         white;
@@ -568,11 +645,24 @@ select {
 
     width:
         100%;
+
+}
+
+
+textarea {
+
+    min-height:
+        110px;
+
+    resize:
+        vertical;
+
 }
 
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
 
     border-color:
         var(--blue);
@@ -585,6 +675,7 @@ select:focus {
             170,
             0.12
         );
+
 }
 
 
@@ -596,6 +687,7 @@ button {
 
     font-family:
         inherit;
+
 }
 
 
@@ -621,6 +713,7 @@ button {
 
     padding:
         12px 17px;
+
 }
 
 
@@ -628,13 +721,86 @@ button {
 
     background:
         var(--blue-light);
+
 }
 
 
-.danger {
+.secondary {
+
+    background:
+        #edf3f8;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        8px;
 
     color:
-        #ffb4ad !important;
+        var(--navy);
+
+    cursor:
+        pointer;
+
+    font-weight:
+        700;
+
+    padding:
+        11px 16px;
+
+}
+
+
+.secondary:hover {
+
+    background:
+        #e1e8ef;
+
+}
+
+
+.danger-btn {
+
+    background:
+        var(--danger);
+
+    border:
+        0;
+
+    border-radius:
+        8px;
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        700;
+
+    padding:
+        11px 16px;
+
+}
+
+
+.danger-btn:hover {
+
+    background:
+        #a93226;
+
+}
+
+
+.small-btn {
+
+    font-size:
+        12px;
+
+    padding:
+        7px 10px;
+
 }
 
 
@@ -645,6 +811,7 @@ button:disabled {
 
     opacity:
         0.55;
+
 }
 
 
@@ -671,6 +838,7 @@ button:disabled {
 
     padding:
         22px;
+
 }
 
 
@@ -697,6 +865,7 @@ button:disabled {
     transition:
         transform 0.15s ease,
         box-shadow 0.15s ease;
+
 }
 
 
@@ -707,6 +876,7 @@ button:disabled {
 
     transform:
         translateY(-2px);
+
 }
 
 
@@ -720,6 +890,7 @@ button:disabled {
 
     gap:
         8px;
+
 }
 
 
@@ -727,6 +898,7 @@ button:disabled {
 
     font-size:
         17px;
+
 }
 
 
@@ -737,6 +909,22 @@ button:disabled {
 
     line-height:
         1.5;
+
+}
+
+
+.highlight-card {
+
+    border:
+        1px solid #b9d3eb;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f4f9fd
+        );
+
 }
 
 
@@ -754,6 +942,7 @@ button:disabled {
 
     margin-bottom:
         20px;
+
 }
 
 
@@ -767,6 +956,7 @@ button:disabled {
                 1fr
             )
         );
+
 }
 
 
@@ -780,6 +970,7 @@ button:disabled {
                 1fr
             )
         );
+
 }
 
 
@@ -793,6 +984,7 @@ button:disabled {
                 1fr
             )
         );
+
 }
 
 
@@ -832,6 +1024,7 @@ button:disabled {
 
     padding:
         35px;
+
 }
 
 
@@ -839,6 +1032,7 @@ button:disabled {
 
     color:
         #9cc7eb;
+
 }
 
 
@@ -846,6 +1040,7 @@ button:disabled {
 
     margin-bottom:
         10px;
+
 }
 
 
@@ -856,59 +1051,7 @@ button:disabled {
 
     max-width:
         700px;
-}
 
-
-.citizen-id-box {
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.1
-        );
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.15
-        );
-
-    border-radius:
-        12px;
-
-    min-width:
-        190px;
-
-    padding:
-        17px;
-
-    text-align:
-        center;
-}
-
-
-.citizen-id-box small {
-
-    color:
-        #b9c8d9;
-
-    display:
-        block;
-
-    margin-bottom:
-        5px;
-}
-
-
-.citizen-id-box strong {
-
-    font-size:
-        22px;
 }
 
 
@@ -926,6 +1069,7 @@ button:disabled {
 
     gap:
         7px;
+
 }
 
 
@@ -939,6 +1083,7 @@ button:disabled {
 
     font-weight:
         600;
+
 }
 
 
@@ -949,6 +1094,7 @@ button:disabled {
 
     font-size:
         24px;
+
 }
 
 
@@ -960,6 +1106,7 @@ button:disabled {
 
     margin-bottom:
         25px;
+
 }
 
 
@@ -967,6 +1114,38 @@ button:disabled {
 
     margin-bottom:
         8px;
+
+}
+
+
+.page-title > p:last-child {
+
+    color:
+        var(--muted);
+
+    max-width:
+        850px;
+
+}
+
+
+/* ============================================================
+   SECTION TITLE
+============================================================ */
+
+.section-title {
+
+    margin:
+        30px 0 18px;
+
+}
+
+
+.section-title h2 {
+
+    margin-bottom:
+        0;
+
 }
 
 
@@ -1000,6 +1179,7 @@ button:disabled {
 
     padding:
         30px;
+
 }
 
 
@@ -1013,6 +1193,7 @@ button:disabled {
 
     font-size:
         14px;
+
 }
 
 
@@ -1026,6 +1207,7 @@ button:disabled {
 
     margin:
         8px 0 18px;
+
 }
 
 
@@ -1033,6 +1215,7 @@ button:disabled {
 
     color:
         #d4dfeb;
+
 }
 
 
@@ -1040,6 +1223,7 @@ button:disabled {
 
     color:
         white;
+
 }
 
 
@@ -1057,6 +1241,7 @@ button:disabled {
 
     gap:
         10px;
+
 }
 
 
@@ -1065,6 +1250,7 @@ button:disabled {
 
     margin-top:
         0;
+
 }
 
 
@@ -1072,6 +1258,7 @@ button:disabled {
 
     flex:
         1;
+
 }
 
 
@@ -1079,12 +1266,33 @@ button:disabled {
 
     flex:
         0 0 auto;
+
 }
 
 
 /* ============================================================
-   LICENSE
+   LICENSES
 ============================================================ */
+
+#licenseGrid {
+
+    display:
+        grid;
+
+    gap:
+        20px;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+}
+
 
 .license-card {
 
@@ -1111,6 +1319,7 @@ button:disabled {
 
     padding:
         22px;
+
 }
 
 
@@ -1118,6 +1327,7 @@ button:disabled {
 
     margin-bottom:
         6px;
+
 }
 
 
@@ -1128,6 +1338,7 @@ button:disabled {
 
     font-size:
         13px;
+
 }
 
 
@@ -1144,6 +1355,7 @@ button:disabled {
 
     padding:
         6px 10px;
+
 }
 
 
@@ -1154,6 +1366,7 @@ button:disabled {
 
     color:
         var(--success);
+
 }
 
 
@@ -1164,6 +1377,7 @@ button:disabled {
 
     color:
         var(--danger);
+
 }
 
 
@@ -1174,6 +1388,7 @@ button:disabled {
 
     color:
         var(--muted);
+
 }
 
 
@@ -1181,6 +1396,7 @@ button:disabled {
 
     margin-top:
         15px;
+
 }
 
 
@@ -1199,11 +1415,15 @@ button:disabled {
     display:
         flex;
 
+    gap:
+        15px;
+
     justify-content:
         space-between;
 
     padding:
         14px 0;
+
 }
 
 
@@ -1211,6 +1431,7 @@ button:disabled {
 
     border-bottom:
         0;
+
 }
 
 
@@ -1221,6 +1442,7 @@ button:disabled {
 
     font-size:
         14px;
+
 }
 
 
@@ -1231,6 +1453,7 @@ button:disabled {
 
     font-size:
         12px;
+
 }
 
 
@@ -1238,6 +1461,7 @@ button:disabled {
 
     font-weight:
         800;
+
 }
 
 
@@ -1245,6 +1469,7 @@ button:disabled {
 
     color:
         var(--success);
+
 }
 
 
@@ -1252,8 +1477,94 @@ button:disabled {
 
     color:
         var(--danger);
+
 }
 
+
+/* ============================================================
+   REQUEST HEADERS
+============================================================ */
+
+.request-header {
+
+    align-items:
+        center;
+
+    display:
+        flex;
+
+    gap:
+        15px;
+
+    justify-content:
+        space-between;
+
+    margin-bottom:
+        15px;
+
+}
+
+
+.request-header h2 {
+
+    margin-bottom:
+        4px;
+
+}
+
+
+/* ============================================================
+   ROLE BADGES
+============================================================ */
+
+.role-badge {
+
+    background:
+        #edf3f8;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--navy);
+
+    display:
+        inline-block;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    padding:
+        5px 9px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ============================================================
+   LARGE VALUE
+============================================================ */
+
+.large-value {
+
+    color:
+        var(--navy);
+
+    display:
+        block;
+
+    font-size:
+        34px;
+
+    margin:
+        6px 0 10px;
+
+}
 
 /* ============================================================
    POLICE RECORDS
@@ -1266,6 +1577,7 @@ button:disabled {
 
     padding:
         15px 0;
+
 }
 
 
@@ -1273,6 +1585,7 @@ button:disabled {
 
     border-bottom:
         0;
+
 }
 
 
@@ -1284,11 +1597,12 @@ button:disabled {
     display:
         flex;
 
+    gap:
+        10px;
+
     justify-content:
         space-between;
 
-    gap:
-        10px;
 }
 
 
@@ -1296,6 +1610,7 @@ button:disabled {
 
     font-size:
         15px;
+
 }
 
 
@@ -1318,6 +1633,7 @@ button:disabled {
 
     padding:
         5px 9px;
+
 }
 
 
@@ -1331,6 +1647,727 @@ button:disabled {
 
     margin-top:
         5px;
+
+}
+
+
+/* ============================================================
+   POLICE RTO / 911
+============================================================ */
+
+.emergency-panel {
+
+    border:
+        1px solid #efb4ae;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffafa,
+            #ffffff
+        );
+
+}
+
+
+.emergency-panel .eyebrow {
+
+    color:
+        var(--danger);
+
+}
+
+
+.emergency-panel #active911Count {
+
+    align-items:
+        center;
+
+    background:
+        var(--danger);
+
+    border-radius:
+        999px;
+
+    color:
+        white;
+
+    display:
+        inline-flex;
+
+    font-size:
+        18px;
+
+    font-weight:
+        800;
+
+    height:
+        38px;
+
+    justify-content:
+        center;
+
+    min-width:
+        38px;
+
+    padding:
+        0 12px;
+
+}
+
+
+.emergency-call {
+
+    background:
+        #fff;
+
+    border:
+        1px solid #f0c7c3;
+
+    border-left:
+        5px solid var(--danger);
+
+    border-radius:
+        12px;
+
+    margin-top:
+        12px;
+
+    padding:
+        16px;
+
+}
+
+
+.emergency-call:first-child {
+
+    margin-top:
+        0;
+
+}
+
+
+.emergency-call h3 {
+
+    color:
+        var(--navy);
+
+    margin-bottom:
+        5px;
+
+}
+
+
+.emergency-call p {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+}
+
+
+.emergency-label {
+
+    background:
+        #fae7e5;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--danger);
+
+    display:
+        inline-block;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    margin-bottom:
+        8px;
+
+    padding:
+        5px 9px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ============================================================
+   BOLO / WARRANT LISTS
+============================================================ */
+
+#boloList,
+#warrantList,
+#govBolos,
+#govWarrants,
+#govPenalCodes,
+#govCharts {
+
+    margin-top:
+        18px;
+
+}
+
+
+#boloList .card,
+#warrantList .card,
+#govBolos .card,
+#govWarrants .card,
+#govPenalCodes .card,
+#govCharts .card {
+
+    box-shadow:
+        none;
+
+    margin-bottom:
+        12px;
+
+}
+
+
+#policeResult {
+
+    margin-bottom:
+        20px;
+
+}
+
+
+/* ============================================================
+   PENAL CODE
+============================================================ */
+
+.penal-code-card {
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        var(--shadow);
+
+    margin-bottom:
+        14px;
+
+    padding:
+        20px;
+
+}
+
+
+.penal-code-card strong {
+
+    color:
+        var(--navy);
+
+    font-size:
+        17px;
+
+}
+
+
+.penal-code-card h3 {
+
+    margin:
+        4px 0 8px;
+
+}
+
+
+.penal-code-card p {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+}
+
+
+.penal-meta {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+
+    margin-top:
+        12px;
+
+}
+
+
+.penal-meta span {
+
+    background:
+        #edf3f8;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--navy);
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    padding:
+        5px 9px;
+
+}
+
+
+/* ============================================================
+   PILOT RADIO
+============================================================ */
+
+.frequency-card {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f4f9fd
+        );
+
+    border:
+        1px solid #c5d8ea;
+
+    border-radius:
+        14px;
+
+    padding:
+        20px;
+
+}
+
+
+.frequency-card span {
+
+    color:
+        var(--muted);
+
+    display:
+        block;
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    margin-bottom:
+        6px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.frequency-card strong {
+
+    color:
+        var(--navy);
+
+    display:
+        block;
+
+    font-size:
+        26px;
+
+}
+
+
+/* ============================================================
+   PHONETIC ALPHABET
+============================================================ */
+
+.phonetic-grid {
+
+    display:
+        grid;
+
+    gap:
+        10px;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+}
+
+
+.phonetic-item {
+
+    align-items:
+        center;
+
+    background:
+        #f7f9fb;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    padding:
+        11px 12px;
+
+}
+
+
+.phonetic-item strong {
+
+    align-items:
+        center;
+
+    background:
+        var(--navy);
+
+    border-radius:
+        7px;
+
+    color:
+        white;
+
+    display:
+        inline-flex;
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        13px;
+
+    height:
+        30px;
+
+    justify-content:
+        center;
+
+    width:
+        30px;
+
+}
+
+
+.phonetic-item span {
+
+    color:
+        var(--text);
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* ============================================================
+   AIRPORT CHARTS
+============================================================ */
+
+.chart-card {
+
+    align-items:
+        center;
+
+    background:
+        #f9fbfd;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    display:
+        flex;
+
+    gap:
+        15px;
+
+    justify-content:
+        space-between;
+
+    margin-top:
+        12px;
+
+    padding:
+        15px;
+
+}
+
+
+.chart-card strong {
+
+    color:
+        var(--navy);
+
+}
+
+
+.chart-card p {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    margin-top:
+        3px;
+
+}
+
+
+.link-btn {
+
+    background:
+        var(--blue);
+
+    border-radius:
+        8px;
+
+    color:
+        white;
+
+    display:
+        inline-block;
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    padding:
+        8px 11px;
+
+    text-decoration:
+        none;
+
+}
+
+
+.link-btn:hover {
+
+    background:
+        var(--blue-light);
+
+    text-decoration:
+        none;
+
+}
+
+
+/* ============================================================
+   FLIGHT PLAN
+============================================================ */
+
+.flight-plan {
+
+    background:
+        #f8fafc;
+
+    border:
+        1px solid var(--border);
+
+    border-left:
+        5px solid var(--blue);
+
+    border-radius:
+        12px;
+
+    margin-top:
+        12px;
+
+    padding:
+        18px;
+
+}
+
+
+.flight-plan h3 {
+
+    color:
+        var(--navy);
+
+    margin-bottom:
+        10px;
+
+}
+
+
+.flight-plan-grid {
+
+    display:
+        grid;
+
+    gap:
+        12px;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+}
+
+
+.flight-plan-grid div {
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    padding:
+        10px;
+
+}
+
+
+.flight-plan-grid span {
+
+    color:
+        var(--muted);
+
+    display:
+        block;
+
+    font-size:
+        11px;
+
+    margin-bottom:
+        3px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.flight-plan-grid strong {
+
+    color:
+        var(--navy);
+
+    font-size:
+        14px;
+
+}
+
+
+.flight-route {
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    margin-top:
+        12px;
+
+    padding:
+        12px;
+
+}
+
+
+.flight-route span {
+
+    color:
+        var(--muted);
+
+    display:
+        block;
+
+    font-size:
+        11px;
+
+    margin-bottom:
+        4px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* ============================================================
+   ATC
+============================================================ */
+
+#atcFlightPlansSection {
+
+    border:
+        1px solid #b9d3eb;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f5f9fd
+        );
+
+}
+
+
+#atcFlightPlans .flight-plan {
+
+    border-left-color:
+        var(--navy);
+
 }
 
 
@@ -1349,14 +2386,15 @@ button:disabled {
     display:
         flex;
 
-    justify-content:
-        space-between;
-
     gap:
         15px;
 
+    justify-content:
+        space-between;
+
     padding:
         15px 0;
+
 }
 
 
@@ -1364,6 +2402,7 @@ button:disabled {
 
     border-bottom:
         0;
+
 }
 
 
@@ -1371,6 +2410,7 @@ button:disabled {
 
     display:
         block;
+
 }
 
 
@@ -1381,31 +2421,7 @@ button:disabled {
 
     font-size:
         13px;
-}
 
-
-.role-badge {
-
-    background:
-        #edf3f8;
-
-    border-radius:
-        999px;
-
-    color:
-        var(--navy);
-
-    font-size:
-        11px;
-
-    font-weight:
-        800;
-
-    padding:
-        5px 9px;
-
-    text-transform:
-        uppercase;
 }
 
 
@@ -1420,6 +2436,7 @@ button:disabled {
 
     padding:
         16px 0;
+
 }
 
 
@@ -1427,22 +2444,7 @@ button:disabled {
 
     border-bottom:
         0;
-}
 
-
-.request-header {
-
-    align-items:
-        center;
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    gap:
-        15px;
 }
 
 
@@ -1456,6 +2458,7 @@ button:disabled {
 
     margin-top:
         10px;
+
 }
 
 
@@ -1463,6 +2466,78 @@ button:disabled {
 
     padding:
         8px 12px;
+
+}
+
+
+/* ============================================================
+   LEADERBOARD
+============================================================ */
+
+.leaderboard-table {
+
+    width:
+        100%;
+
+}
+
+
+.leaderboard-row {
+
+    align-items:
+        center;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display:
+        grid;
+
+    gap:
+        10px;
+
+    grid-template-columns:
+        55px 1fr 150px;
+
+    padding:
+        13px 0;
+
+}
+
+
+.leaderboard-row:last-child {
+
+    border-bottom:
+        0;
+
+}
+
+
+.leaderboard-row.header {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.rank {
+
+    color:
+        var(--navy);
+
+    font-weight:
+        800;
+
 }
 
 
@@ -1477,6 +2552,7 @@ button:disabled {
 
     padding:
         13px 0;
+
 }
 
 
@@ -1484,6 +2560,7 @@ button:disabled {
 
     border-bottom:
         0;
+
 }
 
 
@@ -1491,6 +2568,7 @@ button:disabled {
 
     font-size:
         14px;
+
 }
 
 
@@ -1504,6 +2582,7 @@ button:disabled {
 
     margin-top:
         3px;
+
 }
 
 
@@ -1520,6 +2599,35 @@ button:disabled {
 
     margin-top:
         4px;
+
+}
+
+
+/* ============================================================
+   GOVERNMENT SECTION
+============================================================ */
+
+#government .card {
+
+    position:
+        relative;
+
+}
+
+
+#government .card > .eyebrow {
+
+    color:
+        #76520c;
+
+}
+
+
+#government .card:nth-of-type(even) {
+
+    background:
+        #fcfdfe;
+
 }
 
 
@@ -1569,7 +2677,8 @@ button:disabled {
         translateX(-50%);
 
     z-index:
-        999;
+        9999;
+
 }
 
 
@@ -1577,6 +2686,7 @@ button:disabled {
 
     display:
         block;
+
 }
 
 
@@ -1584,6 +2694,7 @@ button:disabled {
 
     background:
         var(--success);
+
 }
 
 
@@ -1591,6 +2702,46 @@ button:disabled {
 
     background:
         var(--danger);
+
+}
+
+
+/* ============================================================
+   SCROLLBAR
+============================================================ */
+
+::-webkit-scrollbar {
+
+    width:
+        10px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background:
+        #e7ecf1;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    background:
+        #aab7c5;
+
+    border-radius:
+        10px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #8b9aaa;
+
 }
 
 
@@ -1598,7 +2749,72 @@ button:disabled {
    RESPONSIVE
 ============================================================ */
 
-@media (max-width: 900px) {
+@media (
+    max-width:
+        1000px
+) {
+
+    .auth-wrapper {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .auth-brand {
+
+        min-height:
+            auto;
+
+        padding:
+            40px;
+
+    }
+
+
+    .auth-brand h1 {
+
+        font-size:
+            38px;
+
+    }
+
+
+    .phonetic-grid {
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+
+    .flight-plan-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+}
+
+
+@media (
+    max-width:
+        900px
+) {
 
     .grid.four {
 
@@ -1610,6 +2826,7 @@ button:disabled {
                     1fr
                 )
             );
+
     }
 
 
@@ -1617,6 +2834,7 @@ button:disabled {
 
         grid-template-columns:
             1fr;
+
     }
 
 
@@ -1630,17 +2848,11 @@ button:disabled {
 
         gap:
             25px;
+
     }
 
 
-    .citizen-id-box {
-
-        width:
-            100%;
-    }
-
-
-    .topbar {
+    #nav {
 
         align-items:
             flex-start;
@@ -1650,37 +2862,62 @@ button:disabled {
 
         gap:
             12px;
+
     }
 
 
-    nav {
+    .nav-links {
 
         width:
             100%;
+
     }
 
 
-    nav button {
+    .nav-links button {
 
         flex:
             1;
+
     }
+
 }
 
 
-@media (max-width: 650px) {
+@media (
+    max-width:
+        700px
+) {
 
-    main {
+    #appPage {
 
         padding:
-            20px 12px 40px;
+            22px 12px 40px;
+
+    }
+
+
+    #authPage {
+
+        padding:
+            15px;
+
     }
 
 
     .auth-card {
 
         padding:
-            25px 20px;
+            28px 20px;
+
+    }
+
+
+    .auth-brand {
+
+        padding:
+            30px 24px;
+
     }
 
 
@@ -1688,6 +2925,7 @@ button:disabled {
 
         font-size:
             27px;
+
     }
 
 
@@ -1696,6 +2934,15 @@ button:disabled {
 
         grid-template-columns:
             1fr;
+
+    }
+
+
+    #licenseGrid {
+
+        grid-template-columns:
+            1fr;
+
     }
 
 
@@ -1703,6 +2950,7 @@ button:disabled {
 
         padding:
             25px 20px;
+
     }
 
 
@@ -1710,6 +2958,7 @@ button:disabled {
 
         font-size:
             30px;
+
     }
 
 
@@ -1720,6 +2969,7 @@ button:disabled {
 
         flex-direction:
             column;
+
     }
 
 
@@ -1727,17 +2977,20 @@ button:disabled {
 
         width:
             100%;
+
     }
 
 
     .user-row,
-    .license-card {
+    .license-card,
+    .chart-card {
 
         align-items:
             flex-start;
 
         flex-direction:
             column;
+
     }
 
 
@@ -1748,6 +3001,7 @@ button:disabled {
 
         gap:
             10px;
+
     }
 
 
@@ -1758,6 +3012,109 @@ button:disabled {
 
         flex-direction:
             column;
+
+    }
+
+
+    .phonetic-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+
+    .flight-plan-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .leaderboard-row {
+
+        grid-template-columns:
+            45px 1fr;
+
+    }
+
+
+    .leaderboard-row > :last-child {
+
+        grid-column:
+            2;
+
+    }
+
+}
+
+
+@media (
+    max-width:
+        450px
+) {
+
+    .phonetic-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .auth-brand h1 {
+
+        font-size:
+            32px;
+
+    }
+
+
+    .auth-brand h2 {
+
+        font-size:
+            18px;
+
+    }
+
+
+    .card {
+
+        padding:
+            18px;
+
+    }
+
+
+    #nav {
+
+        padding:
+            12px 15px;
+
+    }
+
+
+    .nav-links {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
     }
 
 }
