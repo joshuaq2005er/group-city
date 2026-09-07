@@ -142,7 +142,7 @@ db.exec(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL UNIQUE,
         account_number TEXT NOT NULL UNIQUE,
-        balance REAL NOT NULL DEFAULT 1000,
+        balance REAL NOT NULL DEFAULT 5000,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id)
             REFERENCES users(id)
@@ -967,7 +967,7 @@ function ensureBankAccount(userId) {
         `).run(
             userId,
             generateAccountNumber(),
-            1000
+            5000
         );
 
         account =
