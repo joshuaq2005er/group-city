@@ -30,17 +30,20 @@ const users =
 const pendingIce =
     new Map();
 
+
 function voiceToken() {
     return localStorage.getItem(
         "government_token"
     );
 }
 
+
 function el(id) {
     return document.getElementById(
         id
     );
 }
+
 
 function setVoiceStatus(text) {
     if (
@@ -52,6 +55,7 @@ function setVoiceStatus(text) {
             text;
     }
 }
+
 
 function connectVoice() {
     if (
@@ -81,6 +85,7 @@ function connectVoice() {
             }
         );
 
+
     voiceSocket.on(
         "connect",
         () => {
@@ -90,6 +95,7 @@ function connectVoice() {
         }
     );
 
+
     voiceSocket.on(
         "connect_error",
         error => {
@@ -98,6 +104,7 @@ function connectVoice() {
             );
         }
     );
+
 
     voiceSocket.on(
         "voice:counts",
@@ -129,6 +136,7 @@ function connectVoice() {
         }
     );
 
+
     voiceSocket.on(
         "voice:user-joined",
         data => {
@@ -144,6 +152,7 @@ function connectVoice() {
         }
     );
 
+
     voiceSocket.on(
         "voice:user-left",
         data => {
@@ -152,6 +161,7 @@ function connectVoice() {
             );
         }
     );
+
 
     voiceSocket.on(
         "voice:offer",
@@ -199,6 +209,7 @@ function connectVoice() {
         }
     );
 
+
     voiceSocket.on(
         "voice:answer",
         async data => {
@@ -220,6 +231,7 @@ function connectVoice() {
             );
         }
     );
+
 
     voiceSocket.on(
         "voice:ice",
@@ -259,6 +271,7 @@ function connectVoice() {
         }
     );
 
+
     voiceSocket.on(
         "voice:mute-status",
         data => {
@@ -278,8 +291,10 @@ function connectVoice() {
         }
     );
 
+
     return voiceSocket;
 }
+
 
 async function getMicrophone() {
     if (microphone) {
@@ -306,6 +321,7 @@ async function getMicrophone() {
     return microphone;
 }
 
+
 function createPeer(peerId) {
     if (
         peers.has(peerId)
@@ -325,6 +341,7 @@ function createPeer(peerId) {
         peer
     );
 
+
     if (microphone) {
         microphone
             .getTracks()
@@ -337,6 +354,7 @@ function createPeer(peerId) {
                 }
             );
     }
+
 
     peer.onicecandidate =
         event => {
@@ -355,6 +373,7 @@ function createPeer(peerId) {
                 );
             }
         };
+
 
     peer.ontrack =
         event => {
@@ -399,8 +418,10 @@ function createPeer(peerId) {
                 );
         };
 
+
     return peer;
 }
+
 
 async function createOffer(
     peerId
@@ -428,6 +449,7 @@ async function createOffer(
         }
     );
 }
+
 
 async function addPendingIce(
     peerId
@@ -459,6 +481,7 @@ async function addPendingIce(
         peerId
     );
 }
+
 
 async function joinVoiceRoom(
     room
@@ -557,6 +580,7 @@ async function joinVoiceRoom(
     }
 }
 
+
 function showActiveVoice(
     room
 ) {
@@ -590,6 +614,7 @@ function showActiveVoice(
                 : "";
     }
 }
+
 
 function toggleVoiceMute() {
     muted =
@@ -637,6 +662,7 @@ function toggleVoiceMute() {
     renderUsers();
 }
 
+
 function toggleVoiceDeafen() {
     deafened =
         !deafened;
@@ -663,6 +689,7 @@ function toggleVoiceDeafen() {
                 : "🔇 Deafen";
     }
 }
+
 
 function leaveVoiceRoom() {
     voiceSocket?.emit(
@@ -728,6 +755,7 @@ function leaveVoiceRoom() {
     );
 }
 
+
 function removePeer(
     peerId
 ) {
@@ -761,6 +789,65 @@ function removePeer(
     renderUsers();
 }
 
+
+/*
+============================================================
+CALLSIGN DISPLAY
+============================================================
+
+911 / Police RTO:
+    Show police callsign.
+
+UNICOM / Western Center / Eastern Center:
+    Show pilot callsign.
+============================================================
+*/
+
+function getVoiceCallsign(
+    user
+) {
+    if (!user) {
+        return "";
+    }
+
+    /*
+    Police voice channels
+    */
+
+    if (
+        currentRoom === "911" ||
+        currentRoom === "rto" ||
+        currentRoom === "police-rto"
+    ) {
+        return (
+            user.police_callsign ||
+            ""
+        );
+    }
+
+
+    /*
+    Aviation voice channels
+    */
+
+    if (
+        currentRoom === "unicom" ||
+        currentRoom === "western" ||
+        currentRoom === "western-center" ||
+        currentRoom === "eastern" ||
+        currentRoom === "eastern-center"
+    ) {
+        return (
+            user.pilot_callsign ||
+            ""
+        );
+    }
+
+
+    return "";
+}
+
+
 function renderUsers() {
     const container =
         el(
@@ -780,6 +867,7 @@ function renderUsers() {
         return;
     }
 
+
     container.innerHTML =
         Array.from(
             users.entries()
@@ -794,13 +882,37 @@ function renderUsers() {
                         socketId ===
                         voiceSocket?.id;
 
+
+                    /*
+                    Get the correct callsign
+                    depending on the room.
+                    */
+
+                    const callsign =
+                        getVoiceCallsign(
+                            user
+                        );
+
+
                     return `
                         <div class="voice-user">
+
                             <div>
+
                                 <strong>
+
                                     ${escapeVoice(
                                         user.display_name
                                     )}
+
+                                    ${
+                                        callsign
+                                            ? ` | ${escapeVoice(
+                                                callsign
+                                            )}`
+                                            : ""
+                                    }
+
                                 </strong>
 
                                 ${
@@ -810,25 +922,33 @@ function renderUsers() {
                                 }
 
                                 <div class="muted">
+
                                     ${escapeVoice(
                                         user.role
                                     )}
+
                                 </div>
+
                             </div>
 
+
                             <span>
+
                                 ${
                                     user.muted
                                         ? "🔇 Muted"
                                         : "🎙️ Connected"
                                 }
+
                             </span>
+
                         </div>
                     `;
                 }
             )
             .join("");
 }
+
 
 function updateCount(
     id,
@@ -844,6 +964,7 @@ function updateCount(
             )} connected`;
     }
 }
+
 
 function escapeVoice(value) {
     return String(
@@ -871,6 +992,7 @@ function escapeVoice(value) {
         );
 }
 
+
 document.addEventListener(
     "DOMContentLoaded",
     () => {
@@ -892,12 +1014,14 @@ document.addEventListener(
                 }
             );
 
+
         el(
             "voiceMuteBtn"
         )?.addEventListener(
             "click",
             toggleVoiceMute
         );
+
 
         el(
             "voiceDeafenBtn"
@@ -906,12 +1030,14 @@ document.addEventListener(
             toggleVoiceDeafen
         );
 
+
         el(
             "voiceLeaveBtn"
         )?.addEventListener(
             "click",
             leaveVoiceRoom
         );
+
 
         if (
             voiceToken()
@@ -920,6 +1046,7 @@ document.addEventListener(
         }
     }
 );
+
 
 window.joinVoiceRoom =
     joinVoiceRoom;
