@@ -32,11 +32,13 @@ const VOICE_CHANNELS = {
     }
 };
 
+
 function setupVoiceServer(httpServer, options) {
     const {
         JWT_SECRET,
         db
     } = options;
+
 
     const io = new Server(httpServer, {
         cors: {
@@ -48,10 +50,16 @@ function setupVoiceServer(httpServer, options) {
         }
     });
 
+
+    // ============================================================
+    // AUTHENTICATION
+    // ============================================================
+
     io.use((socket, next) => {
         try {
             const token =
                 socket.handshake.auth?.token;
+
 
             if (!token) {
                 return next(
@@ -61,11 +69,13 @@ function setupVoiceServer(httpServer, options) {
                 );
             }
 
+
             const decoded =
                 jwt.verify(
                     token,
                     JWT_SECRET
                 );
+
 
             const user =
                 db.prepare(`
@@ -81,6 +91,7 @@ function setupVoiceServer(httpServer, options) {
                     WHERE id = ?
                 `).get(decoded.id);
 
+
             if (!user) {
                 return next(
                     new Error(
@@ -89,7 +100,9 @@ function setupVoiceServer(httpServer, options) {
                 );
             }
 
+
             socket.user = user;
+
 
             next();
 
@@ -102,41 +115,90 @@ function setupVoiceServer(httpServer, options) {
         }
     });
 
+
+    // ============================================================
+    // USER IDENTITY
+    // ============================================================
+    //
+    // IMPORTANT:
+    //
+    // We send BOTH callsigns to voice.js.
+    //
+    // voice.js will decide which one to display:
+    //
+    // 911 / RTO
+    //      police_callsign
+    //
+    // UNICOM / WESTERN / EASTERN
+    //      pilot_callsign
+    //
+    // ============================================================
+
     function identity(user) {
-        let callsign = null;
-
-        if (
-            user.role === "police" ||
-            user.role === "government"
-        ) {
-            callsign =
-                user.police_callsign ||
-                null;
-        }
-
-        if (
-            !callsign &&
-            (
-                user.role === "pilot" ||
-                user.role === "atc"
-            )
-        ) {
-            callsign =
-                user.pilot_callsign ||
-                null;
-        }
-
         return {
-            id: user.id,
-            name: user.name,
-            role: user.role,
-            callsign,
+            id:
+                user.id,
+
+            name:
+                user.name,
+
+            role:
+                user.role,
+
+
+            // ====================================================
+            // POLICE CALLSIGN
+            // Example:
+            // 1A-123
+            // ====================================================
+
+            police_callsign:
+                user.police_callsign ||
+                null,
+
+
+            // ====================================================
+            // PILOT CALLSIGN
+            // Example:
+            // GC-1234
+            // ====================================================
+
+            pilot_callsign:
+                user.pilot_callsign ||
+                null,
+
+
+            // ====================================================
+            // OLD CALLSIGN FIELD
+            //
+            // Keep this so older parts of your website
+            // do not break.
+            // ====================================================
+
+            callsign:
+                user.police_callsign ||
+                user.pilot_callsign ||
+                null,
+
+
+            // ====================================================
+            // DISPLAY NAME
+            //
+            // DO NOT put callsign here anymore.
+            //
+            // voice.js adds the correct callsign depending
+            // on which voice channel you are connected to.
+            // ====================================================
+
             display_name:
-                callsign
-                    ? `${callsign} | ${user.name}`
-                    : user.name
+                user.name
         };
     }
+
+
+    // ============================================================
+    // GET PARTICIPANTS
+    // ============================================================
 
     async function participants(room) {
         const sockets =
@@ -144,28 +206,42 @@ function setupVoiceServer(httpServer, options) {
                 .in(room)
                 .fetchSockets();
 
+
         return sockets.map(
             socket => ({
-                socket_id: socket.id,
-                ...identity(socket.user)
+                socket_id:
+                    socket.id,
+
+                ...identity(
+                    socket.user
+                )
             })
         );
     }
 
+
+    // ============================================================
+    // SEND VOICE COUNTS
+    // ============================================================
+
     async function sendCounts() {
         const counts = {};
+
 
         for (
             const room
             of Object.keys(VOICE_CHANNELS)
         ) {
+
             counts[room] =
                 (
                     await io
                         .in(room)
                         .fetchSockets()
                 ).length;
+
         }
+
 
         io.emit(
             "voice:counts",
@@ -173,15 +249,25 @@ function setupVoiceServer(httpServer, options) {
         );
     }
 
+
+    // ============================================================
+    // LEAVE CURRENT ROOM
+    // ============================================================
+
     async function leaveRoom(socket) {
         if (!socket.voiceRoom) {
             return;
         }
 
+
         const oldRoom =
             socket.voiceRoom;
 
-        socket.leave(oldRoom);
+
+        socket.leave(
+            oldRoom
+        );
+
 
         socket
             .to(oldRoom)
@@ -193,21 +279,40 @@ function setupVoiceServer(httpServer, options) {
                 }
             );
 
-        socket.voiceRoom = null;
+
+        socket.voiceRoom =
+            null;
+
 
         await sendCounts();
     }
 
+
+    // ============================================================
+    // SOCKET CONNECTION
+    // ============================================================
+
     io.on(
         "connection",
         socket => {
+
+
+            // ====================================================
+            // SEND AVAILABLE VOICE CHANNELS
+            // ====================================================
 
             socket.emit(
                 "voice:channels",
                 VOICE_CHANNELS
             );
 
+
             sendCounts();
+
+
+            // ====================================================
+            // JOIN VOICE ROOM
+            // ====================================================
 
             socket.on(
                 "voice:join",
@@ -215,21 +320,37 @@ function setupVoiceServer(httpServer, options) {
                     data,
                     callback
                 ) => {
+
                     const room =
                         String(
-                            data?.room || ""
+                            data?.room ||
+                            ""
                         );
 
+
                     const channel =
-                        VOICE_CHANNELS[room];
+                        VOICE_CHANNELS[
+                            room
+                        ];
+
+
+                    // =================================================
+                    // CHECK CHANNEL EXISTS
+                    // =================================================
 
                     if (!channel) {
                         return callback?.({
                             ok: false,
+
                             error:
                                 "Voice channel not found."
                         });
                     }
+
+
+                    // =================================================
+                    // POLICE RTO PERMISSION
+                    // =================================================
 
                     if (
                         channel.policeOnly &&
@@ -240,22 +361,52 @@ function setupVoiceServer(httpServer, options) {
                             socket.user.role
                         )
                     ) {
+
                         return callback?.({
                             ok: false,
+
                             error:
                                 "Police RTO is restricted to police."
                         });
+
                     }
 
-                    await leaveRoom(socket);
+
+                    // =================================================
+                    // LEAVE OLD ROOM FIRST
+                    // =================================================
+
+                    await leaveRoom(
+                        socket
+                    );
+
+
+                    // =================================================
+                    // GET PEOPLE ALREADY IN ROOM
+                    // =================================================
 
                     const existing =
-                        await participants(room);
+                        await participants(
+                            room
+                        );
 
-                    socket.join(room);
+
+                    // =================================================
+                    // JOIN ROOM
+                    // =================================================
+
+                    socket.join(
+                        room
+                    );
+
 
                     socket.voiceRoom =
                         room;
+
+
+                    // =================================================
+                    // TELL OTHER PEOPLE THAT USER JOINED
+                    // =================================================
 
                     socket
                         .to(room)
@@ -272,24 +423,40 @@ function setupVoiceServer(httpServer, options) {
                             }
                         );
 
+
+                    // =================================================
+                    // SEND JOIN RESULT BACK TO USER
+                    // =================================================
+
                     callback?.({
                         ok: true,
-                        room: channel,
+
+                        room:
+                            channel,
+
                         user:
                             identity(
                                 socket.user
                             ),
+
                         participants:
                             existing
                     });
+
 
                     await sendCounts();
                 }
             );
 
+
+            // ====================================================
+            // WEBRTC OFFER
+            // ====================================================
+
             socket.on(
                 "voice:offer",
                 data => {
+
                     io.to(
                         data.target
                     ).emit(
@@ -297,20 +464,29 @@ function setupVoiceServer(httpServer, options) {
                         {
                             from:
                                 socket.id,
+
                             offer:
                                 data.offer,
+
                             user:
                                 identity(
                                     socket.user
                                 )
                         }
                     );
+
                 }
             );
+
+
+            // ====================================================
+            // WEBRTC ANSWER
+            // ====================================================
 
             socket.on(
                 "voice:answer",
                 data => {
+
                     io.to(
                         data.target
                     ).emit(
@@ -318,16 +494,24 @@ function setupVoiceServer(httpServer, options) {
                         {
                             from:
                                 socket.id,
+
                             answer:
                                 data.answer
                         }
                     );
+
                 }
             );
+
+
+            // ====================================================
+            // WEBRTC ICE CANDIDATES
+            // ====================================================
 
             socket.on(
                 "voice:ice",
                 data => {
+
                     io.to(
                         data.target
                     ).emit(
@@ -335,19 +519,28 @@ function setupVoiceServer(httpServer, options) {
                         {
                             from:
                                 socket.id,
+
                             candidate:
                                 data.candidate
                         }
                     );
+
                 }
             );
+
+
+            // ====================================================
+            // MUTE STATUS
+            // ====================================================
 
             socket.on(
                 "voice:mute-status",
                 data => {
+
                     if (!socket.voiceRoom) {
                         return;
                     }
+
 
                     socket
                         .to(
@@ -365,8 +558,14 @@ function setupVoiceServer(httpServer, options) {
                                     )
                             }
                         );
+
                 }
             );
+
+
+            // ====================================================
+            // LEAVE VOICE
+            // ====================================================
 
             socket.on(
                 "voice:leave",
@@ -374,22 +573,32 @@ function setupVoiceServer(httpServer, options) {
                     data,
                     callback
                 ) => {
+
                     await leaveRoom(
                         socket
                     );
 
+
                     callback?.({
                         ok: true
                     });
+
                 }
             );
+
+
+            // ====================================================
+            // DISCONNECT
+            // ====================================================
 
             socket.on(
                 "disconnect",
                 async () => {
+
                     if (
                         socket.voiceRoom
                     ) {
+
                         socket
                             .to(
                                 socket.voiceRoom
@@ -401,16 +610,30 @@ function setupVoiceServer(httpServer, options) {
                                         socket.id
                                 }
                             );
+
                     }
 
+
                     await sendCounts();
+
                 }
             );
+
         }
     );
 
+
+    // ============================================================
+    // RETURN SOCKET SERVER
+    // ============================================================
+
     return io;
 }
+
+
+// ============================================================
+// EXPORTS
+// ============================================================
 
 module.exports = {
     setupVoiceServer,
