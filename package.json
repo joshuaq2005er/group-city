@@ -1,7 +1,7 @@
 {
-  "name": "government-portal",
+  "name": "group-city",
   "version": "1.0.0",
-  "description": "Government citizen portal with banking, licenses, police records and government administration.",
+  "description": "Group City Government Portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
