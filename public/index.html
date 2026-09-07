@@ -1,6 +1,4 @@
-```html
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -12,7 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Government Portal</title>
+    <title>
+        Group City Government Portal
+    </title>
 
     <link
         rel="stylesheet"
@@ -24,262 +24,281 @@
 
 <body>
 
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-<!-- =========================
-     TOP NAVIGATION
-========================== -->
+    <div id="toast"></div>
 
-<header class="topbar">
 
-    <div class="brand">
-
-        <div class="seal">
-            ★
-        </div>
-
-        <div class="brand-text">
-
-            <strong>
-                Government Portal
-            </strong>
-
-            <span>
-                Official Citizen Services
-            </span>
-
-        </div>
-
-    </div>
-
+    <!-- =====================================================
+         TOP NAVIGATION
+    ====================================================== -->
 
     <nav
         id="nav"
         class="hidden"
     >
 
-        <button data-page="home">
-            Home
-        </button>
+        <div class="nav-brand">
 
-        <button data-page="bank">
-            Bank
-        </button>
+            <strong>
+                GROUP CITY
+            </strong>
 
-        <button data-page="licenses">
-            Licenses
-        </button>
+            <span>
+                Government Portal
+            </span>
 
-        <button
-            data-page="police"
-            id="policeNav"
-            class="hidden"
-        >
-            Police
-        </button>
+        </div>
 
-        <button
-            data-page="government"
-            id="govNav"
-            class="hidden"
-        >
-            Government
-        </button>
 
-        <button
-            id="logoutBtn"
-            class="danger"
-        >
-            Logout
-        </button>
+        <div class="nav-links">
+
+            <button
+                data-page="home"
+            >
+                Home
+            </button>
+
+
+            <button
+                data-page="bank"
+            >
+                Bank
+            </button>
+
+
+            <button
+                data-page="licenses"
+            >
+                Licenses
+            </button>
+
+
+            <button
+                data-page="penalCodes"
+            >
+                Penal Codes
+            </button>
+
+
+            <button
+                id="policeNav"
+                class="hidden"
+                data-page="police"
+            >
+                Police
+            </button>
+
+
+            <button
+                id="pilotNav"
+                class="hidden"
+                data-page="pilot"
+            >
+                Pilot
+            </button>
+
+
+            <button
+                id="govNav"
+                class="hidden"
+                data-page="government"
+            >
+                Government
+            </button>
+
+
+            <button
+                id="logoutBtn"
+                class="danger-btn"
+            >
+                Logout
+            </button>
+
+        </div>
 
     </nav>
 
-</header>
+
+    <!-- =====================================================
+         AUTHENTICATION PAGE
+    ====================================================== -->
+
+    <section id="authPage">
+
+        <div class="auth-wrapper">
+
+            <div class="auth-brand">
+
+                <p class="eyebrow">
+                    OFFICIAL CITIZEN SERVICES
+                </p>
 
 
-
-<!-- =========================
-     NOTIFICATION
-========================== -->
-
-<div id="toast"></div>
+                <h1>
+                    Group City
+                </h1>
 
 
-
-<main>
-
-
-    <!-- =========================
-         LOGIN / REGISTER
-    ========================== -->
-
-    <section
-        id="authPage"
-        class="auth-wrap"
-    >
-
-        <div class="auth-card">
-
-            <div class="big-seal">
-                ★
-            </div>
+                <h2>
+                    Government Portal
+                </h2>
 
 
-            <h1>
-                Government Portal
-            </h1>
-
-
-            <p class="muted">
-                Secure access to citizen and government services.
-            </p>
-
-
-
-            <!-- LOGIN / REGISTER TABS -->
-
-            <div class="tabs">
-
-                <button
-                    id="loginTab"
-                    class="active"
-                >
-                    Login
-                </button>
-
-
-                <button
-                    id="registerTab"
-                >
-                    Register
-                </button>
+                <p>
+                    Access banking, licenses, public records,
+                    government services, aviation resources,
+                    and authorized public-safety systems.
+                </p>
 
             </div>
 
 
+            <div class="auth-card">
 
-            <!-- =========================
-                 LOGIN
-            ========================== -->
+                <div class="auth-tabs">
 
-            <form id="loginForm">
-
-                <label>
-
-                    Email
-
-                    <input
-                        id="loginEmail"
-                        type="email"
-                        placeholder="you@example.com"
-                        required
+                    <button
+                        id="loginTab"
+                        class="active"
                     >
+                        Sign In
+                    </button>
 
-                </label>
 
-
-                <label>
-
-                    Password
-
-                    <input
-                        id="loginPassword"
-                        type="password"
-                        placeholder="Your password"
-                        required
+                    <button
+                        id="registerTab"
                     >
+                        Register
+                    </button>
 
-                </label>
+                </div>
 
 
-                <button
-                    class="primary"
-                    type="submit"
+                <!-- LOGIN -->
+
+                <form id="loginForm">
+
+                    <label>
+
+                        Email
+
+                        <input
+                            id="loginEmail"
+                            type="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Password
+
+                        <input
+                            id="loginPassword"
+                            type="password"
+                            placeholder="Your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </label>
+
+
+                    <button
+                        class="primary"
+                        type="submit"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+
+                <!-- REGISTER -->
+
+                <form
+                    id="registerForm"
+                    class="hidden"
                 >
-                    Sign In
-                </button>
 
-            </form>
+                    <label>
+
+                        Full Name
+
+                        <input
+                            id="regName"
+                            type="text"
+                            maxlength="80"
+                            placeholder="Your full name"
+                            required
+                        >
+
+                    </label>
 
 
+                    <label>
 
-            <!-- =========================
-                 REGISTER
-            ========================== -->
+                        Email
 
-            <form
-                id="registerForm"
-                class="hidden"
-            >
+                        <input
+                            id="regEmail"
+                            type="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
 
-                <label>
+                    </label>
 
-                    Full Name
 
-                    <input
-                        id="regName"
-                        type="text"
-                        maxlength="80"
-                        placeholder="Your full name"
-                        required
+                    <label>
+
+                        Password
+
+                        <input
+                            id="regPassword"
+                            type="password"
+                            minlength="8"
+                            placeholder="At least 8 characters"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </label>
+
+
+                    <button
+                        class="primary"
+                        type="submit"
                     >
+                        Create Citizen Account
+                    </button>
 
-                </label>
-
-
-                <label>
-
-                    Email
-
-                    <input
-                        id="regEmail"
-                        type="email"
-                        placeholder="you@example.com"
-                        required
-                    >
-
-                </label>
+                </form>
 
 
-                <label>
+                <p
+                    id="authMessage"
+                    class="message"
+                ></p>
 
-                    Password
-
-                    <input
-                        id="regPassword"
-                        type="password"
-                        minlength="8"
-                        placeholder="At least 8 characters"
-                        required
-                    >
-
-                </label>
-
-
-                <button
-                    class="primary"
-                    type="submit"
-                >
-                    Create Citizen Account
-                </button>
-
-            </form>
-
-
-            <p
-                id="authMessage"
-                class="message"
-            ></p>
+            </div>
 
         </div>
 
     </section>
 
 
-
-    <!-- =========================
-         APPLICATION
-    ========================== -->
+    <!-- =====================================================
+         MAIN APPLICATION
+    ====================================================== -->
 
     <section
         id="appPage"
@@ -287,9 +306,9 @@
     >
 
 
-        <!-- =========================
+        <!-- =================================================
              HOME
-        ========================== -->
+        ================================================== -->
 
         <div
             id="home"
@@ -301,7 +320,7 @@
                 <div>
 
                     <p class="eyebrow">
-                        CITIZEN SERVICES
+                        GROUP CITY CITIZEN SERVICES
                     </p>
 
 
@@ -311,48 +330,35 @@
 
                         <span id="welcomeName">
                             Citizen
-                        </span>.
+                        </span>
 
                     </h1>
 
 
                     <p>
-                        Manage your government account,
-                        bank account, licenses and official records.
+
+                        Government ID:
+
+                        <strong id="citizenId">
+                            —
+                        </strong>
+
                     </p>
-
-                </div>
-
-
-                <div class="citizen-id-box">
-
-                    <small>
-                        Citizen ID
-                    </small>
-
-
-                    <strong id="citizenId">
-                        —
-                    </strong>
 
                 </div>
 
             </div>
 
 
+            <!-- HOME STATS -->
 
-            <!-- =========================
-                 STATISTICS
-            ========================== -->
-
-            <div class="grid four">
+            <div class="grid three">
 
                 <div class="card stat">
 
                     <span>
                         Bank Balance
                     </span>
-
 
                     <strong id="homeBalance">
                         $0.00
@@ -364,9 +370,8 @@
                 <div class="card stat">
 
                     <span>
-                        Licenses
+                        Active Licenses
                     </span>
-
 
                     <strong id="homeLicenses">
                         0
@@ -381,7 +386,6 @@
                         Police Points
                     </span>
 
-
                     <strong id="homePoints">
                         0
                     </strong>
@@ -395,9 +399,34 @@
                         Role
                     </span>
 
-
                     <strong id="homeRole">
                         Citizen
+                    </strong>
+
+                </div>
+
+
+                <div class="card stat">
+
+                    <span>
+                        Police Callsign
+                    </span>
+
+                    <strong id="homePoliceCallsign">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="card stat">
+
+                    <span>
+                        Pilot Callsign
+                    </span>
+
+                    <strong id="homePilotCallsign">
+                        —
                     </strong>
 
                 </div>
@@ -405,12 +434,23 @@
             </div>
 
 
+            <!-- SERVICES -->
 
-            <!-- =========================
-                 SERVICES
-            ========================== -->
+            <div class="section-title">
+
+                <p class="eyebrow">
+                    SERVICES
+                </p>
+
+                <h2>
+                    Government Services
+                </h2>
+
+            </div>
+
 
             <div class="grid three">
+
 
                 <button
                     class="service card-btn"
@@ -421,10 +461,9 @@
                         🏦 Bank
                     </b>
 
-
                     <span>
-                        View your account, transfer money
-                        and transactions.
+                        View your government bank account,
+                        balance, transfers, and transactions.
                     </span>
 
                 </button>
@@ -439,27 +478,79 @@
                         🪪 Licenses
                     </b>
 
-
                     <span>
-                        View and earn available licenses.
+                        View your active licenses and submit
+                        requests for new licenses.
                     </span>
 
                 </button>
 
 
                 <button
+                    class="service card-btn"
+                    data-page="penalCodes"
+                >
+
+                    <b>
+                        ⚖️ Penal Codes
+                    </b>
+
+                    <span>
+                        View and search the official
+                        Group City Penal Code.
+                    </span>
+
+                </button>
+
+
+                <button
+                    id="policeCard"
                     class="service card-btn hidden"
                     data-page="police"
-                    id="policeCard"
                 >
 
                     <b>
                         👮 Police
                     </b>
 
+                    <span>
+                        RTO, citizen records, BOLOs,
+                        arrest warrants, and police systems.
+                    </span>
+
+                </button>
+
+
+                <button
+                    id="pilotCard"
+                    class="service card-btn hidden"
+                    data-page="pilot"
+                >
+
+                    <b>
+                        ✈️ Pilot
+                    </b>
 
                     <span>
-                        Officer records and points.
+                        Charts, frequencies, flight plans,
+                        phonetic alphabet, and ATC resources.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="service card-btn"
+                    data-page="penalCodes"
+                >
+
+                    <b>
+                        📚 Public Records
+                    </b>
+
+                    <span>
+                        Review public Group City
+                        legal information.
                     </span>
 
                 </button>
@@ -469,10 +560,9 @@
         </div>
 
 
-
-        <!-- =========================
+        <!-- =================================================
              BANK
-        ========================== -->
+        ================================================== -->
 
         <div
             id="bank"
@@ -490,13 +580,14 @@
                     Government Bank
                 </h1>
 
+
+                <p>
+                    View your balance and transfer funds
+                    securely to other Group City citizens.
+                </p>
+
             </div>
 
-
-
-            <!-- =========================
-                 BANK BALANCE
-            ========================== -->
 
             <div class="bank-card">
 
@@ -523,381 +614,33 @@
             </div>
 
 
-
-            <!-- =========================
-                 TRANSFER MONEY
-            ========================== -->
-
-            <div class="card">
-
-                <h2>
-                    Transfer Money
-                </h2>
-
-
-                <p class="muted">
-                    Send money to another citizen using
-                    their name, email, Government ID,
-                    Citizen ID, or bank account number.
-                </p>
-
-
-                <label>
-
-                    Recipient
-
-                    <input
-                        id="transferRecipient"
-                        type="text"
-                        placeholder="Name, email, GOV ID, or bank account"
-                        maxlength="255"
-                    >
-
-                </label>
-
-
-                <label>
-
-                    Amount
-
-                    <input
-                        id="transferAmount"
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        placeholder="100.00"
-                    >
-
-                </label>
-
-
-                <label>
-
-                    Description
-
-                    <input
-                        id="transferDescription"
-                        type="text"
-                        placeholder="Bank transfer"
-                        maxlength="200"
-                    >
-
-                </label>
-
-
-                <button
-                    class="primary"
-                    id="transferBtn"
-                >
-                    Send Money
-                </button>
-
-            </div>
-
-
-
-            <!-- =========================
-                 TRANSACTIONS
-            ========================== -->
-
-            <div class="card">
-
-                <h2>
-                    Transaction History
-                </h2>
-
-
-                <div id="transactions">
-
-                    <p class="muted">
-                        Loading transactions...
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =========================
-             LICENSES
-        ========================== -->
-
-        <div
-            id="licenses"
-            class="page hidden"
-        >
-
-            <div class="page-title">
-
-                <p class="eyebrow">
-                    IDENTIFICATION & PERMITS
-                </p>
-
-
-                <h1>
-                    Licenses
-                </h1>
-
-
-                <p class="muted">
-                    View and earn your government licenses.
-                </p>
-
-            </div>
-
-
-            <div
-                id="licenseGrid"
-                class="grid two"
-            >
-
-                <!-- JavaScript loads licenses here -->
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =========================
-             POLICE
-        ========================== -->
-
-        <div
-            id="police"
-            class="page hidden"
-        >
-
-            <div class="page-title">
-
-                <p class="eyebrow">
-                    LAW ENFORCEMENT
-                </p>
-
-
-                <h1>
-                    Police Department
-                </h1>
-
-
-                <p>
-                    Search citizens and manage official
-                    police records.
-                </p>
-
-            </div>
-
-
-
-            <!-- =========================
-                 POLICE SEARCH
-            ========================== -->
-
-            <div class="card">
-
-                <h2>
-                    Search Citizen
-                </h2>
-
-
-                <div class="inline">
-
-                    <input
-                        id="policeCitizen"
-                        type="text"
-                        placeholder="Name, email, Government ID, or database ID"
-                        maxlength="255"
-                    >
-
-
-                    <button
-                        class="primary"
-                        id="searchPolice"
-                    >
-                        Search
-                    </button>
-
-                </div>
-
-
-                <p class="muted">
-                    Enter the citizen's name, email,
-                    Government ID, Citizen ID, or database ID.
-                </p>
-
-            </div>
-
-
-            <div id="policeResult">
-
-                <!-- Police records load here -->
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =========================
-             GOVERNMENT
-        ========================== -->
-
-        <div
-            id="government"
-            class="page hidden"
-        >
-
-            <div class="page-title">
-
-                <p class="eyebrow">
-                    GOVERNMENT ADMINISTRATION
-                </p>
-
-
-                <h1>
-                    Government Dashboard
-                </h1>
-
-
-                <p>
-                    Manage citizens, roles, licenses,
-                    bank accounts and official records.
-                </p>
-
-            </div>
-
-
-
-            <!-- =========================
-                 SEARCH USERS
-            ========================== -->
-
-            <div class="card">
-
-                <h2>
-                    Find Citizen
-                </h2>
-
-
-                <div class="inline">
-
-                    <input
-                        id="govSearch"
-                        type="text"
-                        placeholder="Name, email, or Government ID"
-                        maxlength="255"
-                    >
-
-
-                    <button
-                        class="primary"
-                        id="govSearchBtn"
-                    >
-                        Search
-                    </button>
-
-                </div>
-
-
-                <p class="muted">
-                    Search by name, email, Government ID,
-                    Citizen ID, or database ID.
-                </p>
-
-
-                <div id="govUsers">
-
-                    <!-- Users appear here -->
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =========================
-                 MONEY LEADERBOARD
-            ========================== -->
-
-            <div class="card">
-
-                <div class="request-header">
-
-                    <div>
-
-                        <h2>
-                            Money Leaderboard
-                        </h2>
-
-
-                        <p class="muted">
-                            Citizens ranked by their
-                            current bank balance.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        class="primary"
-                        id="refreshLeaderboard"
-                    >
-                        Refresh
-                    </button>
-
-                </div>
-
-
-                <div id="moneyLeaderboard">
-
-                    <p class="muted">
-                        Loading leaderboard...
-                    </p>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- =========================
-                 GOVERNMENT ACTIONS
-            ========================== -->
-
             <div class="grid two">
-
-
-
-                <!-- =========================
-                     BANK
-                ========================== -->
 
                 <div class="card">
 
                     <h2>
-                        Government Bank Action
+                        Transfer Money
                     </h2>
 
 
                     <p class="muted">
-                        Pay or withdraw money from a citizen.
-                        Enter their name, email, Government ID,
-                        Citizen ID, or database ID.
+
+                        Send money using a citizen's name,
+                        email, Government ID, Citizen ID,
+                        or bank account number.
+
                     </p>
 
 
                     <label>
 
-                        Citizen
+                        Recipient
 
                         <input
-                            id="bankUserId"
+                            id="transferRecipient"
                             type="text"
-                            placeholder="Name, email, GOV ID, or database ID"
                             maxlength="255"
+                            placeholder="Name, email, GOV ID, or bank account"
                         >
 
                     </label>
@@ -908,10 +651,11 @@
                         Amount
 
                         <input
-                            id="bankAmount"
+                            id="transferAmount"
                             type="number"
+                            min="0.01"
                             step="0.01"
-                            placeholder="1000 or -1000"
+                            placeholder="100.00"
                         >
 
                     </label>
@@ -922,111 +666,140 @@
                         Description
 
                         <input
-                            id="bankDescription"
-                            value="Government transaction"
+                            id="transferDescription"
+                            type="text"
+                            maxlength="255"
+                            placeholder="Bank transfer"
                         >
 
                     </label>
 
 
                     <button
+                        id="transferBtn"
                         class="primary"
-                        id="bankAction"
                     >
-                        Apply Transaction
+                        Send Money
                     </button>
 
                 </div>
 
 
-
-                <!-- =========================
-                     LICENSE
-                ========================== -->
-
                 <div class="card">
 
                     <h2>
-                        Government License
+                        Transactions
                     </h2>
 
 
-                    <p class="muted">
-                        Give or revoke a license using the
-                        citizen's name, email, Government ID,
-                        Citizen ID, or database ID.
-                    </p>
+                    <div id="transactions">
+
+                        <p class="muted">
+                            Loading transactions...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
 
-                    <label>
+        <!-- =================================================
+             LICENSES
+        ================================================== -->
 
-                        Citizen
+        <div
+            id="licenses"
+            class="page hidden"
+        >
 
-                        <input
-                            id="licenseUserId"
-                            type="text"
-                            placeholder="Name, email, GOV ID, or database ID"
-                            maxlength="255"
-                        >
+            <div class="page-title">
 
-                    </label>
-
-
-                    <label>
-
-                        License
-
-                        <select id="licenseType">
-
-                            <option>
-                                Driver's License
-                            </option>
+                <p class="eyebrow">
+                    CITIZEN LICENSING
+                </p>
 
 
-                            <option>
-                                Pilot License
-                            </option>
+                <h1>
+                    Licenses
+                </h1>
 
 
-                            <option>
-                                Boating License
-                            </option>
+                <p>
+                    View your official Group City licenses
+                    and submit license requests.
+                </p>
+
+            </div>
 
 
-                            <option>
-                                Business License
-                            </option>
+            <div id="licenseGrid">
 
-                        </select>
+                <p class="muted">
+                    Loading licenses...
+                </p>
 
-                    </label>
+            </div>
 
-
-                    <label>
-
-                        Status
-
-                        <select id="licenseStatus">
-
-                            <option value="active">
-                                Active
-                            </option>
+        </div>
 
 
-                            <option value="revoked">
-                                Revoked
-                            </option>
+        <!-- =================================================
+             PUBLIC PENAL CODES
+        ================================================== -->
 
-                        </select>
+        <div
+            id="penalCodes"
+            class="page hidden"
+        >
 
-                    </label>
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    GROUP CITY LAW
+                </p>
+
+
+                <h1>
+                    Group City Penal Code
+                </h1>
+
+
+                <p>
+
+                    Official searchable list of
+                    Group City criminal and traffic offenses.
+
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>
+                    Search Penal Codes
+                </h2>
+
+
+                <div class="inline">
+
+                    <input
+                        id="penalCodeSearch"
+                        type="text"
+                        placeholder="Search code, offense, or keyword"
+                        maxlength="255"
+                    >
 
 
                     <button
+                        id="penalCodeSearchBtn"
                         class="primary"
-                        id="licenseAction"
                     >
-                        Update License
+                        Search
                     </button>
 
                 </div>
@@ -1034,59 +807,161 @@
             </div>
 
 
+            <div id="penalCodeList">
 
-            <!-- =========================
-                 ROLE MANAGEMENT
-            ========================== -->
+                <p class="muted">
+                    Loading Group City penal codes...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             POLICE
+        ================================================== -->
+
+        <div
+            id="police"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    GROUP CITY POLICE
+                </p>
+
+
+                <h1>
+                    Police Portal
+                </h1>
+
+
+                <p>
+                    Restricted law-enforcement services
+                    for authorized Group City officers.
+                </p>
+
+            </div>
+
+
+            <!-- POLICE CALLSIGN -->
+
+            <div class="card highlight-card">
+
+                <p class="eyebrow">
+                    OFFICER RADIO ID
+                </p>
+
+
+                <h2>
+                    Your Callsign
+                </h2>
+
+
+                <strong
+                    id="policeCallsign"
+                    class="large-value"
+                >
+                    —
+                </strong>
+
+
+                <p class="muted">
+                    Police callsigns use the format
+                    <strong>1A-123</strong>.
+                </p>
+
+            </div>
+
+
+            <!-- 911 RTO -->
+
+            <div class="card emergency-panel">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            RADIO TELEPHONE OPERATOR
+                        </p>
+
+
+                        <h2>
+                            911 RTO
+                        </h2>
+
+
+                        <p class="muted">
+                            New calls are automatically displayed
+                            when the dispatch system receives them.
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Active Calls
+                        </span>
+
+                        <strong id="active911Count">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div id="rtoCalls">
+
+                    <p class="muted">
+                        Loading 911 calls...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CITIZEN SEARCH -->
 
             <div class="card">
 
                 <h2>
-                    Government Personnel
+                    Citizen Record Lookup
                 </h2>
 
 
                 <p class="muted">
-                    Assign or remove government and
-                    police roles. Search by name, email,
-                    Government ID, Citizen ID, or database ID.
+
+                    Search by exact name, email,
+                    Government ID, Citizen ID,
+                    or database ID.
+
                 </p>
 
 
                 <div class="inline">
 
                     <input
-                        id="roleUserId"
+                        id="policeSearch"
                         type="text"
-                        placeholder="Name, email, GOV ID, or database ID"
                         maxlength="255"
+                        placeholder="Name, email, Government ID, or database ID"
                     >
-
-
-                    <select id="roleSelect">
-
-                        <option value="citizen">
-                            Citizen
-                        </option>
-
-
-                        <option value="police">
-                            Police Officer
-                        </option>
-
-
-                        <option value="government">
-                            Government
-                        </option>
-
-                    </select>
 
 
                     <button
+                        id="policeSearchBtn"
                         class="primary"
-                        id="roleAction"
                     >
-                        Assign Role
+                        Search
                     </button>
 
                 </div>
@@ -1094,10 +969,10 @@
             </div>
 
 
+            <div id="policeResult"></div>
 
-            <!-- =========================
-                 LICENSE REQUESTS
-            ========================== -->
+
+            <!-- BOLO LOOKUP -->
 
             <div class="card">
 
@@ -1105,18 +980,824 @@
 
                     <div>
 
-                        <h2>
-                            License Requests
-                        </h2>
-
-
-                        <p class="muted">
-                            Review citizen license requests.
+                        <p class="eyebrow">
+                            OFFICER LOOKUP
                         </p>
+
+
+                        <h2>
+                            Active BOLOs
+                        </h2>
 
                     </div>
 
                 </div>
+
+
+                <div class="inline">
+
+                    <input
+                        id="boloSearch"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Subject, vehicle, plate, or reason"
+                    >
+
+
+                    <button
+                        id="boloSearchBtn"
+                        class="primary"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <div id="boloList">
+
+                    <p class="muted">
+                        Loading BOLOs...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WARRANT LOOKUP -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    OFFICER LOOKUP
+                </p>
+
+
+                <h2>
+                    Arrest Warrants
+                </h2>
+
+
+                <div class="inline">
+
+                    <input
+                        id="warrantSearch"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name or Government ID"
+                    >
+
+
+                    <button
+                        id="warrantSearchBtn"
+                        class="primary"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <div id="warrantList">
+
+                    <p class="muted">
+                        Loading arrest warrants...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+        
+        <!-- =================================================
+             PILOT / ATC
+        ================================================== -->
+
+        <div
+            id="pilot"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    GROUP CITY AVIATION
+                </p>
+
+
+                <h1>
+                    Pilot Portal
+                </h1>
+
+
+                <p>
+                    Access radio frequencies, airport charts,
+                    flight plans, ATC information, and pilot resources.
+                </p>
+
+            </div>
+
+
+            <!-- PILOT CALLSIGN -->
+
+            <div class="card highlight-card">
+
+                <p class="eyebrow">
+                    AIRCRAFT IDENTIFICATION
+                </p>
+
+
+                <h2>
+                    Your Pilot Callsign
+                </h2>
+
+
+                <strong
+                    id="pilotCallsign"
+                    class="large-value"
+                >
+                    —
+                </strong>
+
+
+                <p class="muted">
+                    Pilot callsigns use the format
+                    <strong>GC-1234</strong>.
+                </p>
+
+            </div>
+
+
+            <!-- RADIO FREQUENCIES -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    RADIO
+                </p>
+
+
+                <h2>
+                    Group City Frequencies
+                </h2>
+
+
+                <div
+                    id="radioFrequencies"
+                    class="grid three"
+                ></div>
+
+            </div>
+
+
+            <!-- AIRPORT CHARTS -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            AIRPORT INFORMATION
+                        </p>
+
+
+                        <h2>
+                            Airport Charts
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        id="refreshCharts"
+                        class="secondary"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+                <label>
+
+                    Airport
+
+                    <select id="chartAirport">
+
+                        <option value="">
+                            All Airports
+                        </option>
+
+                        <option value="Airport 1">
+                            Airport 1
+                        </option>
+
+                        <option value="Airport 2">
+                            Airport 2
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <div id="chartList">
+
+                    <p class="muted">
+                        Loading airport charts...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONETIC ALPHABET -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    RADIO REFERENCE
+                </p>
+
+
+                <h2>
+                    Phonetic Alphabet
+                </h2>
+
+
+                <div
+                    id="phoneticAlphabet"
+                    class="phonetic-grid"
+                ></div>
+
+            </div>
+
+
+            <!-- FILE FLIGHT PLAN -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    FLIGHT OPERATIONS
+                </p>
+
+
+                <h2>
+                    File a Flight Plan
+                </h2>
+
+
+                <p class="muted">
+                    If you already have an active valid
+                    <strong>GC-####</strong> callsign,
+                    the system can reuse it.
+                </p>
+
+
+                <div class="grid two">
+
+                    <label>
+
+                        Departure
+
+                        <input
+                            id="flightDeparture"
+                            type="text"
+                            maxlength="80"
+                            placeholder="Departure airport"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Arrival
+
+                        <input
+                            id="flightArrival"
+                            type="text"
+                            maxlength="80"
+                            placeholder="Arrival airport"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Aircraft
+
+                        <input
+                            id="flightAircraft"
+                            type="text"
+                            maxlength="80"
+                            placeholder="Example: B737"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Requested Altitude
+
+                        <input
+                            id="flightAltitude"
+                            type="text"
+                            maxlength="40"
+                            placeholder="Example: FL250"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Callsign
+
+                        <input
+                            id="flightCallsign"
+                            type="text"
+                            maxlength="7"
+                            placeholder="GC-1234"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <label>
+
+                    Route
+
+                    <textarea
+                        id="flightRoute"
+                        maxlength="500"
+                        placeholder="Enter your planned route"
+                    ></textarea>
+
+                </label>
+
+
+                <label>
+
+                    Remarks
+
+                    <textarea
+                        id="flightRemarks"
+                        maxlength="500"
+                        placeholder="Optional flight remarks"
+                    ></textarea>
+
+                </label>
+
+
+                <button
+                    id="fileFlightPlanBtn"
+                    class="primary"
+                >
+                    File Flight Plan
+                </button>
+
+            </div>
+
+
+            <!-- ACTIVE FLIGHT PLAN -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    YOUR FLIGHT
+                </p>
+
+
+                <h2>
+                    Active Flight Plan
+                </h2>
+
+
+                <div id="activeFlightPlan">
+
+                    <p class="muted">
+                        Loading active flight plan...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATC PANEL -->
+
+            <div
+                id="atcFlightPlansSection"
+                class="card hidden"
+            >
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            AIR TRAFFIC CONTROL
+                        </p>
+
+
+                        <h2>
+                            Active Flight Plans
+                        </h2>
+
+
+                        <p class="muted">
+                            View pilot callsigns, routes,
+                            altitudes, aircraft, and destinations.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshATCPlans"
+                        class="secondary"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+                <div id="atcFlightPlans">
+
+                    <p class="muted">
+                        Loading active flights...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GOVERNMENT
+        ================================================== -->
+
+        <div
+            id="government"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    AUTHORIZED PERSONNEL ONLY
+                </p>
+
+
+                <h1>
+                    Government Administration
+                </h1>
+
+
+                <p>
+                    Manage citizens, banking, roles, licenses,
+                    public safety records, aviation charts,
+                    and government records.
+                </p>
+
+            </div>
+
+
+            <!-- USER SEARCH -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    CITIZEN DIRECTORY
+                </p>
+
+
+                <h2>
+                    Search Citizens
+                </h2>
+
+
+                <p class="muted">
+                    Search by partial name, email,
+                    or Government ID.
+                </p>
+
+
+                <div class="inline">
+
+                    <input
+                        id="govSearch"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name, email, or Government ID"
+                    >
+
+
+                    <button
+                        id="govSearchBtn"
+                        class="primary"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <div id="govUsers"></div>
+
+            </div>
+
+
+            <!-- MONEY LEADERBOARD -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            FINANCIAL OVERSIGHT
+                        </p>
+
+
+                        <h2>
+                            Money Leaderboard
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        id="refreshLeaderboard"
+                        class="secondary"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+                <div id="moneyLeaderboard">
+
+                    <p class="muted">
+                        Loading balances...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- BANK ACTION -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    BANKING CONTROL
+                </p>
+
+
+                <h2>
+                    Government Bank Action
+                </h2>
+
+
+                <p class="muted">
+                    Use a full name, email, Government ID,
+                    Citizen ID, or database ID.
+                </p>
+
+
+                <label>
+
+                    Citizen
+
+                    <input
+                        id="bankUserId"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name, email, GOV ID, or database ID"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Amount
+
+                    <input
+                        id="bankAmount"
+                        type="number"
+                        step="0.01"
+                        placeholder="Use a negative number to remove money"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Description
+
+                    <input
+                        id="bankDescription"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Reason for adjustment"
+                    >
+
+                </label>
+
+
+                <button
+                    id="bankActionBtn"
+                    class="primary"
+                >
+                    Update Bank Account
+                </button>
+
+            </div>
+
+
+            <!-- LICENSE MANAGEMENT -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    LICENSE CONTROL
+                </p>
+
+
+                <h2>
+                    Manage Citizen License
+                </h2>
+
+
+                <label>
+
+                    Citizen
+
+                    <input
+                        id="licenseUserId"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name, email, GOV ID, or database ID"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    License Type
+
+                    <input
+                        id="govLicenseType"
+                        type="text"
+                        maxlength="100"
+                        placeholder="Example: Driver License"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Action
+
+                    <select id="govLicenseAction">
+
+                        <option value="">
+                            Select action
+                        </option>
+
+                        <option value="grant">
+                            Grant
+                        </option>
+
+                        <option value="revoke">
+                            Revoke
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <button
+                    id="licenseActionBtn"
+                    class="primary"
+                >
+                    Update License
+                </button>
+
+            </div>
+
+
+            <!-- ROLE MANAGEMENT -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    PERSONNEL CONTROL
+                </p>
+
+
+                <h2>
+                    Assign Government Role
+                </h2>
+
+
+                <p class="muted">
+                    Police users receive a
+                    <strong>1A-123</strong> callsign.
+                    Pilot and ATC users receive a
+                    <strong>GC-1234</strong> aviation callsign.
+                </p>
+
+
+                <label>
+
+                    Citizen
+
+                    <input
+                        id="roleUserId"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name, email, GOV ID, or database ID"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    New Role
+
+                    <select id="newRole">
+
+                        <option value="citizen">
+                            Citizen
+                        </option>
+
+                        <option value="police">
+                            Police Officer
+                        </option>
+
+                        <option value="pilot">
+                            Pilot
+                        </option>
+
+                        <option value="atc">
+                            ATC
+                        </option>
+
+                        <option value="government">
+                            Government
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <button
+                    id="roleActionBtn"
+                    class="primary"
+                >
+                    Assign Role
+                </button>
+
+            </div>
+
+
+            <!-- LICENSE REQUESTS -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    PENDING REQUESTS
+                </p>
+
+
+                <h2>
+                    License Requests
+                </h2>
 
 
                 <div id="licenseRequests">
@@ -1130,27 +1811,452 @@
             </div>
 
 
-
-            <!-- =========================
-                 AUDIT LOG
-            ========================== -->
+            <!-- PENAL CODE MANAGEMENT -->
 
             <div class="card">
 
+                <p class="eyebrow">
+                    LEGAL MANAGEMENT
+                </p>
+
+
                 <h2>
-                    Government Audit Log
+                    Manage Penal Codes
+                </h2>
+
+
+                <div class="grid two">
+
+                    <label>
+
+                        Penal Code
+
+                        <input
+                            id="penalCodeCode"
+                            type="text"
+                            maxlength="50"
+                            placeholder="Example: GC-101"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Offense Title
+
+                        <input
+                            id="penalCodeTitle"
+                            type="text"
+                            maxlength="150"
+                            placeholder="Example: Reckless Driving"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Category
+
+                        <input
+                            id="penalCodeCategory"
+                            type="text"
+                            maxlength="100"
+                            placeholder="Traffic, Felony, Misdemeanor..."
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Fine
+
+                        <input
+                            id="penalCodeFine"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Points
+
+                        <input
+                            id="penalCodePoints"
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Jail Time
+
+                        <input
+                            id="penalCodeJail"
+                            type="text"
+                            maxlength="100"
+                            placeholder="Example: 5 minutes"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <label>
+
+                    Description
+
+                    <textarea
+                        id="penalCodeDescription"
+                        maxlength="1000"
+                        placeholder="Describe the offense and law"
+                    ></textarea>
+
+                </label>
+
+
+                <button
+                    id="addPenalCodeBtn"
+                    class="primary"
+                >
+                    Add Penal Code
+                </button>
+
+
+                <div id="govPenalCodes"></div>
+
+            </div>
+
+
+            <!-- BOLO MANAGEMENT -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    LAW ENFORCEMENT MANAGEMENT
+                </p>
+
+
+                <h2>
+                    Create BOLO
+                </h2>
+
+
+                <div class="grid two">
+
+                    <label>
+
+                        Subject
+
+                        <input
+                            id="boloSubject"
+                            type="text"
+                            maxlength="150"
+                            placeholder="Subject name"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Vehicle
+
+                        <input
+                            id="boloVehicle"
+                            type="text"
+                            maxlength="150"
+                            placeholder="Vehicle description"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Plate
+
+                        <input
+                            id="boloPlate"
+                            type="text"
+                            maxlength="50"
+                            placeholder="License plate"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Reason
+
+                        <input
+                            id="boloReason"
+                            type="text"
+                            maxlength="255"
+                            placeholder="Reason for BOLO"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <label>
+
+                    Description
+
+                    <textarea
+                        id="boloDescription"
+                        maxlength="1000"
+                        placeholder="Additional BOLO information"
+                    ></textarea>
+
+                </label>
+
+
+                <button
+                    id="addBoloBtn"
+                    class="primary"
+                >
+                    Create BOLO
+                </button>
+
+
+                <div id="govBolos"></div>
+
+            </div>
+
+            <!-- ARREST WARRANT MANAGEMENT -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    LAW ENFORCEMENT MANAGEMENT
+                </p>
+
+
+                <h2>
+                    Issue Arrest Warrant
+                </h2>
+
+
+                <label>
+
+                    Citizen
+
+                    <input
+                        id="warrantCitizen"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Name, email, GOV ID, or database ID"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Reason
+
+                    <input
+                        id="warrantReason"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Reason for warrant"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Details
+
+                    <textarea
+                        id="warrantDetails"
+                        maxlength="1000"
+                        placeholder="Charges, circumstances, or additional warrant information"
+                    ></textarea>
+
+                </label>
+
+
+                <button
+                    id="addWarrantBtn"
+                    class="primary"
+                >
+                    Issue Arrest Warrant
+                </button>
+
+
+                <div id="govWarrants">
+
+                    <p class="muted">
+                        Loading arrest warrants...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- AIRPORT CHART MANAGEMENT -->
+
+            <div class="card">
+
+                <p class="eyebrow">
+                    AVIATION MANAGEMENT
+                </p>
+
+
+                <h2>
+                    Airport Charts
                 </h2>
 
 
                 <p class="muted">
-                    Recent government and police
-                    administrative actions.
+                    Add or remove charts used by pilots and ATC.
                 </p>
 
 
-                <div id="audit">
+                <div class="grid two">
 
-                    <!-- Audit records load here -->
+                    <label>
+
+                        Airport
+
+                        <select id="govChartAirport">
+
+                            <option value="Airport 1">
+                                Airport 1
+                            </option>
+
+                            <option value="Airport 2">
+                                Airport 2
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label>
+
+                        Chart Name
+
+                        <input
+                            id="govChartTitle"
+                            type="text"
+                            maxlength="150"
+                            placeholder="Example: Airport Diagram"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Chart Type
+
+                        <input
+                            id="govChartType"
+                            type="text"
+                            maxlength="100"
+                            placeholder="Example: Approach, Departure, Airport Diagram"
+                        >
+
+                    </label>
+
+
+                    <label>
+
+                        Chart URL
+
+                        <input
+                            id="govChartUrl"
+                            type="url"
+                            maxlength="1000"
+                            placeholder="https://example.com/chart.pdf"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <button
+                    id="addChartBtn"
+                    class="primary"
+                >
+                    Add Chart
+                </button>
+
+
+                <div id="govCharts">
+
+                    <p class="muted">
+                        Loading charts...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- AUDIT LOG -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            GOVERNMENT SECURITY
+                        </p>
+
+
+                        <h2>
+                            Audit Log
+                        </h2>
+
+
+                        <p class="muted">
+                            Review important government and administrative actions.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="refreshAudit"
+                        class="secondary"
+                    >
+                        Refresh
+                    </button>
+
+                </div>
+
+
+                <div id="auditLog">
+
+                    <p class="muted">
+                        Loading audit history...
+                    </p>
 
                 </div>
 
@@ -1160,18 +2266,13 @@
 
     </section>
 
-</main>
 
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
 
-
-<!-- =========================
-     JAVASCRIPT
-========================== -->
-
-<script src="app.js"></script>
-
+    <script src="app.js"></script>
 
 </body>
 
 </html>
-```
