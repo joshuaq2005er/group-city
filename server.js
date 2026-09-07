@@ -21,8 +21,7 @@ const app = express();
 // CONFIGURATION
 // ============================================================
 
-const PORT =
-    Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 3000);
 
 const JWT_SECRET =
     process.env.JWT_SECRET ||
@@ -44,14 +43,6 @@ const ADMIN_NAME =
     process.env.ADMIN_NAME ||
     "Government Administrator";
 
-/*
-    Used later by your Discord bot.
-
-    The Discord bot sends a request here when somebody
-    joins the 911 Discord voice channel.
-
-    Add DISPATCH_TOKEN to Render Environment Variables.
-*/
 const DISPATCH_TOKEN =
     process.env.DISPATCH_TOKEN ||
     "";
@@ -111,40 +102,29 @@ db.pragma("foreign_keys = ON");
 
 // ============================================================
 // DATABASE TABLES
+// IMPORTANT:
+// Inside db.exec(), SQL comments MUST use -- and NOT //
 // ============================================================
 
 db.exec(`
 
     CREATE TABLE IF NOT EXISTS users (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         email TEXT NOT NULL UNIQUE COLLATE NOCASE,
-
         password_hash TEXT NOT NULL,
-
         name TEXT NOT NULL,
-
         citizen_id TEXT NOT NULL UNIQUE,
-
         role TEXT NOT NULL DEFAULT 'citizen',
-
         police_points INTEGER NOT NULL DEFAULT 0,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
 
     CREATE TABLE IF NOT EXISTS bank_accounts (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER NOT NULL UNIQUE,
-
         account_number TEXT NOT NULL UNIQUE,
-
         balance REAL NOT NULL DEFAULT 0,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (user_id)
@@ -154,17 +134,11 @@ db.exec(`
 
 
     CREATE TABLE IF NOT EXISTS transactions (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         account_id INTEGER NOT NULL,
-
         amount REAL NOT NULL,
-
         type TEXT NOT NULL,
-
         description TEXT NOT NULL,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (account_id)
@@ -174,21 +148,13 @@ db.exec(`
 
 
     CREATE TABLE IF NOT EXISTS licenses (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER NOT NULL,
-
         license_type TEXT NOT NULL,
-
         status TEXT NOT NULL DEFAULT 'inactive',
-
         issued_by INTEGER,
-
         issued_at TEXT,
-
         revoked_at TEXT,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         UNIQUE(user_id, license_type),
@@ -204,21 +170,13 @@ db.exec(`
 
 
     CREATE TABLE IF NOT EXISTS license_requests (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER NOT NULL,
-
         license_type TEXT NOT NULL,
-
         status TEXT NOT NULL DEFAULT 'pending',
-
         reviewed_by INTEGER,
-
         government_note TEXT,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
         reviewed_at TEXT,
 
         FOREIGN KEY (user_id)
@@ -232,17 +190,11 @@ db.exec(`
 
 
     CREATE TABLE IF NOT EXISTS police_records (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER NOT NULL,
-
         officer_id INTEGER NOT NULL,
-
         reason TEXT NOT NULL,
-
         points INTEGER NOT NULL DEFAULT 0,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (user_id)
@@ -256,15 +208,10 @@ db.exec(`
 
 
     CREATE TABLE IF NOT EXISTS audit_logs (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         actor_id INTEGER,
-
         action TEXT NOT NULL,
-
         description TEXT NOT NULL,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (actor_id)
@@ -273,26 +220,18 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // POLICE RTO / 911
-    // --------------------------------------------------------
+    -- ========================================================
+    -- POLICE RTO / 911
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS emergency_calls (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         caller_user_id INTEGER,
-
         caller_name TEXT NOT NULL,
-
         caller_email TEXT,
-
         channel_id TEXT,
-
         status TEXT NOT NULL DEFAULT 'active',
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
         closed_at TEXT,
 
         FOREIGN KEY (caller_user_id)
@@ -301,24 +240,21 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // GROUP CITY PENAL CODES
-    // --------------------------------------------------------
+    -- ========================================================
+    -- GROUP CITY PENAL CODES
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS penal_codes (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         code TEXT NOT NULL UNIQUE COLLATE NOCASE,
-
         title TEXT NOT NULL,
-
         description TEXT NOT NULL,
-
         penalty TEXT,
-
+        category TEXT,
+        fine REAL DEFAULT 0,
+        points INTEGER DEFAULT 0,
+        jail_time TEXT,
         created_by INTEGER,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (created_by)
@@ -327,28 +263,20 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // BOLOS
-    // --------------------------------------------------------
+    -- ========================================================
+    -- BOLOS
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS bolos (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         subject TEXT NOT NULL,
-
         vehicle TEXT,
-
         plate TEXT,
-
         description TEXT NOT NULL,
-
+        reason TEXT,
         status TEXT NOT NULL DEFAULT 'active',
-
         created_by INTEGER,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
         cleared_at TEXT,
 
         FOREIGN KEY (created_by)
@@ -357,30 +285,21 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // ARREST WARRANTS
-    // --------------------------------------------------------
+    -- ========================================================
+    -- ARREST WARRANTS
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS arrest_warrants (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER,
-
         subject_name TEXT NOT NULL,
-
         subject_identifier TEXT,
-
         reason TEXT NOT NULL,
-
         charges TEXT,
-
+        details TEXT,
         status TEXT NOT NULL DEFAULT 'active',
-
         issued_by INTEGER,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
         served_at TEXT,
 
         FOREIGN KEY (user_id)
@@ -393,24 +312,17 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // AIRPORT CHARTS
-    // --------------------------------------------------------
+    -- ========================================================
+    -- AIRPORT CHARTS
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS charts (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         airport TEXT NOT NULL,
-
         chart_name TEXT NOT NULL,
-
         chart_type TEXT,
-
         url TEXT NOT NULL,
-
         created_by INTEGER,
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (created_by)
@@ -419,34 +331,22 @@ db.exec(`
     );
 
 
-    // --------------------------------------------------------
-    // FLIGHT PLANS
-    // --------------------------------------------------------
+    -- ========================================================
+    -- FLIGHT PLANS
+    -- ========================================================
 
     CREATE TABLE IF NOT EXISTS flight_plans (
-
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-
         user_id INTEGER NOT NULL,
-
         callsign TEXT NOT NULL,
-
         departure TEXT NOT NULL,
-
         arrival TEXT NOT NULL,
-
         aircraft TEXT,
-
         route TEXT NOT NULL,
-
         altitude TEXT,
-
         remarks TEXT,
-
         status TEXT NOT NULL DEFAULT 'active',
-
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (user_id)
@@ -461,11 +361,7 @@ db.exec(`
 // DATABASE MIGRATIONS
 // ============================================================
 
-function ensureColumn(
-    table,
-    column,
-    definition
-) {
+function ensureColumn(table, column, definition) {
 
     const columns =
         db.prepare(
@@ -487,22 +383,51 @@ function ensureColumn(
 }
 
 
-// Police callsign:
-// 1A-123
-
 ensureColumn(
     "users",
     "police_callsign",
     "TEXT"
 );
 
-
-// Pilot callsign:
-// GC-1234
-
 ensureColumn(
     "users",
     "pilot_callsign",
+    "TEXT"
+);
+
+ensureColumn(
+    "penal_codes",
+    "category",
+    "TEXT"
+);
+
+ensureColumn(
+    "penal_codes",
+    "fine",
+    "REAL DEFAULT 0"
+);
+
+ensureColumn(
+    "penal_codes",
+    "points",
+    "INTEGER DEFAULT 0"
+);
+
+ensureColumn(
+    "penal_codes",
+    "jail_time",
+    "TEXT"
+);
+
+ensureColumn(
+    "bolos",
+    "reason",
+    "TEXT"
+);
+
+ensureColumn(
+    "arrest_warrants",
+    "details",
     "TEXT"
 );
 
@@ -512,49 +437,28 @@ ensureColumn(
 // ============================================================
 
 const LICENSE_TYPES = [
-
     "Driver's License",
-
     "Pilot License",
-
     "Boating License",
-
     "Business License"
-
 ];
-
 
 const USER_ROLES = [
-
     "citizen",
-
     "police",
-
     "pilot",
-
     "atc",
-
     "government"
-
 ];
 
-
-/*
-    Change these later when you tell me
-    the actual names of the two airports.
-*/
-
 const AIRPORTS = [
-
     "Airport 1",
-
     "Airport 2"
-
 ];
 
 
 // ============================================================
-// HELPER FUNCTIONS
+// HELPERS
 // ============================================================
 
 function cleanText(
@@ -574,9 +478,7 @@ function cleanText(
 }
 
 
-function normalizeEmail(
-    value
-) {
+function normalizeEmail(value) {
 
     return cleanText(
         value,
@@ -585,10 +487,6 @@ function normalizeEmail(
 
 }
 
-
-// ============================================================
-// GENERATE GOVERNMENT ID
-// ============================================================
 
 function generateCitizenId() {
 
@@ -618,10 +516,6 @@ function generateCitizenId() {
 }
 
 
-// ============================================================
-// GENERATE BANK ACCOUNT
-// ============================================================
-
 function generateAccountNumber() {
 
     let number;
@@ -649,10 +543,6 @@ function generateAccountNumber() {
 
 }
 
-
-// ============================================================
-// GENERATE CALLSIGN
-// ============================================================
 
 function generateUniqueCallsign(
     prefix,
@@ -684,14 +574,11 @@ function generateUniqueCallsign(
     } while (
 
         db.prepare(`
-
             SELECT id
             FROM users
-
             WHERE
                 police_callsign = ?
                 OR pilot_callsign = ?
-
         `).get(
             callsign,
             callsign
@@ -704,13 +591,7 @@ function generateUniqueCallsign(
 }
 
 
-// ============================================================
-// CALLSIGN VALIDATION
-// ============================================================
-
-function validPilotCallsign(
-    value
-) {
+function validPilotCallsign(value) {
 
     return /^GC-\d{4}$/.test(
         String(
@@ -721,9 +602,7 @@ function validPilotCallsign(
 }
 
 
-function validPoliceCallsign(
-    value
-) {
+function validPoliceCallsign(value) {
 
     return /^1A-\d{3}$/.test(
         String(
@@ -734,34 +613,19 @@ function validPoliceCallsign(
 }
 
 
-// ============================================================
-// GET USER
-// ============================================================
-
-function getUserById(
-    id
-) {
+function getUserById(id) {
 
     return db.prepare(`
 
         SELECT
-
             id,
-
             email,
-
             name,
-
             citizen_id,
-
             role,
-
             police_points,
-
             police_callsign,
-
             pilot_callsign,
-
             created_at
 
         FROM users
@@ -773,9 +637,75 @@ function getUserById(
 }
 
 
-// ============================================================
-// AUDIT LOG
-// ============================================================
+function findUser(identifier) {
+
+    const input =
+        cleanText(
+            identifier,
+            255
+        );
+
+    if (!input) {
+        return null;
+    }
+
+
+    const numericId =
+        Number(input);
+
+    if (
+        Number.isInteger(numericId) &&
+        numericId > 0
+    ) {
+
+        const user =
+            getUserById(
+                numericId
+            );
+
+        if (user) {
+            return user;
+        }
+
+    }
+
+
+    const email =
+        normalizeEmail(
+            input
+        );
+
+
+    return db.prepare(`
+
+        SELECT
+            id,
+            email,
+            name,
+            citizen_id,
+            role,
+            police_points,
+            police_callsign,
+            pilot_callsign,
+            created_at
+
+        FROM users
+
+        WHERE
+            citizen_id = ?
+            OR email = ?
+            OR LOWER(name) = LOWER(?)
+
+        LIMIT 1
+
+    `).get(
+        input,
+        email,
+        input
+    ) || null;
+
+}
+
 
 function createAudit(
     actorId,
@@ -795,156 +725,31 @@ function createAudit(
         VALUES (?, ?, ?)
 
     `).run(
-
         actorId || null,
-
         action,
-
         description
-
     );
 
 }
 
 
-// ============================================================
-// JWT
-// ============================================================
-
-function createToken(
-    user
-) {
+function createToken(user) {
 
     return jwt.sign(
-
         {
             id: user.id
         },
-
         JWT_SECRET,
-
         {
             expiresIn: "7d"
         }
-
     );
 
 }
 
 
 // ============================================================
-// FIND USER
-//
-// SUPPORTED:
-//
-// Name
-// Email
-// GOV ID
-// Database ID
-// ============================================================
-
-function findUser(
-    identifier
-) {
-
-    const input =
-        cleanText(
-            identifier,
-            255
-        );
-
-    if (!input) {
-
-        return null;
-
-    }
-
-
-    // --------------------------------------------------------
-    // DATABASE ID
-    // --------------------------------------------------------
-
-    const numericId =
-        Number(input);
-
-    if (
-        Number.isInteger(numericId) &&
-        numericId > 0
-    ) {
-
-        const user =
-            getUserById(
-                numericId
-            );
-
-        if (user) {
-
-            return user;
-
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // GOV ID / EMAIL / NAME
-    // --------------------------------------------------------
-
-    const email =
-        normalizeEmail(
-            input
-        );
-
-
-    return db.prepare(`
-
-        SELECT
-
-            id,
-
-            email,
-
-            name,
-
-            citizen_id,
-
-            role,
-
-            police_points,
-
-            police_callsign,
-
-            pilot_callsign,
-
-            created_at
-
-        FROM users
-
-        WHERE
-
-            citizen_id = ?
-
-            OR email = ?
-
-            OR LOWER(name) = LOWER(?)
-
-        LIMIT 1
-
-    `).get(
-
-        input,
-
-        email,
-
-        input
-
-    ) || null;
-
-}
-
-
-// ============================================================
-// AUTHENTICATION
+// AUTH MIDDLEWARE
 // ============================================================
 
 function requireAuth(
@@ -956,14 +761,11 @@ function requireAuth(
     const header =
         req.headers.authorization;
 
-
     if (!header) {
 
         return res.status(401).json({
-
             message:
                 "Authentication required."
-
         });
 
     }
@@ -972,17 +774,14 @@ function requireAuth(
     const parts =
         header.split(" ");
 
-
     if (
         parts.length !== 2 ||
         parts[0] !== "Bearer"
     ) {
 
         return res.status(401).json({
-
             message:
                 "Invalid authentication token."
-
         });
 
     }
@@ -996,48 +795,36 @@ function requireAuth(
                 JWT_SECRET
             );
 
-
         const user =
             getUserById(
                 decoded.id
             );
 
-
         if (!user) {
 
             return res.status(401).json({
-
                 message:
                     "User no longer exists."
-
             });
 
         }
 
-
         req.user =
             user;
-
 
         next();
 
     } catch {
 
         return res.status(401).json({
-
             message:
                 "Invalid or expired authentication token."
-
         });
 
     }
 
 }
 
-
-// ============================================================
-// POLICE ACCESS
-// ============================================================
 
 function requirePolice(
     req,
@@ -1055,23 +842,16 @@ function requirePolice(
     ) {
 
         return res.status(403).json({
-
             message:
                 "Police access required."
-
         });
 
     }
-
 
     next();
 
 }
 
-
-// ============================================================
-// PILOT ACCESS
-// ============================================================
 
 function requirePilot(
     req,
@@ -1090,23 +870,16 @@ function requirePilot(
     ) {
 
         return res.status(403).json({
-
             message:
                 "Pilot access required."
-
         });
 
     }
-
 
     next();
 
 }
 
-
-// ============================================================
-// ATC ACCESS
-// ============================================================
 
 function requireATC(
     req,
@@ -1124,23 +897,16 @@ function requireATC(
     ) {
 
         return res.status(403).json({
-
             message:
                 "ATC access required."
-
         });
 
     }
-
 
     next();
 
 }
 
-
-// ============================================================
-// GOVERNMENT ACCESS
-// ============================================================
 
 function requireGovernment(
     req,
@@ -1154,14 +920,11 @@ function requireGovernment(
     ) {
 
         return res.status(403).json({
-
             message:
                 "Government access required."
-
         });
 
     }
-
 
     next();
 
@@ -1169,9 +932,7 @@ function requireGovernment(
 
 
 // ============================================================
-// POLICE CALLSIGN
-//
-// 1A-123
+// CALLSIGNS
 // ============================================================
 
 function getOrCreatePoliceCallsign(
@@ -1183,13 +944,9 @@ function getOrCreatePoliceCallsign(
             userId
         );
 
-
     if (!user) {
-
         return null;
-
     }
-
 
     if (
         validPoliceCallsign(
@@ -1208,31 +965,19 @@ function getOrCreatePoliceCallsign(
             3
         );
 
-
     db.prepare(`
-
         UPDATE users
-
         SET police_callsign = ?
-
         WHERE id = ?
-
     `).run(
         callsign,
         userId
     );
 
-
     return callsign;
 
 }
 
-
-// ============================================================
-// PILOT CALLSIGN
-//
-// GC-1234
-// ============================================================
 
 function getOrCreatePilotCallsign(
     userId
@@ -1243,18 +988,9 @@ function getOrCreatePilotCallsign(
             userId
         );
 
-
     if (!user) {
-
         return null;
-
     }
-
-
-    /*
-        If they already have a proper GC-1234 callsign,
-        keep using it.
-    */
 
     if (
         validPilotCallsign(
@@ -1267,26 +1003,52 @@ function getOrCreatePilotCallsign(
     }
 
 
+    const activePlan =
+        db.prepare(`
+            SELECT callsign
+            FROM flight_plans
+            WHERE user_id = ?
+            AND status = 'active'
+            ORDER BY id DESC
+            LIMIT 1
+        `).get(userId);
+
+
+    if (
+        activePlan &&
+        validPilotCallsign(
+            activePlan.callsign
+        )
+    ) {
+
+        db.prepare(`
+            UPDATE users
+            SET pilot_callsign = ?
+            WHERE id = ?
+        `).run(
+            activePlan.callsign,
+            userId
+        );
+
+        return activePlan.callsign;
+
+    }
+
+
     const callsign =
         generateUniqueCallsign(
             "GC",
             4
         );
 
-
     db.prepare(`
-
         UPDATE users
-
         SET pilot_callsign = ?
-
         WHERE id = ?
-
     `).run(
         callsign,
         userId
     );
-
 
     return callsign;
 
@@ -1322,27 +1084,18 @@ function createInitialGovernment() {
 
     const existing =
         db.prepare(`
-
             SELECT id
-
             FROM users
-
             WHERE email = ?
-
         `).get(email);
 
 
     if (existing) {
 
         db.prepare(`
-
             UPDATE users
-
-            SET role =
-                'government'
-
+            SET role = 'government'
             WHERE id = ?
-
         `).run(
             existing.id
         );
@@ -1357,7 +1110,6 @@ function createInitialGovernment() {
             ADMIN_PASSWORD,
             12
         );
-
 
     const citizenId =
         generateCitizenId();
@@ -1381,15 +1133,10 @@ function createInitialGovernment() {
                 (?, ?, ?, ?, 'government')
 
             `).run(
-
                 email,
-
                 passwordHash,
-
                 ADMIN_NAME,
-
                 citizenId
-
             );
 
 
@@ -1405,22 +1152,15 @@ function createInitialGovernment() {
             VALUES (?, ?, 0)
 
         `).run(
-
             result.lastInsertRowid,
-
             generateAccountNumber()
-
         );
 
 
         createAudit(
-
             result.lastInsertRowid,
-
             "INITIAL_GOVERNMENT",
-
             "Initial government administrator account created."
-
         );
 
     })();
@@ -1437,26 +1177,20 @@ createInitialGovernment();
 
 
 // ============================================================
-// HEALTH CHECK
+// HEALTH
 // ============================================================
 
 app.get(
-
     "/api/health",
-
     (req, res) => {
 
         res.json({
-
             online: true,
-
             service:
                 "Group City Government Portal"
-
         });
 
     }
-
 );
 
 
@@ -1465,9 +1199,7 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/auth/register",
-
     (req, res) => {
 
         const name =
@@ -1476,12 +1208,10 @@ app.post(
                 80
             );
 
-
         const email =
             normalizeEmail(
                 req.body.email
             );
-
 
         const password =
             String(
@@ -1497,10 +1227,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Name, email and password are required."
-
             });
 
         }
@@ -1511,10 +1239,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Password must be at least 8 characters."
-
             });
 
         }
@@ -1522,40 +1248,33 @@ app.post(
 
         const existing =
             db.prepare(`
-
                 SELECT id
-
                 FROM users
-
                 WHERE email = ?
-
             `).get(email);
 
 
         if (existing) {
 
             return res.status(409).json({
-
                 message:
                     "An account with that email already exists."
-
             });
 
         }
 
 
-        const passwordHash =
-            bcrypt.hashSync(
-                password,
-                12
-            );
-
-
-        const citizenId =
-            generateCitizenId();
-
-
         try {
+
+            const passwordHash =
+                bcrypt.hashSync(
+                    password,
+                    12
+                );
+
+            const citizenId =
+                generateCitizenId();
+
 
             const userId =
                 db.transaction(() => {
@@ -1576,15 +1295,10 @@ app.post(
                             (?, ?, ?, ?, 'citizen')
 
                         `).run(
-
                             email,
-
                             passwordHash,
-
                             name,
-
                             citizenId
-
                         );
 
 
@@ -1600,11 +1314,8 @@ app.post(
                         VALUES (?, ?, 0)
 
                     `).run(
-
                         result.lastInsertRowid,
-
                         generateAccountNumber()
-
                     );
 
 
@@ -1620,14 +1331,9 @@ app.post(
 
 
             res.status(201).json({
-
                 token:
-                    createToken(
-                        user
-                    ),
-
+                    createToken(user),
                 user
-
             });
 
         } catch (error) {
@@ -1637,18 +1343,14 @@ app.post(
                 error
             );
 
-
             res.status(500).json({
-
                 message:
                     "Unable to create account."
-
             });
 
         }
 
     }
-
 );
 
 
@@ -1657,16 +1359,13 @@ app.post(
 // ============================================================
 
 app.post(
-
     "/api/auth/login",
-
     (req, res) => {
 
         const email =
             normalizeEmail(
                 req.body.email
             );
-
 
         const password =
             String(
@@ -1677,13 +1376,9 @@ app.post(
 
         const user =
             db.prepare(`
-
                 SELECT *
-
                 FROM users
-
                 WHERE email = ?
-
             `).get(email);
 
 
@@ -1696,10 +1391,8 @@ app.post(
         ) {
 
             return res.status(401).json({
-
                 message:
                     "Invalid email or password."
-
             });
 
         }
@@ -1712,19 +1405,15 @@ app.post(
 
 
         res.json({
-
             token:
                 createToken(
                     safeUser
                 ),
-
             user:
                 safeUser
-
         });
 
     }
-
 );
 
 
@@ -1733,37 +1422,24 @@ app.post(
 // ============================================================
 
 app.get(
-
     "/api/auth/me",
-
     requireAuth,
-
     (req, res) => {
 
         res.json({
-
             user:
                 getUserById(
                     req.user.id
                 )
-
         });
 
     }
-
 );
 
 
-// ============================================================
-// USER INFORMATION
-// ============================================================
-
 app.get(
-
     "/api/users/me",
-
     requireAuth,
-
     (req, res) => {
 
         const user =
@@ -1776,11 +1452,8 @@ app.get(
             db.prepare(`
 
                 SELECT
-
                     id,
-
                     account_number,
-
                     balance
 
                 FROM bank_accounts
@@ -1793,19 +1466,13 @@ app.get(
 
 
         res.json({
-
             user: {
-
                 ...user,
-
                 account
-
             }
-
         });
 
     }
-
 );
 
 
@@ -1814,22 +1481,16 @@ app.get(
 // ============================================================
 
 app.get(
-
     "/api/bank",
-
     requireAuth,
-
     (req, res) => {
 
         const account =
             db.prepare(`
 
                 SELECT
-
                     id,
-
                     account_number,
-
                     balance
 
                 FROM bank_accounts
@@ -1844,10 +1505,8 @@ app.get(
         if (!account) {
 
             return res.status(404).json({
-
                 message:
                     "Bank account not found."
-
             });
 
         }
@@ -1857,15 +1516,10 @@ app.get(
             db.prepare(`
 
                 SELECT
-
                     id,
-
                     amount,
-
                     type,
-
                     description,
-
                     created_at
 
                 FROM transactions
@@ -1882,15 +1536,11 @@ app.get(
 
 
         res.json({
-
             account,
-
             transactions
-
         });
 
     }
-
 );
 
 
@@ -1899,11 +1549,8 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/bank/transfer",
-
     requireAuth,
-
     (req, res) => {
 
         const recipient =
@@ -1912,31 +1559,24 @@ app.post(
                 255
             );
 
-
         const amount =
             Number(
                 req.body.amount
             );
 
-
         const description =
             cleanText(
-
                 req.body.description ||
                 "Bank transfer",
-
                 255
-
             );
 
 
         if (!recipient) {
 
             return res.status(400).json({
-
                 message:
                     "Recipient is required."
-
             });
 
         }
@@ -1948,24 +1588,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Amount must be greater than 0."
-
-            });
-
-        }
-
-
-        if (
-            amount > 1000000000
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Amount is too large."
-
             });
 
         }
@@ -1981,13 +1605,9 @@ app.post(
             db.prepare(`
 
                 SELECT
-
                     id,
-
                     user_id,
-
                     account_number,
-
                     balance
 
                 FROM bank_accounts
@@ -2002,10 +1622,8 @@ app.post(
         if (!senderAccount) {
 
             return res.status(404).json({
-
                 message:
                     "Your bank account was not found."
-
             });
 
         }
@@ -2017,82 +1635,55 @@ app.post(
                 255
             );
 
-
         const recipientEmail =
             normalizeEmail(
                 recipientInput
             );
 
 
-        /*
-            Citizens can now transfer by:
-
-            Name
-            Email
-            GOV ID
-            Bank account
-        */
-
         const target =
             db.prepare(`
 
                 SELECT
-
                     users.id,
-
                     users.name,
-
                     users.email,
-
                     users.citizen_id,
 
                     bank_accounts.id
                         AS account_id,
 
                     bank_accounts.account_number,
-
                     bank_accounts.balance
 
                 FROM users
 
                 INNER JOIN bank_accounts
-
                     ON bank_accounts.user_id =
                         users.id
 
                 WHERE
-
                     users.email = ?
-
                     OR users.citizen_id = ?
-
                     OR LOWER(users.name) =
                         LOWER(?)
-
                     OR bank_accounts.account_number = ?
 
                 LIMIT 1
 
             `).get(
-
                 recipientEmail,
-
                 recipientInput,
-
                 recipientInput,
-
                 recipientInput
-
             );
 
 
         if (!target) {
 
             return res.status(404).json({
-
                 message:
                     "Recipient was not found."
-
             });
 
         }
@@ -2104,10 +1695,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "You cannot send money to yourself."
-
             });
 
         }
@@ -2119,10 +1708,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Insufficient funds."
-
             });
 
         }
@@ -2133,38 +1720,24 @@ app.post(
             db.transaction(() => {
 
                 db.prepare(`
-
                     UPDATE bank_accounts
-
                     SET balance =
                         balance - ?
-
                     WHERE id = ?
-
                 `).run(
-
                     transferAmount,
-
                     senderAccount.id
-
                 );
 
 
                 db.prepare(`
-
                     UPDATE bank_accounts
-
                     SET balance =
                         balance + ?
-
                     WHERE id = ?
-
                 `).run(
-
                     transferAmount,
-
                     target.account_id
-
                 );
 
 
@@ -2182,13 +1755,9 @@ app.post(
                     (?, ?, 'transfer', ?)
 
                 `).run(
-
                     senderAccount.id,
-
                     -transferAmount,
-
                     `Sent $${transferAmount.toFixed(2)} to ${target.name}. ${description}`
-
                 );
 
 
@@ -2206,67 +1775,24 @@ app.post(
                     (?, ?, 'transfer', ?)
 
                 `).run(
-
                     target.account_id,
-
                     transferAmount,
-
                     `Received $${transferAmount.toFixed(2)} from ${req.user.name}. ${description}`
-
                 );
 
 
                 createAudit(
-
                     req.user.id,
-
                     "BANK_TRANSFER",
-
                     `${req.user.name} sent $${transferAmount.toFixed(2)} to ${target.name}.`
-
                 );
 
             })();
 
 
-            const updatedAccount =
-                db.prepare(`
-
-                    SELECT
-
-                        id,
-
-                        account_number,
-
-                        balance
-
-                    FROM bank_accounts
-
-                    WHERE user_id = ?
-
-                `).get(
-                    req.user.id
-                );
-
-
             res.json({
-
                 message:
-                    "Money sent successfully.",
-
-                recipient: {
-
-                    name:
-                        target.name,
-
-                    citizen_id:
-                        target.citizen_id
-
-                },
-
-                account:
-                    updatedAccount
-
+                    "Money sent successfully."
             });
 
         } catch (error) {
@@ -2276,18 +1802,14 @@ app.post(
                 error
             );
 
-
             res.status(500).json({
-
                 message:
                     "Unable to complete bank transfer."
-
             });
 
         }
 
     }
-
 );
 
 
@@ -2296,68 +1818,48 @@ app.post(
 // ============================================================
 
 app.get(
-
     "/api/licenses",
-
     requireAuth,
-
     (req, res) => {
 
         const licenses =
             LICENSE_TYPES.map(
-
                 type => {
 
                     const license =
                         db.prepare(`
 
                             SELECT
-
                                 id,
-
                                 license_type,
-
                                 status,
-
                                 issued_at,
-
                                 revoked_at
 
                             FROM licenses
 
                             WHERE user_id = ?
-
                             AND license_type = ?
 
                         `).get(
-
                             req.user.id,
-
                             type
-
                         );
 
 
                     return license || {
-
                         id: null,
-
                         license_type:
                             type,
-
                         status:
                             "inactive",
-
                         issued_at:
                             null,
-
                         revoked_at:
                             null
-
                     };
 
                 }
-
             );
 
 
@@ -2366,7 +1868,6 @@ app.get(
         });
 
     }
-
 );
 
 
@@ -2375,29 +1876,20 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/licenses/request",
-
     requireAuth,
-
     (req, res) => {
 
         const licenseType =
             cleanText(
-
                 req.body.license_type,
-
                 100
-
             );
-
 
         const passcode =
             String(
-
                 req.body.government_passcode ||
                 ""
-
             );
 
 
@@ -2408,10 +1900,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid license type."
-
             });
 
         }
@@ -2419,16 +1909,13 @@ app.post(
 
         if (
             !GOVERNMENT_PASSCODE ||
-
             passcode !==
                 GOVERNMENT_PASSCODE
         ) {
 
             return res.status(403).json({
-
                 message:
                     "Incorrect government passcode."
-
             });
 
         }
@@ -2438,31 +1925,23 @@ app.post(
             db.prepare(`
 
                 SELECT id
-
                 FROM licenses
 
                 WHERE user_id = ?
-
                 AND license_type = ?
-
                 AND status = 'active'
 
             `).get(
-
                 req.user.id,
-
                 licenseType
-
             );
 
 
         if (existingLicense) {
 
             return res.status(400).json({
-
                 message:
                     "You already have this license."
-
             });
 
         }
@@ -2472,31 +1951,23 @@ app.post(
             db.prepare(`
 
                 SELECT id
-
                 FROM license_requests
 
                 WHERE user_id = ?
-
                 AND license_type = ?
-
                 AND status = 'pending'
 
             `).get(
-
                 req.user.id,
-
                 licenseType
-
             );
 
 
         if (pending) {
 
             return res.status(400).json({
-
                 message:
                     "You already have a pending request."
-
             });
 
         }
@@ -2513,34 +1984,24 @@ app.post(
             VALUES (?, ?)
 
         `).run(
-
             req.user.id,
-
             licenseType
-
         );
 
 
         createAudit(
-
             req.user.id,
-
             "LICENSE_REQUEST",
-
             `${req.user.name} requested ${licenseType}.`
-
         );
 
 
         res.json({
-
             message:
                 "License request submitted."
-
         });
 
     }
-
 );
 
 
@@ -2549,13 +2010,9 @@ app.post(
 // ============================================================
 
 app.get(
-
     "/api/police/citizen/:identifier",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const citizen =
@@ -2567,10 +2024,8 @@ app.get(
         if (!citizen) {
 
             return res.status(404).json({
-
                 message:
                     "Citizen not found."
-
             });
 
         }
@@ -2580,13 +2035,9 @@ app.get(
             db.prepare(`
 
                 SELECT
-
                     police_records.id,
-
                     police_records.reason,
-
                     police_records.points,
-
                     police_records.created_at,
 
                     officer.name
@@ -2595,7 +2046,6 @@ app.get(
                 FROM police_records
 
                 LEFT JOIN users officer
-
                     ON officer.id =
                         police_records.officer_id
 
@@ -2611,15 +2061,11 @@ app.get(
 
 
         res.json({
-
             citizen,
-
             records
-
         });
 
     }
-
 );
 
 
@@ -2628,48 +2074,35 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/police/points",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const identifier =
             cleanText(
-
-                req.body.citizen_id,
-
+                req.body.citizen_id ||
+                req.body.user_id,
                 255
-
             );
-
 
         const points =
             Number(
                 req.body.points
             );
 
-
         const reason =
             cleanText(
-
                 req.body.reason,
-
                 500
-
             );
 
 
         if (!identifier) {
 
             return res.status(400).json({
-
                 message:
                     "Name, email, Government ID or database ID is required."
-
             });
 
         }
@@ -2677,17 +2110,13 @@ app.post(
 
         if (
             !Number.isFinite(points) ||
-
             points <= 0 ||
-
             points > 1000
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Points must be between 1 and 1000."
-
             });
 
         }
@@ -2696,10 +2125,8 @@ app.post(
         if (!reason) {
 
             return res.status(400).json({
-
                 message:
                     "A reason is required."
-
             });
 
         }
@@ -2714,10 +2141,8 @@ app.post(
         if (!citizen) {
 
             return res.status(404).json({
-
                 message:
                     "Citizen not found."
-
             });
 
         }
@@ -2738,58 +2163,39 @@ app.post(
                 VALUES (?, ?, ?, ?)
 
             `).run(
-
                 citizen.id,
-
                 req.user.id,
-
                 reason,
-
                 points
-
             );
 
 
             db.prepare(`
-
                 UPDATE users
-
                 SET police_points =
                     police_points + ?
-
                 WHERE id = ?
-
             `).run(
-
                 points,
-
                 citizen.id
-
             );
 
 
             createAudit(
-
                 req.user.id,
-
                 "POLICE_POINTS",
-
                 `${req.user.name} added ${points} police points to ${citizen.name}. Reason: ${reason}`
-
             );
 
         })();
 
 
         res.json({
-
             message:
                 "Police points added."
-
         });
 
     }
-
 );
 
 
@@ -2798,34 +2204,23 @@ app.post(
 // ============================================================
 
 app.post(
-
     "/api/police/records",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const identifier =
             cleanText(
-
-                req.body.citizen_id,
-
+                req.body.citizen_id ||
+                req.body.user_id,
                 255
-
             );
-
 
         const reason =
             cleanText(
-
                 req.body.reason,
-
                 500
-
             );
-
 
         const points =
             Number(
@@ -2836,10 +2231,8 @@ app.post(
         if (!identifier) {
 
             return res.status(400).json({
-
                 message:
                     "Name, email, Government ID or database ID is required."
-
             });
 
         }
@@ -2848,10 +2241,8 @@ app.post(
         if (!reason) {
 
             return res.status(400).json({
-
                 message:
                     "A reason is required."
-
             });
 
         }
@@ -2859,17 +2250,13 @@ app.post(
 
         if (
             !Number.isFinite(points) ||
-
             points < 0 ||
-
             points > 1000
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Points must be between 0 and 1000."
-
             });
 
         }
@@ -2884,10 +2271,8 @@ app.post(
         if (!citizen) {
 
             return res.status(404).json({
-
                 message:
                     "Citizen not found."
-
             });
 
         }
@@ -2908,15 +2293,10 @@ app.post(
                 VALUES (?, ?, ?, ?)
 
             `).run(
-
                 citizen.id,
-
                 req.user.id,
-
                 reason,
-
                 points
-
             );
 
 
@@ -2925,47 +2305,33 @@ app.post(
             ) {
 
                 db.prepare(`
-
                     UPDATE users
-
                     SET police_points =
                         police_points + ?
-
                     WHERE id = ?
-
                 `).run(
-
                     points,
-
                     citizen.id
-
                 );
 
             }
 
 
             createAudit(
-
                 req.user.id,
-
                 "POLICE_RECORD",
-
                 `${req.user.name} created a police record for ${citizen.name}: ${reason}`
-
             );
 
         })();
 
 
         res.json({
-
             message:
                 "Police record created."
-
         });
 
     }
-
 );
 
 
@@ -2974,13 +2340,9 @@ app.post(
 // ============================================================
 
 app.get(
-
     "/api/police/callsign",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const callsign =
@@ -2988,13 +2350,11 @@ app.get(
                 req.user.id
             );
 
-
         res.json({
             callsign
         });
 
     }
-
 );
 
 
@@ -3003,20 +2363,15 @@ app.get(
 // ============================================================
 
 app.get(
-
     "/api/police/911",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const calls =
             db.prepare(`
 
                 SELECT
-
                     emergency_calls.*,
 
                     users.citizen_id
@@ -3025,7 +2380,6 @@ app.get(
                 FROM emergency_calls
 
                 LEFT JOIN users
-
                     ON users.id =
                         emergency_calls.caller_user_id
 
@@ -3042,38 +2396,19 @@ app.get(
         });
 
     }
-
 );
 
 
 // ============================================================
 // DISCORD BOT -> 911 CALL
-//
-// Your Discord bot will call this when someone
-// joins the 911 VC.
-//
-// Header:
-//
-// x-dispatch-token: YOUR_TOKEN
-//
-// POST BODY EXAMPLE:
-//
-// {
-//     "caller_name": "Joshua",
-//     "user_identifier": "GOV-123456",
-//     "channel_id": "123456789"
-// }
 // ============================================================
 
 app.post(
-
     "/api/dispatch/911",
-
     (req, res) => {
 
         if (
             !DISPATCH_TOKEN ||
-
             req.headers[
                 "x-dispatch-token"
             ] !==
@@ -3081,10 +2416,8 @@ app.post(
         ) {
 
             return res.status(401).json({
-
                 message:
                     "Dispatch authentication failed."
-
             });
 
         }
@@ -3092,39 +2425,25 @@ app.post(
 
         const userIdentifier =
             cleanText(
-
                 req.body.user_identifier,
-
                 255
-
             );
-
 
         const callerName =
             cleanText(
-
                 req.body.caller_name,
-
                 120
-
             );
-
 
         const callerEmail =
             normalizeEmail(
-
                 req.body.caller_email
-
             );
-
 
         const channelId =
             cleanText(
-
                 req.body.channel_id,
-
                 100
-
             );
 
 
@@ -3142,10 +2461,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "caller_name or user_identifier is required."
-
             });
 
         }
@@ -3154,7 +2471,6 @@ app.post(
         const finalName =
             caller?.name ||
             callerName;
-
 
         const finalEmail =
             caller?.email ||
@@ -3176,32 +2492,23 @@ app.post(
                 VALUES (?, ?, ?, ?)
 
             `).run(
-
                 caller?.id ||
                     null,
-
                 finalName,
-
                 finalEmail,
-
                 channelId ||
                     null
-
             );
 
 
         res.status(201).json({
-
             message:
                 "911 call created.",
-
             call_id:
                 result.lastInsertRowid
-
         });
 
     }
-
 );
 
 
@@ -3210,13 +2517,9 @@ app.post(
 // ============================================================
 
 app.post(
-
     "/api/police/911/:id/close",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const id =
@@ -3230,10 +2533,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid call ID."
-
             });
 
         }
@@ -3244,10 +2545,7 @@ app.post(
             UPDATE emergency_calls
 
             SET
-
-                status =
-                    'closed',
-
+                status = 'closed',
                 closed_at =
                     CURRENT_TIMESTAMP
 
@@ -3257,78 +2555,51 @@ app.post(
 
 
         createAudit(
-
             req.user.id,
-
             "911_CALL_CLOSED",
-
             `${req.user.name} closed 911 call #${id}.`
-
         );
 
 
         res.json({
-
             message:
                 "911 call closed."
-
         });
 
     }
-
 );
 
 
 // ============================================================
-// PUBLIC GROUP CITY PENAL CODES
+// PUBLIC PENAL CODES
 // ============================================================
 
 app.get(
-
     "/api/penal-codes",
-
     (req, res) => {
 
         const search =
             cleanText(
-
                 req.query.search,
-
                 100
-
             );
 
 
         let codes;
-
 
         if (search) {
 
             const like =
                 `%${search}%`;
 
-
             codes =
                 db.prepare(`
 
-                    SELECT
-
-                        id,
-
-                        code,
-
-                        title,
-
-                        description,
-
-                        penalty,
-
-                        created_at
+                    SELECT *
 
                     FROM penal_codes
 
                     WHERE
-
                         code LIKE ?
                             COLLATE NOCASE
 
@@ -3338,19 +2609,19 @@ app.get(
                         OR description LIKE ?
                             COLLATE NOCASE
 
+                        OR category LIKE ?
+                            COLLATE NOCASE
+
                     ORDER BY
                         code COLLATE NOCASE
 
                     LIMIT 200
 
                 `).all(
-
                     like,
-
                     like,
-
+                    like,
                     like
-
                 );
 
         } else {
@@ -3358,19 +2629,7 @@ app.get(
             codes =
                 db.prepare(`
 
-                    SELECT
-
-                        id,
-
-                        code,
-
-                        title,
-
-                        description,
-
-                        penalty,
-
-                        created_at
+                    SELECT *
 
                     FROM penal_codes
 
@@ -3385,443 +2644,104 @@ app.get(
 
 
         res.json({
-            codes
+            codes,
+            penal_codes:
+                codes
         });
 
     }
-
 );
 
 
 // ============================================================
-// GOVERNMENT ADD PENAL CODE
-// ============================================================
-
-app.post(
-
-    "/api/government/penal-codes",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const code =
-            cleanText(
-                req.body.code,
-                40
-            );
-
-
-        const title =
-            cleanText(
-                req.body.title,
-                150
-            );
-
-
-        const description =
-            cleanText(
-                req.body.description,
-                1000
-            );
-
-
-        const penalty =
-            cleanText(
-                req.body.penalty,
-                300
-            );
-
-
-        if (
-            !code ||
-            !title ||
-            !description
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Code, title and description are required."
-
-            });
-
-        }
-
-
-        try {
-
-            const result =
-                db.prepare(`
-
-                    INSERT INTO penal_codes
-                    (
-                        code,
-                        title,
-                        description,
-                        penalty,
-                        created_by
-                    )
-
-                    VALUES (?, ?, ?, ?, ?)
-
-                `).run(
-
-                    code,
-
-                    title,
-
-                    description,
-
-                    penalty ||
-                        null,
-
-                    req.user.id
-
-                );
-
-
-            createAudit(
-
-                req.user.id,
-
-                "PENAL_CODE_CREATE",
-
-                `${req.user.name} created penal code ${code}.`
-
-            );
-
-
-            res.status(201).json({
-
-                message:
-                    "Penal code created.",
-
-                id:
-                    result.lastInsertRowid
-
-            });
-
-        } catch {
-
-            res.status(409).json({
-
-                message:
-                    "That penal code already exists."
-
-            });
-
-        }
-
-    }
-
-);
-
-
-// ============================================================
-// GOVERNMENT DELETE PENAL CODE
-// ============================================================
-
-app.delete(
-
-    "/api/government/penal-codes/:id",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const id =
-            Number(
-                req.params.id
-            );
-
-
-        if (
-            !Number.isInteger(id)
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Invalid penal code ID."
-
-            });
-
-        }
-
-
-        db.prepare(`
-
-            DELETE FROM penal_codes
-
-            WHERE id = ?
-
-        `).run(id);
-
-
-        createAudit(
-
-            req.user.id,
-
-            "PENAL_CODE_DELETE",
-
-            `${req.user.name} removed penal code #${id}.`
-
-        );
-
-
-        res.json({
-
-            message:
-                "Penal code removed."
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// POLICE BOLO LOOKUP
+// POLICE BOLOS
 // ============================================================
 
 app.get(
-
     "/api/police/bolos",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const search =
             cleanText(
-
                 req.query.search,
-
                 150
-
             );
 
+
+        let bolos;
 
         if (search) {
 
             const like =
                 `%${search}%`;
 
-
-            return res.json({
-
-                bolos:
-                    db.prepare(`
-
-                        SELECT *
-
-                        FROM bolos
-
-                        WHERE
-
-                            subject LIKE ?
-                                COLLATE NOCASE
-
-                            OR vehicle LIKE ?
-                                COLLATE NOCASE
-
-                            OR plate LIKE ?
-                                COLLATE NOCASE
-
-                            OR description LIKE ?
-                                COLLATE NOCASE
-
-                        ORDER BY
-                            id DESC
-
-                        LIMIT 200
-
-                    `).all(
-
-                        like,
-
-                        like,
-
-                        like,
-
-                        like
-
-                    )
-
-            });
-
-        }
-
-
-        res.json({
-
-            bolos:
+            bolos =
                 db.prepare(`
 
                     SELECT *
 
                     FROM bolos
 
-                    ORDER BY
-                        id DESC
+                    WHERE
+                        subject LIKE ?
+                            COLLATE NOCASE
+
+                        OR vehicle LIKE ?
+                            COLLATE NOCASE
+
+                        OR plate LIKE ?
+                            COLLATE NOCASE
+
+                        OR description LIKE ?
+                            COLLATE NOCASE
+
+                        OR reason LIKE ?
+                            COLLATE NOCASE
+
+                    ORDER BY id DESC
 
                     LIMIT 200
 
-                `).all()
+                `).all(
+                    like,
+                    like,
+                    like,
+                    like,
+                    like
+                );
 
-        });
+        } else {
 
-    }
+            bolos =
+                db.prepare(`
 
-);
+                    SELECT *
 
+                    FROM bolos
 
-// ============================================================
-// GOVERNMENT CREATE BOLO
-// ============================================================
+                    ORDER BY id DESC
 
-app.post(
+                    LIMIT 200
 
-    "/api/government/bolos",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const subject =
-            cleanText(
-
-                req.body.subject,
-
-                150
-
-            );
-
-
-        const vehicle =
-            cleanText(
-
-                req.body.vehicle,
-
-                150
-
-            );
-
-
-        const plate =
-            cleanText(
-
-                req.body.plate,
-
-                50
-
-            );
-
-
-        const description =
-            cleanText(
-
-                req.body.description,
-
-                1000
-
-            );
-
-
-        if (
-            !subject ||
-            !description
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Subject and description are required."
-
-            });
+                `).all();
 
         }
 
 
-        const result =
-            db.prepare(`
-
-                INSERT INTO bolos
-                (
-                    subject,
-                    vehicle,
-                    plate,
-                    description,
-                    created_by
-                )
-
-                VALUES (?, ?, ?, ?, ?)
-
-            `).run(
-
-                subject,
-
-                vehicle ||
-                    null,
-
-                plate ||
-                    null,
-
-                description,
-
-                req.user.id
-
-            );
-
-
-        createAudit(
-
-            req.user.id,
-
-            "BOLO_CREATE",
-
-            `${req.user.name} created a BOLO for ${subject}.`
-
-        );
-
-
-        res.status(201).json({
-
-            message:
-                "BOLO created.",
-
-            id:
-                result.lastInsertRowid
-
+        res.json({
+            bolos
         });
 
     }
-
 );
 
 
-// ============================================================
-// POLICE CLEAR BOLO
-// ============================================================
-
 app.post(
-
     "/api/police/bolos/:id/clear",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const id =
@@ -3830,15 +2750,11 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(id)
-        ) {
+        if (!Number.isInteger(id)) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid BOLO ID."
-
             });
 
         }
@@ -3849,10 +2765,7 @@ app.post(
             UPDATE bolos
 
             SET
-
-                status =
-                    'cleared',
-
+                status = 'cleared',
                 cleared_at =
                     CURRENT_TIMESTAMP
 
@@ -3862,377 +2775,110 @@ app.post(
 
 
         createAudit(
-
             req.user.id,
-
             "BOLO_CLEAR",
-
             `${req.user.name} cleared BOLO #${id}.`
-
         );
 
 
         res.json({
-
             message:
                 "BOLO cleared."
-
         });
 
     }
-
 );
 
 
 // ============================================================
-// GOVERNMENT DELETE BOLO
-// ============================================================
-
-app.delete(
-
-    "/api/government/bolos/:id",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const id =
-            Number(
-                req.params.id
-            );
-
-
-        if (
-            !Number.isInteger(id)
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Invalid BOLO ID."
-
-            });
-
-        }
-
-
-        db.prepare(`
-
-            DELETE FROM bolos
-
-            WHERE id = ?
-
-        `).run(id);
-
-
-        createAudit(
-
-            req.user.id,
-
-            "BOLO_DELETE",
-
-            `${req.user.name} deleted BOLO #${id}.`
-
-        );
-
-
-        res.json({
-
-            message:
-                "BOLO deleted."
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// POLICE WARRANT LOOKUP
+// POLICE WARRANTS
 // ============================================================
 
 app.get(
-
     "/api/police/warrants",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const search =
             cleanText(
-
                 req.query.search,
-
                 150
-
             );
 
+
+        let warrants;
 
         if (search) {
 
             const like =
                 `%${search}%`;
 
+            warrants =
+                db.prepare(`
 
-            return res.json({
+                    SELECT *
 
-                warrants:
-                    db.prepare(`
+                    FROM arrest_warrants
 
-                        SELECT
+                    WHERE
+                        subject_name LIKE ?
+                            COLLATE NOCASE
 
-                            arrest_warrants.*,
+                        OR subject_identifier LIKE ?
+                            COLLATE NOCASE
 
-                            issuer.name
-                                AS issuer_name
+                        OR reason LIKE ?
+                            COLLATE NOCASE
 
-                        FROM arrest_warrants
+                        OR charges LIKE ?
+                            COLLATE NOCASE
 
-                        LEFT JOIN users issuer
+                        OR details LIKE ?
+                            COLLATE NOCASE
 
-                            ON issuer.id =
-                                arrest_warrants.issued_by
+                    ORDER BY id DESC
 
-                        WHERE
+                    LIMIT 200
 
-                            subject_name LIKE ?
-                                COLLATE NOCASE
+                `).all(
+                    like,
+                    like,
+                    like,
+                    like,
+                    like
+                );
 
-                            OR subject_identifier LIKE ?
-                                COLLATE NOCASE
+        } else {
 
-                            OR reason LIKE ?
-                                COLLATE NOCASE
+            warrants =
+                db.prepare(`
 
-                            OR charges LIKE ?
-                                COLLATE NOCASE
+                    SELECT *
 
-                        ORDER BY
-                            id DESC
+                    FROM arrest_warrants
 
-                        LIMIT 200
+                    ORDER BY id DESC
 
-                    `).all(
+                    LIMIT 200
 
-                        like,
-
-                        like,
-
-                        like,
-
-                        like
-
-                    )
-
-            });
+                `).all();
 
         }
 
 
         res.json({
-
-            warrants:
-                db.prepare(`
-
-                    SELECT
-
-                        arrest_warrants.*,
-
-                        issuer.name
-                            AS issuer_name
-
-                    FROM arrest_warrants
-
-                    LEFT JOIN users issuer
-
-                        ON issuer.id =
-                            arrest_warrants.issued_by
-
-                    ORDER BY
-                        id DESC
-
-                    LIMIT 200
-
-                `).all()
-
+            warrants
         });
 
     }
-
 );
 
 
-// ============================================================
-// GOVERNMENT ISSUE ARREST WARRANT
-// ============================================================
-
 app.post(
-
-    "/api/government/warrants",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const identifier =
-            cleanText(
-
-                req.body.subject_identifier,
-
-                255
-
-            );
-
-
-        const subjectNameInput =
-            cleanText(
-
-                req.body.subject_name,
-
-                150
-
-            );
-
-
-        const reason =
-            cleanText(
-
-                req.body.reason,
-
-                1000
-
-            );
-
-
-        const charges =
-            cleanText(
-
-                req.body.charges,
-
-                1000
-
-            );
-
-
-        if (!reason) {
-
-            return res.status(400).json({
-
-                message:
-                    "A reason is required."
-
-            });
-
-        }
-
-
-        const target =
-            identifier
-                ? findUser(
-                    identifier
-                )
-                : null;
-
-
-        const subjectName =
-            target?.name ||
-            subjectNameInput;
-
-
-        if (!subjectName) {
-
-            return res.status(400).json({
-
-                message:
-                    "Subject name or user identifier is required."
-
-            });
-
-        }
-
-
-        const result =
-            db.prepare(`
-
-                INSERT INTO arrest_warrants
-                (
-                    user_id,
-                    subject_name,
-                    subject_identifier,
-                    reason,
-                    charges,
-                    issued_by
-                )
-
-                VALUES (?, ?, ?, ?, ?, ?)
-
-            `).run(
-
-                target?.id ||
-                    null,
-
-                subjectName,
-
-                identifier ||
-                    target?.citizen_id ||
-                    null,
-
-                reason,
-
-                charges ||
-                    null,
-
-                req.user.id
-
-            );
-
-
-        createAudit(
-
-            req.user.id,
-
-            "WARRANT_CREATE",
-
-            `${req.user.name} issued a warrant for ${subjectName}.`
-
-        );
-
-
-        res.status(201).json({
-
-            message:
-                "Arrest warrant issued.",
-
-            id:
-                result.lastInsertRowid
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// POLICE SERVE WARRANT
-// ============================================================
-
-app.post(
-
     "/api/police/warrants/:id/serve",
-
     requireAuth,
-
     requirePolice,
-
     (req, res) => {
 
         const id =
@@ -4241,15 +2887,11 @@ app.post(
             );
 
 
-        if (
-            !Number.isInteger(id)
-        ) {
+        if (!Number.isInteger(id)) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid warrant ID."
-
             });
 
         }
@@ -4260,10 +2902,7 @@ app.post(
             UPDATE arrest_warrants
 
             SET
-
-                status =
-                    'served',
-
+                status = 'served',
                 served_at =
                     CURRENT_TIMESTAMP
 
@@ -4273,91 +2912,18 @@ app.post(
 
 
         createAudit(
-
             req.user.id,
-
             "WARRANT_SERVED",
-
             `${req.user.name} marked warrant #${id} as served.`
-
         );
 
 
         res.json({
-
             message:
                 "Warrant marked as served."
-
         });
 
     }
-
-);
-
-
-// ============================================================
-// GOVERNMENT DELETE WARRANT
-// ============================================================
-
-app.delete(
-
-    "/api/government/warrants/:id",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const id =
-            Number(
-                req.params.id
-            );
-
-
-        if (
-            !Number.isInteger(id)
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Invalid warrant ID."
-
-            });
-
-        }
-
-
-        db.prepare(`
-
-            DELETE FROM arrest_warrants
-
-            WHERE id = ?
-
-        `).run(id);
-
-
-        createAudit(
-
-            req.user.id,
-
-            "WARRANT_DELETE",
-
-            `${req.user.name} removed warrant #${id}.`
-
-        );
-
-
-        res.json({
-
-            message:
-                "Warrant removed."
-
-        });
-
-    }
-
 );
 
 
@@ -4366,308 +2932,62 @@ app.delete(
 // ============================================================
 
 app.get(
-
     "/api/pilot/charts",
-
     requireAuth,
-
     requirePilot,
-
     (req, res) => {
 
         const airport =
             cleanText(
-
                 req.query.airport,
-
                 100
-
             );
 
 
+        let charts;
+
         if (airport) {
 
-            return res.json({
-
-                airports:
-                    AIRPORTS,
-
-                charts:
-                    db.prepare(`
-
-                        SELECT
-
-                            id,
-
-                            airport,
-
-                            chart_name,
-
-                            chart_type,
-
-                            url,
-
-                            created_at
-
-                        FROM charts
-
-                        WHERE airport = ?
-
-                        ORDER BY
-                            id DESC
-
-                    `).all(
-                        airport
-                    )
-
-            });
-
-        }
-
-
-        res.json({
-
-            airports:
-                AIRPORTS,
-
-            charts:
+            charts =
                 db.prepare(`
 
-                    SELECT
+                    SELECT *
 
-                        id,
+                    FROM charts
 
-                        airport,
+                    WHERE airport = ?
 
-                        chart_name,
+                    ORDER BY id DESC
 
-                        chart_type,
+                `).all(
+                    airport
+                );
 
-                        url,
+        } else {
 
-                        created_at
+            charts =
+                db.prepare(`
+
+                    SELECT *
 
                     FROM charts
 
                     ORDER BY
-
-                        airport,
-
+                        airport COLLATE NOCASE,
                         id DESC
 
-                `).all()
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// GOVERNMENT ADD CHART
-// ============================================================
-
-app.post(
-
-    "/api/government/charts",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const airport =
-            cleanText(
-
-                req.body.airport,
-
-                100
-
-            );
-
-
-        const chartName =
-            cleanText(
-
-                req.body.chart_name,
-
-                150
-
-            );
-
-
-        const chartType =
-            cleanText(
-
-                req.body.chart_type,
-
-                100
-
-            );
-
-
-        const url =
-            cleanText(
-
-                req.body.url,
-
-                2000
-
-            );
-
-
-        if (
-            !AIRPORTS.includes(
-                airport
-            )
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Choose one of the two airports."
-
-            });
+                `).all();
 
         }
-
-
-        if (
-            !chartName ||
-            !url
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Chart name and chart URL are required."
-
-            });
-
-        }
-
-
-        const result =
-            db.prepare(`
-
-                INSERT INTO charts
-                (
-                    airport,
-                    chart_name,
-                    chart_type,
-                    url,
-                    created_by
-                )
-
-                VALUES (?, ?, ?, ?, ?)
-
-            `).run(
-
-                airport,
-
-                chartName,
-
-                chartType ||
-                    null,
-
-                url,
-
-                req.user.id
-
-            );
-
-
-        createAudit(
-
-            req.user.id,
-
-            "CHART_CREATE",
-
-            `${req.user.name} added ${chartName} to ${airport}.`
-
-        );
-
-
-        res.status(201).json({
-
-            message:
-                "Chart added.",
-
-            id:
-                result.lastInsertRowid
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// GOVERNMENT DELETE CHART
-// ============================================================
-
-app.delete(
-
-    "/api/government/charts/:id",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const id =
-            Number(
-                req.params.id
-            );
-
-
-        if (
-            !Number.isInteger(id)
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Invalid chart ID."
-
-            });
-
-        }
-
-
-        db.prepare(`
-
-            DELETE FROM charts
-
-            WHERE id = ?
-
-        `).run(id);
-
-
-        createAudit(
-
-            req.user.id,
-
-            "CHART_DELETE",
-
-            `${req.user.name} removed chart #${id}.`
-
-        );
 
 
         res.json({
-
-            message:
-                "Chart removed."
-
+            charts,
+            airports:
+                AIRPORTS
         });
 
     }
-
 );
 
 
@@ -4676,13 +2996,9 @@ app.delete(
 // ============================================================
 
 app.get(
-
     "/api/pilot/callsign",
-
     requireAuth,
-
     requirePilot,
-
     (req, res) => {
 
         const callsign =
@@ -4690,77 +3006,36 @@ app.get(
                 req.user.id
             );
 
-
-        if (
-            !validPilotCallsign(
-                callsign
-            )
-        ) {
-
-            return res.status(500).json({
-
-                message:
-                    "Unable to generate a valid callsign."
-
-            });
-
-        }
-
-
         res.json({
             callsign
         });
 
     }
-
 );
 
 
 // ============================================================
-// GET PILOT'S ACTIVE FLIGHT PLAN
+// ACTIVE FLIGHT PLAN
 // ============================================================
 
 app.get(
-
     "/api/pilot/flight-plan",
-
     requireAuth,
-
     requirePilot,
-
     (req, res) => {
 
         const plan =
             db.prepare(`
 
-                SELECT
-
-                    flight_plans.*,
-
-                    users.name
-                        AS pilot_name,
-
-                    users.email
-                        AS pilot_email,
-
-                    users.pilot_callsign
+                SELECT *
 
                 FROM flight_plans
 
-                INNER JOIN users
-
-                    ON users.id =
-                        flight_plans.user_id
-
                 WHERE
+                    user_id = ?
+                    AND status = 'active'
 
-                    flight_plans.user_id = ?
-
-                    AND flight_plans.status =
-                        'active'
-
-                ORDER BY
-                    flight_plans.id DESC
+                ORDER BY id DESC
 
                 LIMIT 1
 
@@ -4770,20 +3045,11 @@ app.get(
 
 
         res.json({
-
-            callsign:
-                getOrCreatePilotCallsign(
-                    req.user.id
-                ),
-
-            plan:
-                plan ||
-                null
-
+            flight_plan:
+                plan || null
         });
 
     }
-
 );
 
 
@@ -4792,72 +3058,51 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/pilot/flight-plan",
-
     requireAuth,
-
     requirePilot,
-
     (req, res) => {
 
         const departure =
             cleanText(
-
                 req.body.departure,
-
                 100
-
             );
-
 
         const arrival =
             cleanText(
-
                 req.body.arrival,
-
                 100
-
             );
-
 
         const aircraft =
             cleanText(
-
                 req.body.aircraft,
-
                 100
-
             );
-
 
         const route =
             cleanText(
-
                 req.body.route,
-
-                2000
-
+                1000
             );
-
 
         const altitude =
             cleanText(
-
                 req.body.altitude,
-
                 100
-
             );
-
 
         const remarks =
             cleanText(
-
                 req.body.remarks,
-
                 1000
+            );
 
+        let requestedCallsign =
+            cleanText(
+                req.body.callsign,
+                20
             );
 
 
@@ -4868,53 +3113,120 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Departure, arrival and route are required."
-
             });
 
         }
 
 
-        /*
-            Existing valid callsign is reused.
-            Otherwise a GC-1234 callsign is generated.
-        */
+        const existing =
+            db.prepare(`
 
-        const callsign =
-            getOrCreatePilotCallsign(
+                SELECT *
+
+                FROM flight_plans
+
+                WHERE
+                    user_id = ?
+                    AND status = 'active'
+
+                ORDER BY id DESC
+
+                LIMIT 1
+
+            `).get(
                 req.user.id
             );
 
 
-        /*
-            Close the previous flight plan so each
-            pilot only has one ACTIVE flight plan.
-        */
+        if (existing) {
 
-        db.prepare(`
+            return res.status(400).json({
+                message:
+                    `You already have an active flight plan using ${existing.callsign}.`,
+                flight_plan:
+                    existing
+            });
 
-            UPDATE flight_plans
+        }
 
-            SET
 
-                status =
-                    'closed',
+        let callsign;
 
-                updated_at =
-                    CURRENT_TIMESTAMP
+        if (requestedCallsign) {
 
-            WHERE
+            requestedCallsign =
+                requestedCallsign.toUpperCase();
 
-                user_id = ?
+            if (
+                !validPilotCallsign(
+                    requestedCallsign
+                )
+            ) {
 
-                AND status =
-                    'active'
+                return res.status(400).json({
+                    message:
+                        "Pilot callsign must use the format GC-1234."
+                });
 
-        `).run(
-            req.user.id
-        );
+            }
+
+
+            const taken =
+                db.prepare(`
+
+                    SELECT id
+
+                    FROM users
+
+                    WHERE
+                        pilot_callsign = ?
+                        AND id != ?
+
+                    LIMIT 1
+
+                `).get(
+                    requestedCallsign,
+                    req.user.id
+                );
+
+
+            if (taken) {
+
+                return res.status(409).json({
+                    message:
+                        "That pilot callsign is already in use."
+                });
+
+            }
+
+
+            callsign =
+                requestedCallsign;
+
+
+            db.prepare(`
+
+                UPDATE users
+
+                SET pilot_callsign = ?
+
+                WHERE id = ?
+
+            `).run(
+                callsign,
+                req.user.id
+            );
+
+        } else {
+
+            callsign =
+                getOrCreatePilotCallsign(
+                    req.user.id
+                );
+
+        }
 
 
         const result =
@@ -4936,54 +3248,42 @@ app.post(
                 (?, ?, ?, ?, ?, ?, ?, ?)
 
             `).run(
-
                 req.user.id,
-
                 callsign,
-
                 departure,
-
                 arrival,
-
-                aircraft ||
-                    null,
-
+                aircraft || null,
                 route,
-
-                altitude ||
-                    null,
-
-                remarks ||
-                    null
-
+                altitude || null,
+                remarks || null
             );
 
 
         createAudit(
-
             req.user.id,
-
             "FLIGHT_PLAN_FILED",
-
-            `${req.user.name} filed flight plan ${callsign}: ${departure} to ${arrival}.`
-
+            `${req.user.name} filed flight plan ${callsign} from ${departure} to ${arrival}.`
         );
 
 
-        res.status(201).json({
+        const plan =
+            db.prepare(`
+                SELECT *
+                FROM flight_plans
+                WHERE id = ?
+            `).get(
+                result.lastInsertRowid
+            );
 
+
+        res.status(201).json({
             message:
                 "Flight plan filed.",
-
-            callsign,
-
-            id:
-                result.lastInsertRowid
-
+            flight_plan:
+                plan
         });
 
     }
-
 );
 
 
@@ -4992,95 +3292,101 @@ app.post(
 // ============================================================
 
 app.post(
-
     "/api/pilot/flight-plan/cancel",
-
     requireAuth,
-
     requirePilot,
-
     (req, res) => {
+
+        const plan =
+            db.prepare(`
+
+                SELECT *
+
+                FROM flight_plans
+
+                WHERE
+                    user_id = ?
+                    AND status = 'active'
+
+                ORDER BY id DESC
+
+                LIMIT 1
+
+            `).get(
+                req.user.id
+            );
+
+
+        if (!plan) {
+
+            return res.status(404).json({
+                message:
+                    "You do not have an active flight plan."
+            });
+
+        }
+
 
         db.prepare(`
 
             UPDATE flight_plans
 
             SET
-
-                status =
-                    'closed',
-
+                status = 'cancelled',
                 updated_at =
                     CURRENT_TIMESTAMP
 
-            WHERE
-
-                user_id = ?
-
-                AND status =
-                    'active'
+            WHERE id = ?
 
         `).run(
-            req.user.id
+            plan.id
         );
 
 
         createAudit(
-
             req.user.id,
-
-            "FLIGHT_PLAN_CANCEL",
-
-            `${req.user.name} cancelled their active flight plan.`
-
+            "FLIGHT_PLAN_CANCELLED",
+            `${req.user.name} cancelled flight plan ${plan.callsign}.`
         );
 
 
         res.json({
-
             message:
                 "Flight plan cancelled."
-
         });
 
     }
-
 );
 
 
 // ============================================================
-// ATC ACTIVE FLIGHT PLANS
+// ATC FLIGHT PLANS
 // ============================================================
 
 app.get(
-
     "/api/atc/flight-plans",
-
     requireAuth,
-
     requireATC,
-
     (req, res) => {
 
         const plans =
             db.prepare(`
 
                 SELECT
-
                     flight_plans.*,
 
                     users.name
                         AS pilot_name,
 
-                    users.email
-                        AS pilot_email,
-
                     users.citizen_id
+                        AS pilot_citizen_id,
+
+                    users.email
+                        AS pilot_email
 
                 FROM flight_plans
 
                 INNER JOIN users
-
                     ON users.id =
                         flight_plans.user_id
 
@@ -5095,11 +3401,12 @@ app.get(
 
 
         res.json({
+            flight_plans:
+                plans,
             plans
         });
 
     }
-
 );
 
 
@@ -5108,101 +3415,97 @@ app.get(
 // ============================================================
 
 app.get(
-
     "/api/government/users",
-
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
         const search =
             cleanText(
-
                 req.query.search,
-
-                100
-
+                255
             );
 
 
-        if (!search) {
+        let users;
 
-            return res.json({
 
-                users: []
+        if (search) {
 
-            });
+            const like =
+                `%${search}%`;
+
+            users =
+                db.prepare(`
+
+                    SELECT
+                        id,
+                        name,
+                        email,
+                        citizen_id,
+                        role,
+                        police_points,
+                        police_callsign,
+                        pilot_callsign,
+                        created_at
+
+                    FROM users
+
+                    WHERE
+                        name LIKE ?
+                            COLLATE NOCASE
+
+                        OR email LIKE ?
+                            COLLATE NOCASE
+
+                        OR citizen_id LIKE ?
+                            COLLATE NOCASE
+
+                        OR police_callsign LIKE ?
+                            COLLATE NOCASE
+
+                        OR pilot_callsign LIKE ?
+                            COLLATE NOCASE
+
+                    ORDER BY
+                        name COLLATE NOCASE ASC
+
+                    LIMIT 50
+
+                `).all(
+                    like,
+                    like,
+                    like,
+                    like,
+                    like
+                );
+
+        } else {
+
+            users =
+                db.prepare(`
+
+                    SELECT
+                        id,
+                        name,
+                        email,
+                        citizen_id,
+                        role,
+                        police_points,
+                        police_callsign,
+                        pilot_callsign,
+                        created_at
+
+                    FROM users
+
+                    ORDER BY
+                        id DESC
+
+                    LIMIT 50
+
+                `).all();
 
         }
-
-
-        const like =
-            `%${search}%`;
-
-
-        const users =
-            db.prepare(`
-
-                SELECT
-
-                    id,
-
-                    name,
-
-                    email,
-
-                    citizen_id,
-
-                    role,
-
-                    police_points,
-
-                    police_callsign,
-
-                    pilot_callsign,
-
-                    created_at
-
-                FROM users
-
-                WHERE
-
-                    name LIKE ?
-                        COLLATE NOCASE
-
-                    OR email LIKE ?
-                        COLLATE NOCASE
-
-                    OR citizen_id LIKE ?
-                        COLLATE NOCASE
-
-                    OR police_callsign LIKE ?
-                        COLLATE NOCASE
-
-                    OR pilot_callsign LIKE ?
-                        COLLATE NOCASE
-
-                ORDER BY
-
-                    name COLLATE NOCASE ASC
-
-                LIMIT 50
-
-            `).all(
-
-                like,
-
-                like,
-
-                like,
-
-                like,
-
-                like
-
-            );
 
 
         res.json({
@@ -5210,7 +3513,6 @@ app.get(
         });
 
     }
-
 );
 
 
@@ -5219,54 +3521,30 @@ app.get(
 // ============================================================
 
 app.get(
-
-    "/api/government/money-leaderboard",
-
+    "/api/government/money",
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
-        const leaderboard =
+        const users =
             db.prepare(`
 
                 SELECT
-
                     users.id,
-
                     users.name,
-
                     users.email,
-
                     users.citizen_id,
-
-                    users.role,
-
-                    users.police_callsign,
-
-                    users.pilot_callsign,
-
                     bank_accounts.account_number,
-
                     bank_accounts.balance
 
                 FROM users
 
                 INNER JOIN bank_accounts
-
                     ON bank_accounts.user_id =
                         users.id
 
-                WHERE
-                    users.role !=
-                        'government'
-
                 ORDER BY
-
-                    bank_accounts.balance DESC,
-
-                    users.id ASC
+                    bank_accounts.balance DESC
 
                 LIMIT 100
 
@@ -5274,11 +3552,12 @@ app.get(
 
 
         res.json({
-            leaderboard
+            users,
+            leaderboard:
+                users
         });
 
     }
-
 );
 
 
@@ -5287,59 +3566,35 @@ app.get(
 // ============================================================
 
 app.post(
-
     "/api/government/bank",
-
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
-
-        /*
-            Despite the name "user_id",
-            the frontend may send:
-
-            Name
-            Email
-            GOV ID
-            Database ID
-        */
 
         const identifier =
             cleanText(
-
                 req.body.user_id,
-
                 255
-
             );
-
 
         const amount =
             Number(
                 req.body.amount
             );
 
-
         const description =
             cleanText(
-
                 req.body.description ||
-                "Government transaction",
-
-                255
-
+                "Government bank adjustment",
+                500
             );
 
 
         if (!identifier) {
 
             return res.status(400).json({
-
                 message:
                     "Name, email, Government ID or database ID is required."
-
             });
 
         }
@@ -5351,43 +3606,24 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
-                    "Enter a valid amount."
-
+                    "Enter a non-zero amount."
             });
 
         }
 
 
-        if (
-            Math.abs(amount) >
-            1000000000
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Amount is too large."
-
-            });
-
-        }
-
-
-        const user =
+        const targetUser =
             findUser(
                 identifier
             );
 
 
-        if (!user) {
+        if (!targetUser) {
 
             return res.status(404).json({
-
                 message:
-                    "Citizen not found."
-
+                    "User not found."
             });
 
         }
@@ -5396,33 +3632,46 @@ app.post(
         const account =
             db.prepare(`
 
-                SELECT id
+                SELECT *
 
                 FROM bank_accounts
 
                 WHERE user_id = ?
 
             `).get(
-                user.id
+                targetUser.id
             );
 
 
         if (!account) {
 
             return res.status(404).json({
-
                 message:
                     "Bank account not found."
-
             });
 
         }
 
 
-        const rounded =
+        const newBalance =
             Math.round(
-                amount * 100
+                (
+                    account.balance +
+                    amount
+                ) * 100
             ) / 100;
+
+
+        if (
+            newBalance < 0
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "This adjustment would make the account balance negative."
+            });
+
+        }
 
 
         db.transaction(() => {
@@ -5431,17 +3680,13 @@ app.post(
 
                 UPDATE bank_accounts
 
-                SET balance =
-                    balance + ?
+                SET balance = ?
 
                 WHERE id = ?
 
             `).run(
-
-                rounded,
-
+                newBalance,
                 account.id
-
             );
 
 
@@ -5459,95 +3704,67 @@ app.post(
                 (?, ?, 'government', ?)
 
             `).run(
-
                 account.id,
-
-                rounded,
-
+                amount,
                 description
-
             );
 
 
             createAudit(
-
                 req.user.id,
-
                 "GOVERNMENT_BANK",
-
-                `${req.user.name} changed ${user.name}'s balance by $${rounded.toFixed(2)}. ${description}`
-
+                `${req.user.name} adjusted ${targetUser.name}'s balance by $${amount.toFixed(2)}.`
             );
 
         })();
 
 
         res.json({
-
             message:
-                "Bank transaction applied.",
-
-            citizen:
-                user
-
+                "Bank account updated.",
+            balance:
+                newBalance
         });
 
     }
-
 );
 
 
 // ============================================================
-// GOVERNMENT LICENSE MANAGEMENT
+// GOVERNMENT LICENSE ACTION
 // ============================================================
 
 app.post(
-
     "/api/government/license",
-
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
         const identifier =
             cleanText(
-
                 req.body.user_id,
-
                 255
-
             );
-
 
         const licenseType =
             cleanText(
-
                 req.body.license_type,
-
                 100
-
             );
 
-
-        const status =
+        const action =
             cleanText(
-
+                req.body.action ||
                 req.body.status,
-
-                20
-
-            );
+                30
+            ).toLowerCase();
 
 
         if (!identifier) {
 
             return res.status(400).json({
-
                 message:
                     "Name, email, Government ID or database ID is required."
-
             });
 
         }
@@ -5560,10 +3777,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid license type."
-
             });
 
         }
@@ -5571,246 +3786,18 @@ app.post(
 
         if (
             ![
+                "grant",
+                "revoke",
                 "active",
                 "revoked"
             ].includes(
-                status
+                action
             )
         ) {
 
             return res.status(400).json({
-
                 message:
-                    "Invalid license status."
-
-            });
-
-        }
-
-
-        const user =
-            findUser(
-                identifier
-            );
-
-
-        if (!user) {
-
-            return res.status(404).json({
-
-                message:
-                    "Citizen not found."
-
-            });
-
-        }
-
-
-        const existing =
-            db.prepare(`
-
-                SELECT *
-
-                FROM licenses
-
-                WHERE
-
-                    user_id = ?
-
-                    AND license_type = ?
-
-            `).get(
-
-                user.id,
-
-                licenseType
-
-            );
-
-
-        if (existing) {
-
-            if (
-                status ===
-                "active"
-            ) {
-
-                db.prepare(`
-
-                    UPDATE licenses
-
-                    SET
-
-                        status =
-                            'active',
-
-                        issued_by = ?,
-
-                        issued_at =
-                            CURRENT_TIMESTAMP,
-
-                        revoked_at =
-                            NULL
-
-                    WHERE id = ?
-
-                `).run(
-
-                    req.user.id,
-
-                    existing.id
-
-                );
-
-            } else {
-
-                db.prepare(`
-
-                    UPDATE licenses
-
-                    SET
-
-                        status =
-                            'revoked',
-
-                        revoked_at =
-                            CURRENT_TIMESTAMP
-
-                    WHERE id = ?
-
-                `).run(
-                    existing.id
-                );
-
-            }
-
-        } else {
-
-            db.prepare(`
-
-                INSERT INTO licenses
-                (
-                    user_id,
-                    license_type,
-                    status,
-                    issued_by,
-                    issued_at
-                )
-
-                VALUES (?, ?, ?, ?, ?)
-
-            `).run(
-
-                user.id,
-
-                licenseType,
-
-                status,
-
-                req.user.id,
-
-                status === "active"
-                    ? new Date().toISOString()
-                    : null
-
-            );
-
-        }
-
-
-        createAudit(
-
-            req.user.id,
-
-            "LICENSE_UPDATE",
-
-            `${req.user.name} changed ${user.name}'s ${licenseType} status to ${status}.`
-
-        );
-
-
-        res.json({
-
-            message:
-                "License updated.",
-
-            citizen: {
-
-                name:
-                    user.name,
-
-                email:
-                    user.email,
-
-                citizen_id:
-                    user.citizen_id
-
-            }
-
-        });
-
-    }
-
-);
-
-
-// ============================================================
-// GOVERNMENT ROLE MANAGEMENT
-// ============================================================
-
-app.post(
-
-    "/api/government/role",
-
-    requireAuth,
-
-    requireGovernment,
-
-    (req, res) => {
-
-        const identifier =
-            cleanText(
-
-                req.body.user_id,
-
-                255
-
-            );
-
-
-        const role =
-            cleanText(
-
-                req.body.role,
-
-                30
-
-            );
-
-
-        if (!identifier) {
-
-            return res.status(400).json({
-
-                message:
-                    "Name, email, Government ID or database ID is required."
-
-            });
-
-        }
-
-
-        if (
-            !USER_ROLES.includes(
-                role
-            )
-        ) {
-
-            return res.status(400).json({
-
-                message:
-                    "Invalid role."
-
+                    "Invalid license action."
             });
 
         }
@@ -5825,51 +3812,209 @@ app.post(
         if (!targetUser) {
 
             return res.status(404).json({
-
                 message:
-                    "Citizen not found."
+                    "User not found."
+            });
 
+        }
+
+
+        const granting =
+            action === "grant" ||
+            action === "active";
+
+
+        const existing =
+            db.prepare(`
+
+                SELECT *
+
+                FROM licenses
+
+                WHERE
+                    user_id = ?
+                    AND license_type = ?
+
+            `).get(
+                targetUser.id,
+                licenseType
+            );
+
+
+        if (existing) {
+
+            db.prepare(`
+
+                UPDATE licenses
+
+                SET
+                    status = ?,
+                    issued_by = ?,
+                    issued_at =
+                        CASE
+                            WHEN ? = 'active'
+                            THEN CURRENT_TIMESTAMP
+                            ELSE issued_at
+                        END,
+                    revoked_at =
+                        CASE
+                            WHEN ? = 'revoked'
+                            THEN CURRENT_TIMESTAMP
+                            ELSE NULL
+                        END
+
+                WHERE id = ?
+
+            `).run(
+                granting
+                    ? "active"
+                    : "revoked",
+                req.user.id,
+                granting
+                    ? "active"
+                    : "revoked",
+                granting
+                    ? "active"
+                    : "revoked",
+                existing.id
+            );
+
+        } else {
+
+            db.prepare(`
+
+                INSERT INTO licenses
+                (
+                    user_id,
+                    license_type,
+                    status,
+                    issued_by,
+                    issued_at,
+                    revoked_at
+                )
+
+                VALUES
+                (?, ?, ?, ?, ?, ?)
+
+            `).run(
+                targetUser.id,
+                licenseType,
+                granting
+                    ? "active"
+                    : "revoked",
+                req.user.id,
+                granting
+                    ? new Date().toISOString()
+                    : null,
+                granting
+                    ? null
+                    : new Date().toISOString()
+            );
+
+        }
+
+
+        createAudit(
+            req.user.id,
+            "GOVERNMENT_LICENSE",
+            `${req.user.name} ${granting ? "granted" : "revoked"} ${licenseType} for ${targetUser.name}.`
+        );
+
+
+        res.json({
+            message:
+                granting
+                    ? "License granted."
+                    : "License revoked."
+        });
+
+    }
+);
+
+
+// ============================================================
+// GOVERNMENT ROLE ACTION
+// ============================================================
+
+app.post(
+    "/api/government/role",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const identifier =
+            cleanText(
+                req.body.user_id,
+                255
+            );
+
+        const role =
+            cleanText(
+                req.body.role,
+                50
+            ).toLowerCase();
+
+
+        if (!identifier) {
+
+            return res.status(400).json({
+                message:
+                    "Name, email, Government ID or database ID is required."
+            });
+
+        }
+
+
+        if (
+            !USER_ROLES.includes(
+                role
+            )
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Invalid role."
+            });
+
+        }
+
+
+        const targetUser =
+            findUser(
+                identifier
+            );
+
+
+        if (!targetUser) {
+
+            return res.status(404).json({
+                message:
+                    "User not found."
             });
 
         }
 
 
         db.prepare(`
-
             UPDATE users
-
             SET role = ?
-
             WHERE id = ?
-
         `).run(
-
             role,
-
             targetUser.id
-
         );
 
 
-        let policeCallsign =
-            targetUser.police_callsign;
+        let callsign =
+            null;
 
-
-        let pilotCallsign =
-            targetUser.pilot_callsign;
-
-
-        /*
-            Automatically assign a police callsign
-            when Government makes somebody Police.
-        */
 
         if (
             role ===
             "police"
         ) {
 
-            policeCallsign =
+            callsign =
                 getOrCreatePoliceCallsign(
                     targetUser.id
                 );
@@ -5877,17 +4022,12 @@ app.post(
         }
 
 
-        /*
-            Automatically assign a pilot callsign
-            when Government makes somebody Pilot.
-        */
-
         if (
             role ===
             "pilot"
         ) {
 
-            pilotCallsign =
+            callsign =
                 getOrCreatePilotCallsign(
                     targetUser.id
                 );
@@ -5896,95 +4036,709 @@ app.post(
 
 
         createAudit(
-
             req.user.id,
-
             "ROLE_CHANGE",
-
             `${req.user.name} changed ${targetUser.name}'s role from ${targetUser.role} to ${role}.`
-
         );
 
 
-        const updated =
-            getUserById(
-                targetUser.id
-            );
-
-
         res.json({
-
             message:
                 "User role updated.",
-
             citizen:
-                updated,
-
-            callsign:
-                role === "police"
-                    ? policeCallsign
-                    : role === "pilot"
-                        ? pilotCallsign
-                        : null
-
+                getUserById(
+                    targetUser.id
+                ),
+            callsign
         });
 
     }
-
 );
 
 
 // ============================================================
-// GOVERNMENT AUDIT LOG
+// GOVERNMENT PENAL CODES
+// ============================================================
+
+app.post(
+    "/api/government/penal-codes",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const code =
+            cleanText(
+                req.body.code,
+                40
+            );
+
+        const title =
+            cleanText(
+                req.body.title,
+                150
+            );
+
+        const description =
+            cleanText(
+                req.body.description,
+                1000
+            );
+
+        const category =
+            cleanText(
+                req.body.category,
+                100
+            );
+
+        const fine =
+            Number(
+                req.body.fine || 0
+            );
+
+        const points =
+            Number(
+                req.body.points || 0
+            );
+
+        const jailTime =
+            cleanText(
+                req.body.jail_time,
+                100
+            );
+
+        let penalty =
+            cleanText(
+                req.body.penalty,
+                300
+            );
+
+
+        if (
+            !code ||
+            !title ||
+            !description
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Code, title and description are required."
+            });
+
+        }
+
+
+        if (!penalty) {
+
+            const pieces = [];
+
+            if (fine > 0) {
+                pieces.push(
+                    `Fine: $${fine}`
+                );
+            }
+
+            if (points > 0) {
+                pieces.push(
+                    `Points: ${points}`
+                );
+            }
+
+            if (jailTime) {
+                pieces.push(
+                    `Jail: ${jailTime}`
+                );
+            }
+
+            penalty =
+                pieces.join(" • ");
+
+        }
+
+
+        try {
+
+            const result =
+                db.prepare(`
+
+                    INSERT INTO penal_codes
+                    (
+                        code,
+                        title,
+                        description,
+                        penalty,
+                        category,
+                        fine,
+                        points,
+                        jail_time,
+                        created_by
+                    )
+
+                    VALUES
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+                `).run(
+                    code,
+                    title,
+                    description,
+                    penalty || null,
+                    category || null,
+                    Number.isFinite(fine)
+                        ? fine
+                        : 0,
+                    Number.isFinite(points)
+                        ? points
+                        : 0,
+                    jailTime || null,
+                    req.user.id
+                );
+
+
+            createAudit(
+                req.user.id,
+                "PENAL_CODE_CREATE",
+                `${req.user.name} created penal code ${code}.`
+            );
+
+
+            res.status(201).json({
+                message:
+                    "Penal code created.",
+                id:
+                    result.lastInsertRowid
+            });
+
+        } catch (error) {
+
+            console.error(
+                "PENAL CODE ERROR:",
+                error
+            );
+
+            res.status(409).json({
+                message:
+                    "That penal code already exists."
+            });
+
+        }
+
+    }
+);
+
+
+app.delete(
+    "/api/government/penal-codes/:id",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const id =
+            Number(
+                req.params.id
+            );
+
+
+        if (!Number.isInteger(id)) {
+
+            return res.status(400).json({
+                message:
+                    "Invalid penal code ID."
+            });
+
+        }
+
+
+        db.prepare(`
+            DELETE FROM penal_codes
+            WHERE id = ?
+        `).run(id);
+
+
+        createAudit(
+            req.user.id,
+            "PENAL_CODE_DELETE",
+            `${req.user.name} removed penal code #${id}.`
+        );
+
+
+        res.json({
+            message:
+                "Penal code removed."
+        });
+
+    }
+);
+
+
+// ============================================================
+// GOVERNMENT BOLOS
+// ============================================================
+
+app.post(
+    "/api/government/bolos",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const subject =
+            cleanText(
+                req.body.subject,
+                150
+            );
+
+        const vehicle =
+            cleanText(
+                req.body.vehicle,
+                150
+            );
+
+        const plate =
+            cleanText(
+                req.body.plate,
+                50
+            );
+
+        const description =
+            cleanText(
+                req.body.description,
+                1000
+            );
+
+        const reason =
+            cleanText(
+                req.body.reason,
+                1000
+            );
+
+
+        if (
+            !subject ||
+            !description
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Subject and description are required."
+            });
+
+        }
+
+
+        const result =
+            db.prepare(`
+
+                INSERT INTO bolos
+                (
+                    subject,
+                    vehicle,
+                    plate,
+                    description,
+                    reason,
+                    created_by
+                )
+
+                VALUES (?, ?, ?, ?, ?, ?)
+
+            `).run(
+                subject,
+                vehicle || null,
+                plate || null,
+                description,
+                reason || null,
+                req.user.id
+            );
+
+
+        createAudit(
+            req.user.id,
+            "BOLO_CREATE",
+            `${req.user.name} created a BOLO for ${subject}.`
+        );
+
+
+        res.status(201).json({
+            message:
+                "BOLO created.",
+            id:
+                result.lastInsertRowid
+        });
+
+    }
+);
+
+
+app.delete(
+    "/api/government/bolos/:id",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const id =
+            Number(
+                req.params.id
+            );
+
+
+        if (!Number.isInteger(id)) {
+
+            return res.status(400).json({
+                message:
+                    "Invalid BOLO ID."
+            });
+
+        }
+
+
+        db.prepare(`
+            DELETE FROM bolos
+            WHERE id = ?
+        `).run(id);
+
+
+        createAudit(
+            req.user.id,
+            "BOLO_DELETE",
+            `${req.user.name} deleted BOLO #${id}.`
+        );
+
+
+        res.json({
+            message:
+                "BOLO deleted."
+        });
+
+    }
+);
+
+
+// ============================================================
+// GOVERNMENT WARRANTS
+// ============================================================
+
+app.post(
+    "/api/government/warrants",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const identifier =
+            cleanText(
+                req.body.user_id ||
+                req.body.subject_identifier,
+                255
+            );
+
+        const suppliedName =
+            cleanText(
+                req.body.subject_name,
+                150
+            );
+
+        const reason =
+            cleanText(
+                req.body.reason,
+                1000
+            );
+
+        const details =
+            cleanText(
+                req.body.details ||
+                req.body.charges,
+                2000
+            );
+
+
+        if (
+            !identifier &&
+            !suppliedName
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Citizen identifier or subject name is required."
+            });
+
+        }
+
+
+        if (!reason) {
+
+            return res.status(400).json({
+                message:
+                    "Warrant reason is required."
+            });
+
+        }
+
+
+        const citizen =
+            identifier
+                ? findUser(identifier)
+                : null;
+
+
+        const subjectName =
+            citizen?.name ||
+            suppliedName ||
+            identifier;
+
+
+        const subjectIdentifier =
+            citizen?.citizen_id ||
+            identifier ||
+            null;
+
+
+        const result =
+            db.prepare(`
+
+                INSERT INTO arrest_warrants
+                (
+                    user_id,
+                    subject_name,
+                    subject_identifier,
+                    reason,
+                    charges,
+                    details,
+                    issued_by
+                )
+
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+
+            `).run(
+                citizen?.id || null,
+                subjectName,
+                subjectIdentifier,
+                reason,
+                details || null,
+                details || null,
+                req.user.id
+            );
+
+
+        createAudit(
+            req.user.id,
+            "WARRANT_CREATE",
+            `${req.user.name} issued an arrest warrant for ${subjectName}.`
+        );
+
+
+        res.status(201).json({
+            message:
+                "Arrest warrant issued.",
+            id:
+                result.lastInsertRowid
+        });
+
+    }
+);
+
+
+app.delete(
+    "/api/government/warrants/:id",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const id =
+            Number(
+                req.params.id
+            );
+
+
+        if (!Number.isInteger(id)) {
+
+            return res.status(400).json({
+                message:
+                    "Invalid warrant ID."
+            });
+
+        }
+
+
+        db.prepare(`
+            DELETE FROM arrest_warrants
+            WHERE id = ?
+        `).run(id);
+
+
+        createAudit(
+            req.user.id,
+            "WARRANT_DELETE",
+            `${req.user.name} deleted warrant #${id}.`
+        );
+
+
+        res.json({
+            message:
+                "Warrant deleted."
+        });
+
+    }
+);
+
+
+// ============================================================
+// GOVERNMENT CHARTS
 // ============================================================
 
 app.get(
-
-    "/api/government/audit",
-
+    "/api/government/charts",
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
-        const audit =
+        const charts =
             db.prepare(`
 
-                SELECT
+                SELECT *
 
-                    audit_logs.id,
-
-                    audit_logs.action,
-
-                    audit_logs.description,
-
-                    audit_logs.created_at,
-
-                    actor.name
-                        AS actor_name
-
-                FROM audit_logs
-
-                LEFT JOIN users actor
-
-                    ON actor.id =
-                        audit_logs.actor_id
+                FROM charts
 
                 ORDER BY
-                    audit_logs.id DESC
-
-                LIMIT 200
+                    airport COLLATE NOCASE,
+                    id DESC
 
             `).all();
 
 
         res.json({
-            audit
+            charts,
+            airports:
+                AIRPORTS
         });
 
     }
+);
 
+
+app.post(
+    "/api/government/charts",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const airport =
+            cleanText(
+                req.body.airport,
+                100
+            );
+
+        const chartName =
+            cleanText(
+                req.body.chart_name ||
+                req.body.title,
+                200
+            );
+
+        const chartType =
+            cleanText(
+                req.body.chart_type,
+                100
+            );
+
+        const url =
+            cleanText(
+                req.body.url,
+                2000
+            );
+
+
+        if (
+            !airport ||
+            !chartName ||
+            !url
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Airport, chart title and URL are required."
+            });
+
+        }
+
+
+        const result =
+            db.prepare(`
+
+                INSERT INTO charts
+                (
+                    airport,
+                    chart_name,
+                    chart_type,
+                    url,
+                    created_by
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+
+            `).run(
+                airport,
+                chartName,
+                chartType || null,
+                url,
+                req.user.id
+            );
+
+
+        createAudit(
+            req.user.id,
+            "CHART_CREATE",
+            `${req.user.name} added chart ${chartName} for ${airport}.`
+        );
+
+
+        res.status(201).json({
+            message:
+                "Chart added.",
+            id:
+                result.lastInsertRowid
+        });
+
+    }
+);
+
+
+app.delete(
+    "/api/government/charts/:id",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const id =
+            Number(
+                req.params.id
+            );
+
+
+        if (!Number.isInteger(id)) {
+
+            return res.status(400).json({
+                message:
+                    "Invalid chart ID."
+            });
+
+        }
+
+
+        db.prepare(`
+            DELETE FROM charts
+            WHERE id = ?
+        `).run(id);
+
+
+        createAudit(
+            req.user.id,
+            "CHART_DELETE",
+            `${req.user.name} removed chart #${id}.`
+        );
+
+
+        res.json({
+            message:
+                "Chart removed."
+        });
+
+    }
 );
 
 
@@ -5993,20 +4747,15 @@ app.get(
 // ============================================================
 
 app.get(
-
     "/api/government/license-requests",
-
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
         const requests =
             db.prepare(`
 
                 SELECT
-
                     license_requests.*,
 
                     users.name
@@ -6023,12 +4772,10 @@ app.get(
                 FROM license_requests
 
                 INNER JOIN users
-
                     ON users.id =
                         license_requests.user_id
 
                 LEFT JOIN users reviewer
-
                     ON reviewer.id =
                         license_requests.reviewed_by
 
@@ -6045,22 +4792,13 @@ app.get(
         });
 
     }
-
 );
 
 
-// ============================================================
-// GOVERNMENT APPROVE / DENY LICENSE REQUEST
-// ============================================================
-
 app.post(
-
     "/api/government/license-requests/:id",
-
     requireAuth,
-
     requireGovernment,
-
     (req, res) => {
 
         const id =
@@ -6068,36 +4806,40 @@ app.post(
                 req.params.id
             );
 
-
-        const status =
+        let status =
             cleanText(
-
-                req.body.status,
-
+                req.body.status ||
+                req.body.action,
                 20
-
-            );
-
+            ).toLowerCase();
 
         const note =
             cleanText(
-
                 req.body.note,
-
                 1000
-
             );
 
 
         if (
-            !Number.isInteger(id)
+            status === "approve"
         ) {
+            status =
+                "approved";
+        }
+
+        if (
+            status === "deny"
+        ) {
+            status =
+                "denied";
+        }
+
+
+        if (!Number.isInteger(id)) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid request ID."
-
             });
 
         }
@@ -6113,10 +4855,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "Invalid request status."
-
             });
 
         }
@@ -6124,23 +4864,17 @@ app.post(
 
         const request =
             db.prepare(`
-
                 SELECT *
-
                 FROM license_requests
-
                 WHERE id = ?
-
             `).get(id);
 
 
         if (!request) {
 
             return res.status(404).json({
-
                 message:
                     "License request not found."
-
             });
 
         }
@@ -6152,10 +4886,8 @@ app.post(
         ) {
 
             return res.status(400).json({
-
                 message:
                     "This request has already been reviewed."
-
             });
 
         }
@@ -6168,29 +4900,19 @@ app.post(
                 UPDATE license_requests
 
                 SET
-
                     status = ?,
-
                     reviewed_by = ?,
-
                     government_note = ?,
-
                     reviewed_at =
                         CURRENT_TIMESTAMP
 
                 WHERE id = ?
 
             `).run(
-
                 status,
-
                 req.user.id,
-
-                note ||
-                    null,
-
+                note || null,
                 id
-
             );
 
 
@@ -6207,17 +4929,12 @@ app.post(
                         FROM licenses
 
                         WHERE
-
                             user_id = ?
-
                             AND license_type = ?
 
                     `).get(
-
                         request.user_id,
-
                         request.license_type
-
                     );
 
 
@@ -6228,26 +4945,18 @@ app.post(
                         UPDATE licenses
 
                         SET
-
-                            status =
-                                'active',
-
+                            status = 'active',
                             issued_by = ?,
-
                             issued_at =
                                 CURRENT_TIMESTAMP,
-
                             revoked_at =
                                 NULL
 
                         WHERE id = ?
 
                     `).run(
-
                         req.user.id,
-
                         existing.id
-
                     );
 
                 } else {
@@ -6267,13 +4976,9 @@ app.post(
                         (?, ?, 'active', ?, CURRENT_TIMESTAMP)
 
                     `).run(
-
                         request.user_id,
-
                         request.license_type,
-
                         req.user.id
-
                     );
 
                 }
@@ -6288,27 +4993,64 @@ app.post(
 
 
             createAudit(
-
                 req.user.id,
-
                 "LICENSE_REQUEST_REVIEW",
-
                 `${req.user.name} ${status} the ${request.license_type} request for ${targetUser?.name || "unknown user"}.`
-
             );
 
         })();
 
 
         res.json({
-
             message:
                 `License request ${status}.`
-
         });
 
     }
+);
 
+
+// ============================================================
+// GOVERNMENT AUDIT
+// ============================================================
+
+app.get(
+    "/api/government/audit",
+    requireAuth,
+    requireGovernment,
+    (req, res) => {
+
+        const audit =
+            db.prepare(`
+
+                SELECT
+                    audit_logs.id,
+                    audit_logs.action,
+                    audit_logs.description,
+                    audit_logs.created_at,
+
+                    actor.name
+                        AS actor_name
+
+                FROM audit_logs
+
+                LEFT JOIN users actor
+                    ON actor.id =
+                        audit_logs.actor_id
+
+                ORDER BY
+                    audit_logs.id DESC
+
+                LIMIT 200
+
+            `).all();
+
+
+        res.json({
+            audit
+        });
+
+    }
 );
 
 
@@ -6317,20 +5059,15 @@ app.post(
 // ============================================================
 
 app.use(
-
     "/api",
-
     (req, res) => {
 
         res.status(404).json({
-
             message:
                 "API endpoint not found."
-
         });
 
     }
-
 );
 
 
@@ -6339,14 +5076,12 @@ app.use(
 // ============================================================
 
 app.use(
-
     express.static(
         path.join(
             __dirname,
             "public"
         )
     )
-
 );
 
 
@@ -6355,23 +5090,18 @@ app.use(
 // ============================================================
 
 app.get(
-
     "*splat",
-
     (req, res) => {
 
         res.sendFile(
-
             path.join(
                 __dirname,
                 "public",
                 "index.html"
             )
-
         );
 
     }
-
 );
 
 
@@ -6380,7 +5110,6 @@ app.get(
 // ============================================================
 
 app.use(
-
     (
         error,
         req,
@@ -6395,14 +5124,11 @@ app.use(
 
 
         res.status(500).json({
-
             message:
                 "Internal server error."
-
         });
 
     }
-
 );
 
 
@@ -6411,9 +5137,7 @@ app.use(
 // ============================================================
 
 app.listen(
-
     PORT,
-
     () => {
 
         console.log(
@@ -6437,5 +5161,4 @@ app.listen(
         );
 
     }
-
 );
