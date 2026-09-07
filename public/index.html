@@ -83,6 +83,15 @@
             </button>
 
 
+
+            <button
+                id="voiceNav"
+                data-page="voice"
+            >
+                Voice Radio
+            </button>
+
+
             <button
                 id="policeNav"
                 class="hidden"
@@ -503,6 +512,24 @@
                 </button>
 
 
+
+                <button
+                    class="service card-btn"
+                    data-page="voice"
+                >
+
+                    <b>
+                        🎙️ Voice Radio
+                    </b>
+
+                    <span>
+                        Join Group City voice channels directly
+                        from the website.
+                    </span>
+
+                </button>
+
+
                 <button
                     id="policeCard"
                     class="service card-btn hidden"
@@ -818,6 +845,274 @@
         </div>
 
 
+
+        <!-- =================================================
+             VOICE RADIO
+        ================================================== -->
+
+        <div
+            id="voice"
+            class="page hidden"
+        >
+
+            <div class="page-title">
+
+                <p class="eyebrow">
+                    GROUP CITY COMMUNICATIONS
+                </p>
+
+                <h1>
+                    Voice Radio
+                </h1>
+
+                <p>
+                    Join live Group City voice channels directly
+                    from your browser. Your browser will ask for
+                    microphone permission when you join.
+                </p>
+
+            </div>
+
+
+            <div
+                id="voiceStatus"
+                class="card"
+            >
+                Not connected.
+            </div>
+
+
+            <div class="grid two">
+
+                <div class="card">
+
+                    <p class="eyebrow">
+                        EMERGENCY COMMUNICATIONS
+                    </p>
+
+                    <h2>
+                        🚨 911 Emergency
+                    </h2>
+
+                    <p class="muted">
+                        Emergency voice channel for active
+                        Group City incidents.
+                    </p>
+
+                    <p>
+                        <strong id="call911VoiceCount">
+                            0 connected
+                        </strong>
+                    </p>
+
+                    <button
+                        class="primary"
+                        data-voice-room="911"
+                    >
+                        Join 911 Emergency
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="rtoVoiceCard"
+                    class="card"
+                >
+
+                    <p class="eyebrow">
+                        LAW ENFORCEMENT RADIO
+                    </p>
+
+                    <h2>
+                        📻 Police RTO
+                    </h2>
+
+                    <p class="muted">
+                        Restricted police radio channel.
+                        Only Police and Government accounts
+                        can join.
+                    </p>
+
+                    <p>
+                        <strong id="rtoCount">
+                            0 connected
+                        </strong>
+                    </p>
+
+                    <button
+                        class="primary"
+                        data-voice-room="rto"
+                    >
+                        Join Police RTO
+                    </button>
+
+                </div>
+
+
+                <div class="card">
+
+                    <p class="eyebrow">
+                        AVIATION RADIO
+                    </p>
+
+                    <h2>
+                        ✈️ UNICOM
+                    </h2>
+
+                    <p class="muted">
+                        122.500 MHz
+                    </p>
+
+                    <p>
+                        <strong id="unicomCount">
+                            0 connected
+                        </strong>
+                    </p>
+
+                    <button
+                        class="primary"
+                        data-voice-room="unicom"
+                    >
+                        Join UNICOM
+                    </button>
+
+                </div>
+
+
+                <div class="card">
+
+                    <p class="eyebrow">
+                        AIR TRAFFIC CONTROL
+                    </p>
+
+                    <h2>
+                        📡 Western Center
+                    </h2>
+
+                    <p class="muted">
+                        128.600 MHz
+                    </p>
+
+                    <p>
+                        <strong id="westernCount">
+                            0 connected
+                        </strong>
+                    </p>
+
+                    <button
+                        class="primary"
+                        data-voice-room="western"
+                    >
+                        Join Western Center
+                    </button>
+
+                </div>
+
+
+                <div class="card">
+
+                    <p class="eyebrow">
+                        AIR TRAFFIC CONTROL
+                    </p>
+
+                    <h2>
+                        📡 Eastern Center
+                    </h2>
+
+                    <p class="muted">
+                        119.600 MHz
+                    </p>
+
+                    <p>
+                        <strong id="easternCount">
+                            0 connected
+                        </strong>
+                    </p>
+
+                    <button
+                        class="primary"
+                        data-voice-room="eastern"
+                    >
+                        Join Eastern Center
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="activeVoice"
+                class="card"
+                hidden
+            >
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            LIVE VOICE CONNECTION
+                        </p>
+
+                        <h2 id="activeVoiceName">
+                            Voice Channel
+                        </h2>
+
+                        <p
+                            id="activeVoiceFrequency"
+                            class="muted"
+                        ></p>
+
+                    </div>
+
+
+                    <div class="inline">
+
+                        <button
+                            id="voiceMuteBtn"
+                            class="secondary"
+                        >
+                            🎤 Mute
+                        </button>
+
+                        <button
+                            id="voiceDeafenBtn"
+                            class="secondary"
+                        >
+                            🔇 Deafen
+                        </button>
+
+                        <button
+                            id="voiceLeaveBtn"
+                            class="danger-btn"
+                        >
+                            Leave
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <h3>
+                    Connected Users
+                </h3>
+
+                <div id="voiceUsers">
+
+                    <p class="muted">
+                        No users connected.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
         <!-- =================================================
              POLICE
         ================================================== -->
@@ -873,6 +1168,50 @@
                     Police callsigns use the format
                     <strong>1A-123</strong>.
                 </p>
+
+            </div>
+
+
+
+            <!-- POLICE RTO VOICE -->
+
+            <div class="card">
+
+                <div class="request-header">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            POLICE RADIO
+                        </p>
+
+                        <h2>
+                            📻 Police RTO Voice
+                        </h2>
+
+                        <p class="muted">
+                            Join the live Police RTO voice channel
+                            directly from the website.
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <strong id="policeRtoCountMirror">
+                            Police Only
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="primary"
+                    data-voice-room="rto"
+                >
+                    Join Police RTO
+                </button>
 
             </div>
 
@@ -2271,6 +2610,8 @@
          JAVASCRIPT
     ====================================================== -->
 
+    <script src="https://group-city.onrender.com/socket.io/socket.io.js"></script>
+    <script src="voice.js"></script>
     <script src="app.js"></script>
 
 </body>
